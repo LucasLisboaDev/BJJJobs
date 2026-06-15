@@ -99,15 +99,16 @@ model Job {
 }
 
 model Application {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   jobId     String
-  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  job       Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
   coachId   String
-  coach     Coach    @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  coach     Coach     @relation(fields: [coachId], references: [id], onDelete: Cascade)
   message   String?
-  status    String   @default("pending")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  status    String    @default("pending")
+  viewedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@unique([jobId, coachId])
 }

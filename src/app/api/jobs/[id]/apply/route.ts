@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendNewApplicationEmail } from "@/lib/email/send";
 import { z } from "zod";
 
 const applySchema = z.object({
@@ -37,8 +38,15 @@ export async function POST(
         message,
         status: "pending",
       },
-      include: { job: { include: { gym: true } }, coach: true },
+      include: {
+        job: { include: { gym: { include: { user: true } } } },
+        coach: { include: { user: true } },
+      },
     });
+
+    sendNewApplicationEmail(application).catch((err) =>
+      console.error("Failed to send application email:", err)
+    );
 
     return NextResponse.json(application, { status: 201 });
   } catch (err: any) {

@@ -11,12 +11,14 @@ A full-stack job board connecting Brazilian jiu-jitsu coaches with gyms — buil
 - Browse and filter open positions by keyword, city, or belt requirement
 - Apply to jobs with an optional cover message
 - Track application status (pending, shortlisted, declined) from a personal dashboard
+- Receive email when a gym views or updates your application
 
 **For gyms**
 - Register a gym profile and post job listings in minutes
 - Manage listings — toggle active/inactive without deleting
 - Review applicants inline: view belt rank, specialties, and cover message
 - Shortlist or decline applicants directly from the dashboard
+- Receive email when a coach applies to your listing
 
 ---
 
@@ -63,6 +65,13 @@ NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 
 # Database
 DATABASE_URL=postgresql://...
+
+# Resend (email notifications)
+RESEND_API_KEY=re_...
+RESEND_FROM_EMAIL=BJJJobs <notifications@yourdomain.com>
+
+# App URL (used in email links)
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 ### 3. Push the database schema
@@ -109,7 +118,11 @@ src/
 │               ├── apply/route.ts      # Submit / check application
 │               └── applications/       # Gym views & manages applicants
 ├── lib/
-│   └── prisma.ts                       # Prisma client singleton
+│   ├── prisma.ts                       # Prisma client singleton
+│   └── email/
+│       ├── resend.ts                   # Resend client + config
+│       ├── get-user-email.ts           # Clerk email lookup/sync
+│       └── send.ts                     # Email templates & senders
 └── middleware.ts                        # Clerk auth (protects /dashboard, /post-job, /register/*)
 prisma/
 └── schema.prisma                        # Database schema
@@ -131,7 +144,7 @@ The project is designed to deploy on Railway with zero additional configuration.
 
 ## Roadmap
 
-- [ ] Email notifications on new applications (Resend)
+- [x] Email notifications on new applications (Resend)
 - [ ] Belt verification system
 - [ ] Featured gym and coach profiles
 - [ ] Full-text search (upgrade path: Algolia)

@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { syncClerkEmail } from "@/lib/email/get-user-email";
 import { z } from "zod";
 
 const gymSchema = z.object({
@@ -20,12 +21,14 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const data = gymSchema.parse(body);
 
+    const email = await syncClerkEmail(userId);
+
     const user = await prisma.user.upsert({
       where: { clerkId: userId },
-      update: {},
+      update: { email },
       create: {
         clerkId: userId,
-        email: "",
+        email,
         role: "GYM",
       },
     });

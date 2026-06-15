@@ -1,6 +1,15 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import {
+  sendApplicationStatusEmail,
+  sendApplicationViewedEmail,
+} from "@/lib/email/send";
+
+const applicationInclude = {
+  coach: { include: { user: true } },
+  job: { include: { gym: { include: { user: true } } } },
+} as const;
 
 // GET — gym views applicants for one of their jobs
 export async function GET(
@@ -29,7 +38,33 @@ export async function GET(
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(applications);
+    const unviewed = applications.filter((a) => !a.viewedAt);
+    if (unviewed.length > 0) {
+      const now = new Date();
+      await prisma.application.updateMany({
+        where: { id: { in: unviewed.map((a) => a.id) } },
+        data: { viewedAt: now },
+      });
+
+      for (const app of unviewed) {
+        const full = await prisma.application.findUnique({
+          where: { id: app.id },
+          include: applicationInclude,
+        });
+        if (full) {
+          sendApplicationViewedEmail(full).catch((err) =>
+            console.error("Failed to send viewed email:", err)
+          );
+        }
+      }
+    }
+
+    return NextResponse.json(
+      applications.map((a) => ({
+        ...a,
+        viewedAt: a.viewedAt ?? (unviewed.some((u) => u.id === a.id) ? new Date() : null),
+      }))
+    );
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -59,10 +94,24 @@ export async function PATCH(
 
     const { applicationId, status } = await req.json();
 
+    const existing = await prisma.application.findUnique({
+      where: { id: applicationId },
+    });
+    if (!existing || existing.jobId !== params.id) {
+      return NextResponse.json({ error: "Application not found" }, { status: 404 });
+    }
+
     const updated = await prisma.application.update({
       where: { id: applicationId },
       data: { status },
+      include: applicationInclude,
     });
+
+    if (existing.status !== status && (status === "shortlisted" || status === "rejected")) {
+      sendApplicationStatusEmail(updated, status).catch((err) =>
+        console.error("Failed to send status email:", err)
+      );
+    }
 
     return NextResponse.json(updated);
   } catch (err) {
