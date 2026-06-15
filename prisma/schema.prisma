@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  COACH
+  GYM
+}
+
+enum BeltRank {
+  WHITE
+  BLUE
+  PURPLE
+  BROWN
+  BLACK
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  REVENUE_SHARE
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  coach     Coach?
+  gym       Gym?
+}
+
+model Coach {
+  id                String        @id @default(cuid())
+  userId            String        @unique
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName         String
+  lastName          String
+  photoUrl          String?
+  beltRank          BeltRank
+  affiliation       String?
+  yearsTeaching     Int           @default(0)
+  specialties       String[]
+  targetCity        String?
+  bio               String?
+  competitionRecord String?
+  minPay            Float?
+  maxPay            Float?
+  applications      Application[]
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model Gym {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  logoUrl     String?
+  affiliation String?
+  city        String
+  state       String
+  website     String?
+  description String?
+  jobs        Job[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Job {
+  id               String        @id @default(cuid())
+  gymId            String
+  gym              Gym           @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  title            String
+  jobType          JobType
+  city             String
+  state            String
+  minBelt          BeltRank      @default(WHITE)
+  minYearsTeaching Int           @default(0)
+  styles           String[]
+  perks            String[]
+  description      String
+  minPay           Float?
+  maxPay           Float?
+  payType          String        @default("hourly")
+  featured         Boolean       @default(false)
+  active           Boolean       @default(true)
+  applications     Application[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model Application {
+  id        String   @id @default(cuid())
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  coachId   String
+  coach     Coach    @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  message   String?
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([jobId, coachId])
+}
