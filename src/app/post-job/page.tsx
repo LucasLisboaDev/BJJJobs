@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Shield, Building2 } from "lucide-react";
 import Link from "next/link";
+import { US_STATES } from "@/lib/utils";
 
 const STYLES = ["Gi", "No-Gi", "Kids program", "Competition team", "Self-defense", "Fundamentals"];
 const PERKS = ["Free membership", "Flexible schedule", "Competition support", "Health benefits", "Seminar opportunities", "Growth potential"];
@@ -138,7 +139,16 @@ export default function PostJobPage() {
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5">State</label>
-              <input className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-green-400" placeholder="FL" value={state} onChange={(e) => setState(e.target.value)} />
+              <select
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-green-400 bg-white"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+              >
+                <option value="">Select state</option>
+                {US_STATES.map((s) => (
+                  <option key={s.abbr} value={s.abbr}>{s.name}</option>
+                ))}
+              </select>
             </div>
           </div>
 

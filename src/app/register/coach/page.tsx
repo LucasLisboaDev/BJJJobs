@@ -12,7 +12,6 @@ const BELT_COLORS: Record<string, string> = {
   WHITE: "#ccc", BLUE: "#3478c8", PURPLE: "#8b5cf6", BROWN: "#92400e", BLACK: "#1a1a1a",
 };
 const SPECIALTIES = ["Gi", "No-Gi", "Kids classes", "Competition prep", "Self-defense", "Fundamentals", "Women's only"];
-const AFFILIATIONS = ["Alliance", "Gracie Barra", "Atos", "10th Planet", "Checkmat", "Renzo Gracie", "Independent", "Other"];
 const YEARS_OPTIONS = [
   { label: "Less than 1 year", value: 0 },
   { label: "1–2 years", value: 1 },
@@ -25,7 +24,7 @@ export default function CoachRegisterPage() {
   const router = useRouter();
   const [selectedBelt, setSelectedBelt] = useState("BROWN");
   const [selectedSpecs, setSelectedSpecs] = useState<string[]>(["Gi", "No-Gi"]);
-  const [affiliation, setAffiliation] = useState("Alliance");
+  const [affiliation, setAffiliation] = useState("");
   const [yearsTeaching, setYearsTeaching] = useState(5);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -179,14 +178,13 @@ export default function CoachRegisterPage() {
 
           <div className="grid grid-cols-2 gap-4 mb-5">
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Affiliation</label>
-              <select
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">Affiliation <span className="font-normal text-gray-400">· optional</span></label>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+                placeholder="e.g. Alliance, Gracie Barra, Independent..."
                 value={affiliation}
                 onChange={(e) => setAffiliation(e.target.value)}
-              >
-                {AFFILIATIONS.map((a) => <option key={a}>{a}</option>)}
-              </select>
+              />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5">Years teaching</label>
