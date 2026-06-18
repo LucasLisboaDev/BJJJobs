@@ -95,7 +95,13 @@ export default function JobDetailPage() {
                 <h1 className="text-xl font-medium mb-1">{job.title}</h1>
                 <div className="flex items-center gap-1.5 text-sm text-gray-500">
                   <Building2 className="w-4 h-4" />
-                  {job.gym?.name}
+                  {job.gym?.id ? (
+                    <Link href={`/gyms/${job.gym.id}`} className="hover:underline" style={{ color: "#0F6E56" }}>
+                      {job.gym.name}
+                    </Link>
+                  ) : (
+                    job.gym?.name
+                  )}
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-0.5">
                   <MapPin className="w-4 h-4" />
@@ -217,21 +223,26 @@ export default function JobDetailPage() {
         {job.gym && (
           <div className="bg-white border border-gray-100 rounded-2xl p-7">
             <h2 className="font-medium mb-4">About the gym</h2>
-            <div className="flex items-center gap-3 mb-3">
+            <Link
+              href={`/gyms/${job.gym.id}`}
+              className="flex items-center gap-3 mb-3 group"
+            >
               <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg" style={{ background: "#E1F5EE" }}>🏛️</div>
               <div>
-                <div className="font-medium text-sm">{job.gym.name}</div>
+                <div className="font-medium text-sm group-hover:underline" style={{ color: "#0F6E56" }}>{job.gym.name}</div>
                 <div className="text-xs text-gray-500">{job.gym.city}, {job.gym.state}{job.gym.affiliation ? ` · ${job.gym.affiliation}` : ""}</div>
               </div>
-            </div>
+            </Link>
             {job.gym.description && (
-              <p className="text-sm text-gray-600 leading-relaxed">{job.gym.description}</p>
+              <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">{job.gym.description}</p>
             )}
-            {job.gym.website && (
-              <a href={job.gym.website} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-sm" style={{ color: "#1D9E75" }}>
-                Visit website →
-              </a>
-            )}
+            <Link
+              href={`/gyms/${job.gym.id}`}
+              className="inline-block mt-3 text-sm font-medium"
+              style={{ color: "#1D9E75" }}
+            >
+              View gym profile →
+            </Link>
           </div>
         )}
       </div>

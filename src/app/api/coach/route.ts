@@ -27,9 +27,24 @@ export async function POST(req: NextRequest) {
 
     const email = await syncClerkEmail(userId);
 
+    const existing = await prisma.user.findUnique({
+      where: { clerkId: userId },
+      include: { gym: true },
+    });
+
+    if (existing?.gym) {
+      return NextResponse.json(
+        {
+          error:
+            "This account is registered as a gym. Sign out and create a separate account to register as a coach.",
+        },
+        { status: 409 }
+      );
+    }
+
     const user = await prisma.user.upsert({
       where: { clerkId: userId },
-      update: { email },
+      update: { email, role: "COACH" },
       create: {
         clerkId: userId,
         email,

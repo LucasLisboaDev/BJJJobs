@@ -1,12 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Shield } from "lucide-react";
 import Link from "next/link";
 import { US_STATES } from "@/lib/utils";
 
 export default function GymRegisterPage() {
   const router = useRouter();
+  const { isLoaded, userId } = useAuth();
+  const [checkingAccount, setCheckingAccount] = useState(true);
+  const [wrongAccount, setWrongAccount] = useState(false);
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -15,6 +19,25 @@ export default function GymRegisterPage() {
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!userId) {
+      router.replace("/register?role=gym");
+      return;
+    }
+
+    fetch("/api/dashboard")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.role === "COACH" && data.coach) {
+          setWrongAccount(true);
+        } else if (data.role === "GYM" && data.gym) {
+          router.replace("/dashboard");
+        }
+      })
+      .finally(() => setCheckingAccount(false));
+  }, [isLoaded, userId, router]);
 
   async function handleSubmit() {
     if (!name || !city || !state) {
@@ -30,7 +53,7 @@ export default function GymRegisterPage() {
         body: JSON.stringify({ name, city, state, affiliation: affiliation || undefined, website: website || undefined, description: description || undefined }),
       });
       if (res.ok) {
-        router.push("/post-job");
+        router.push("/dashboard");
       } else {
         const data = await res.json();
         setError(data.error || "Something went wrong");
@@ -40,6 +63,46 @@ export default function GymRegisterPage() {
     } finally {
       setSaving(false);
     }
+  }
+
+  if (!isLoaded || checkingAccount) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-sm text-gray-400">Loading...</div>
+      </div>
+    );
+  }
+
+  if (wrongAccount) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+        <div className="max-w-md text-center">
+          <div className="text-3xl mb-4">🏋️</div>
+          <h1 className="text-xl font-medium mb-2">This account is a coach</h1>
+          <p className="text-sm text-gray-500 mb-8 leading-relaxed">
+            You&apos;re signed in with a coach account. Coach and gym profiles use separate
+            accounts — sign out and create a new account with a different email to register
+            a gym.
+          </p>
+          <div className="flex flex-col gap-3">
+            <SignOutButton redirectUrl="/register?role=gym">
+              <button
+                className="text-sm font-medium text-white px-6 py-3 rounded-xl w-full"
+                style={{ background: "#1D9E75" }}
+              >
+                Sign out & create gym account
+              </button>
+            </SignOutButton>
+            <Link
+              href="/dashboard"
+              className="text-sm px-6 py-3 rounded-xl border border-gray-200 text-gray-600"
+            >
+              Go to coach dashboard
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -54,7 +117,10 @@ export default function GymRegisterPage() {
 
       <div className="max-w-lg mx-auto py-12 px-6">
         <h1 className="text-2xl font-medium mb-2">Create your gym profile</h1>
-        <p className="text-sm text-gray-500 mb-8">Set up your gym so coaches can find you and apply to your listings</p>
+        <p className="text-sm text-gray-500 mb-8">
+          Set up your gym profile first. You&apos;ll land on your dashboard where you can
+          manage your info and post jobs when you&apos;re ready.
+        </p>
 
         {error && (
           <div className="mb-5 px-4 py-3 rounded-lg text-sm" style={{ background: "#FCEBEB", color: "#A32D2D" }}>

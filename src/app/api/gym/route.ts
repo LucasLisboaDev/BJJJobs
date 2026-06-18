@@ -23,9 +23,24 @@ export async function POST(req: NextRequest) {
 
     const email = await syncClerkEmail(userId);
 
+    const existing = await prisma.user.findUnique({
+      where: { clerkId: userId },
+      include: { coach: true },
+    });
+
+    if (existing?.coach) {
+      return NextResponse.json(
+        {
+          error:
+            "This account is registered as a coach. Sign out and create a separate account to register a gym.",
+        },
+        { status: 409 }
+      );
+    }
+
     const user = await prisma.user.upsert({
       where: { clerkId: userId },
-      update: { email },
+      update: { email, role: "GYM" },
       create: {
         clerkId: userId,
         email,
@@ -59,6 +74,38 @@ export async function GET() {
 
     return NextResponse.json(user.gym);
   } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const user = await prisma.user.findUnique({
+      where: { clerkId: userId },
+      include: { gym: true },
+    });
+
+    if (!user?.gym) {
+      return NextResponse.json({ error: "Gym profile not found" }, { status: 404 });
+    }
+
+    const body = await req.json();
+    const data = gymSchema.parse(body);
+
+    const gym = await prisma.gym.update({
+      where: { id: user.gym.id },
+      data,
+    });
+
+    return NextResponse.json(gym);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return NextResponse.json({ error: err.errors }, { status: 400 });
+    }
     console.error(err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

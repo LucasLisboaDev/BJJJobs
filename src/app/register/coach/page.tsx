@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Shield, ShieldCheck, MapPin, Eye } from "lucide-react";
 import Link from "next/link";
 
@@ -22,6 +23,9 @@ const YEARS_OPTIONS = [
 
 export default function CoachRegisterPage() {
   const router = useRouter();
+  const { isLoaded, userId } = useAuth();
+  const [checkingAccount, setCheckingAccount] = useState(true);
+  const [wrongAccount, setWrongAccount] = useState(false);
   const [selectedBelt, setSelectedBelt] = useState("BROWN");
   const [selectedSpecs, setSelectedSpecs] = useState<string[]>(["Gi", "No-Gi"]);
   const [affiliation, setAffiliation] = useState("");
@@ -34,6 +38,25 @@ export default function CoachRegisterPage() {
 
   const toggleSpec = (s: string) =>
     setSelectedSpecs((prev) => prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!userId) {
+      router.replace("/register?role=coach");
+      return;
+    }
+
+    fetch("/api/dashboard")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.role === "GYM" && data.gym) {
+          setWrongAccount(true);
+        } else if (data.role === "COACH" && data.coach) {
+          router.replace("/dashboard");
+        }
+      })
+      .finally(() => setCheckingAccount(false));
+  }, [isLoaded, userId, router]);
 
   async function handleSubmit() {
     if (!firstName || !lastName) { setError("Please enter your name"); return; }
@@ -64,6 +87,46 @@ export default function CoachRegisterPage() {
     } finally {
       setSaving(false);
     }
+  }
+
+  if (!isLoaded || checkingAccount) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-sm text-gray-400">Loading...</div>
+      </div>
+    );
+  }
+
+  if (wrongAccount) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+        <div className="max-w-md text-center">
+          <div className="text-3xl mb-4">🥋</div>
+          <h1 className="text-xl font-medium mb-2">This account is a gym</h1>
+          <p className="text-sm text-gray-500 mb-8 leading-relaxed">
+            You&apos;re signed in with a gym account. Coach and gym profiles use separate
+            accounts — sign out and create a new account with a different email to register
+            as a coach.
+          </p>
+          <div className="flex flex-col gap-3">
+            <SignOutButton redirectUrl="/register?role=coach">
+              <button
+                className="text-sm font-medium text-white px-6 py-3 rounded-xl w-full"
+                style={{ background: "#1D9E75" }}
+              >
+                Sign out & create coach account
+              </button>
+            </SignOutButton>
+            <Link
+              href="/dashboard"
+              className="text-sm px-6 py-3 rounded-xl border border-gray-200 text-gray-600"
+            >
+              Go to gym dashboard
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

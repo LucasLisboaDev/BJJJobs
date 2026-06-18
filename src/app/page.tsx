@@ -51,14 +51,14 @@ export default function HomePage() {
         </div>
         <div className="flex items-center gap-6">
           <Link href="/jobs" className="text-sm text-gray-500 hover:text-gray-900">Browse jobs</Link>
-          <Link href="/post-job" className="text-sm text-gray-500 hover:text-gray-900">For gyms</Link>
-          <Link href="/register/coach" className="text-sm text-gray-500 hover:text-gray-900">For coaches</Link>
+          <Link href="/register?role=gym" className="text-sm text-gray-500 hover:text-gray-900">For gyms</Link>
+          <Link href="/register?role=coach" className="text-sm text-gray-500 hover:text-gray-900">For coaches</Link>
           <Link
-            href="/post-job"
+            href="/dashboard"
             className="text-sm font-medium text-white px-4 py-2 rounded-lg"
             style={{ background: "#1D9E75" }}
           >
-            Post a job
+            Dashboard
           </Link>
         </div>
       </nav>
@@ -106,7 +106,7 @@ export default function HomePage() {
         {/* CTA cards */}
         <div className="flex items-center justify-center gap-3">
           <Link
-            href="/register/coach"
+            href="/register?role=coach"
             className="flex items-center gap-3 border border-gray-200 rounded-xl px-6 py-3 hover:border-green-400 transition-colors"
           >
             <Users className="w-5 h-5" style={{ color: "#1D9E75" }} />
@@ -116,13 +116,13 @@ export default function HomePage() {
             </div>
           </Link>
           <Link
-            href="/register/gym"
+            href="/register?role=gym"
             className="flex items-center gap-3 border border-gray-200 rounded-xl px-6 py-3 hover:border-green-400 transition-colors"
           >
             <Building2 className="w-5 h-5" style={{ color: "#1D9E75" }} />
             <div className="text-left">
               <div className="text-sm font-medium">I&apos;m a gym</div>
-              <div className="text-xs text-gray-500">Post open positions</div>
+              <div className="text-xs text-gray-500">Build your gym profile</div>
             </div>
           </Link>
         </div>
@@ -255,7 +255,7 @@ export default function HomePage() {
               Post a job — it&apos;s free
             </Link>
             <Link
-              href="/register/coach"
+              href="/register?role=coach"
               className="text-sm font-medium px-6 py-2.5 rounded-lg border text-white"
               style={{ borderColor: "rgba(255,255,255,0.3)" }}
             >
