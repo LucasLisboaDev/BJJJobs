@@ -1,20 +1,19 @@
-import { SignUp } from "@clerk/nextjs";
-
-const REDIRECTS: Record<string, string> = {
-  coach: "/register/coach",
-  gym: "/register/gym",
-};
+import GymSignUp from "@/components/gym-sign-up";
+import CoachSignUp from "@/components/coach-sign-up";
+import RegisterRolePicker from "@/components/register-role-picker";
 
 export default function RegisterPage({
   searchParams,
 }: {
   searchParams: { role?: string };
 }) {
-  const redirectUrl = REDIRECTS[searchParams.role ?? ""] ?? "/dashboard";
+  if (searchParams.role === "gym") {
+    return <GymSignUp />;
+  }
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <SignUp forceRedirectUrl={redirectUrl} signInUrl="/login" />
-    </div>
-  );
+  if (searchParams.role === "coach") {
+    return <CoachSignUp />;
+  }
+
+  return <RegisterRolePicker />;
 }

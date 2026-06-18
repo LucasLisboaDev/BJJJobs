@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth, SignOutButton } from "@clerk/nextjs";
+import { useAuth, SignOutButton, useUser } from "@clerk/nextjs";
 import { Shield } from "lucide-react";
 import Link from "next/link";
 import { US_STATES } from "@/lib/utils";
@@ -9,6 +9,7 @@ import { US_STATES } from "@/lib/utils";
 export default function GymRegisterPage() {
   const router = useRouter();
   const { isLoaded, userId } = useAuth();
+  const { user } = useUser();
   const [checkingAccount, setCheckingAccount] = useState(true);
   const [wrongAccount, setWrongAccount] = useState(false);
   const [name, setName] = useState("");
@@ -39,6 +40,17 @@ export default function GymRegisterPage() {
       .finally(() => setCheckingAccount(false));
   }, [isLoaded, userId, router]);
 
+  useEffect(() => {
+    if (name) return;
+    const fromMeta = user?.unsafeMetadata?.gymName;
+    if (typeof fromMeta === "string" && fromMeta.trim()) {
+      setName(fromMeta.trim());
+      return;
+    }
+    const stored = sessionStorage.getItem("bjjjobs_gym_name");
+    if (stored?.trim()) setName(stored.trim());
+  }, [user, name]);
+
   async function handleSubmit() {
     if (!name || !city || !state) {
       setError("Please fill in gym name, city, and state");
@@ -53,6 +65,8 @@ export default function GymRegisterPage() {
         body: JSON.stringify({ name, city, state, affiliation: affiliation || undefined, website: website || undefined, description: description || undefined }),
       });
       if (res.ok) {
+        sessionStorage.removeItem("bjjjobs_gym_name");
+        sessionStorage.removeItem("bjjjobs_signup_role");
         router.push("/dashboard");
       } else {
         const data = await res.json();

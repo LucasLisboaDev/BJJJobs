@@ -49,16 +49,15 @@ export default function HomePage() {
             BETA
           </span>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
           <Link href="/jobs" className="text-sm text-gray-500 hover:text-gray-900">Browse jobs</Link>
-          <Link href="/register?role=gym" className="text-sm text-gray-500 hover:text-gray-900">For gyms</Link>
-          <Link href="/register?role=coach" className="text-sm text-gray-500 hover:text-gray-900">For coaches</Link>
+          <Link href="/login" className="text-sm text-gray-500 hover:text-gray-900">Sign in</Link>
           <Link
-            href="/dashboard"
+            href="/register"
             className="text-sm font-medium text-white px-4 py-2 rounded-lg"
             style={{ background: "#1D9E75" }}
           >
-            Dashboard
+            Create an account
           </Link>
         </div>
       </nav>

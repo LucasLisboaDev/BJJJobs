@@ -77,6 +77,7 @@ export default function CoachRegisterPage() {
         }),
       });
       if (res.ok) {
+        sessionStorage.removeItem("bjjjobs_signup_role");
         router.push("/dashboard");
       } else {
         const data = await res.json();

@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { UserButton } from "@clerk/nextjs";
 import {
   Shield,
   Briefcase,
@@ -143,8 +145,10 @@ function CoachDashboard({ coach }: { coach: any }) {
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [redirecting, setRedirecting] = useState(false);
 
   const fetchDashboard = useCallback(async () => {
     const res = await fetch("/api/dashboard");
@@ -156,6 +160,22 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchDashboard();
   }, [fetchDashboard]);
+
+  useEffect(() => {
+    if (loading || !data || data.error) return;
+    if (data.gym || data.coach) return;
+
+    const storedRole = sessionStorage.getItem("bjjjobs_signup_role");
+    const intendedRole = data.intendedRole ?? storedRole;
+
+    if (intendedRole === "GYM") {
+      setRedirecting(true);
+      router.replace("/register/gym");
+    } else if (intendedRole === "COACH") {
+      setRedirecting(true);
+      router.replace("/register/coach");
+    }
+  }, [data, loading, router]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -177,10 +197,11 @@ export default function DashboardPage() {
               Post a job
             </Link>
           )}
+          <UserButton afterSignOutUrl="/" />
         </div>
       </nav>
 
-      {loading ? (
+      {loading || redirecting ? (
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-sm text-gray-400">Loading dashboard...</div>
         </div>
@@ -200,22 +221,21 @@ export default function DashboardPage() {
           <div className="text-3xl mb-4">🥋</div>
           <h1 className="text-xl font-medium mb-2">Welcome to BJJJobs</h1>
           <p className="text-sm text-gray-500 mb-8">
-            Set up your profile to get started — are you a coach looking for work, or a
-            gym looking to hire?
+            Sign in if you already have an account, or create one to get started.
           </p>
           <div className="flex gap-3 justify-center">
             <Link
-              href="/register?role=coach"
+              href="/register"
               className="text-sm font-medium text-white px-6 py-3 rounded-xl"
               style={{ background: "#1D9E75" }}
             >
-              I&apos;m a coach
+              Create an account
             </Link>
             <Link
-              href="/register?role=gym"
+              href="/login"
               className="text-sm font-medium px-6 py-3 rounded-xl border border-gray-200"
             >
-              I&apos;m a gym
+              Sign in
             </Link>
           </div>
         </div>
