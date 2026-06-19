@@ -2,7 +2,9 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { Shield, MapPin, Clock, DollarSign, Award, CheckCircle, Building2, ChevronLeft } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
+import { MapPin, Clock, DollarSign, Award, CheckCircle, Building2, ChevronLeft } from "lucide-react";
+import PublicNav from "@/components/public-nav";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#aaa", BLUE: "#3478c8", PURPLE: "#8b5cf6", BROWN: "#92400e", BLACK: "#1a1a1a",
@@ -16,26 +18,35 @@ const JOB_TYPE_LABELS: Record<string, string> = {
 
 export default function JobDetailPage() {
   const { id } = useParams();
+  const { isLoaded, isSignedIn } = useAuth();
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
   const [applied, setApplied] = useState(false);
+  const [applyError, setApplyError] = useState("");
   const [message, setMessage] = useState("");
   const [showApplyForm, setShowApplyForm] = useState(false);
+
+  const jobPath = typeof id === "string" ? `/jobs/${id}` : "/jobs";
+  const signInUrl = `/login?redirect_url=${encodeURIComponent(jobPath)}`;
 
   useEffect(() => {
     if (!id) return;
     fetch(`/api/jobs/${id}`)
       .then((r) => r.json())
       .then((data) => { setJob(data); setLoading(false); });
+  }, [id]);
 
+  useEffect(() => {
+    if (!id || !isLoaded || !isSignedIn) return;
     fetch(`/api/jobs/${id}/apply`)
       .then((r) => r.json())
       .then((data) => setApplied(data.applied));
-  }, [id]);
+  }, [id, isLoaded, isSignedIn]);
 
   async function handleApply() {
     setApplying(true);
+    setApplyError("");
     const res = await fetch(`/api/jobs/${id}/apply`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -44,6 +55,9 @@ export default function JobDetailPage() {
     if (res.ok) {
       setApplied(true);
       setShowApplyForm(false);
+    } else {
+      const data = await res.json();
+      setApplyError(data.error || "Something went wrong. Please try again.");
     }
     setApplying(false);
   }
@@ -69,15 +83,7 @@ export default function JobDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="flex items-center justify-between px-8 py-4 border-b border-gray-100 bg-white">
-        <Link href="/" className="flex items-center gap-2 text-base font-medium">
-          <Shield className="w-5 h-5" style={{ color: "#1D9E75" }} />
-          BJJJobs
-        </Link>
-        <Link href="/jobs" className="text-sm font-medium text-white px-4 py-2 rounded-lg" style={{ background: "#1D9E75" }}>
-          Post a job
-        </Link>
-      </nav>
+      <PublicNav />
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         <Link href="/jobs" className="flex items-center gap-1.5 text-sm text-gray-500 mb-6 hover:text-gray-900">
@@ -158,6 +164,26 @@ export default function JobDetailPage() {
               <CheckCircle className="w-4 h-4" />
               Application sent — the gym will be in touch
             </div>
+          ) : !isLoaded ? (
+            <div className="w-full text-sm text-center text-gray-400 py-3 rounded-xl border border-gray-100">
+              Loading...
+            </div>
+          ) : !isSignedIn ? (
+            <div>
+              <Link
+                href={signInUrl}
+                className="block w-full text-center text-sm font-medium text-white py-3 rounded-xl"
+                style={{ background: "#1D9E75" }}
+              >
+                Sign in and apply for this position
+              </Link>
+              <p className="text-xs text-gray-500 text-center mt-3">
+                Don&apos;t have an account?{" "}
+                <Link href="/register?role=coach" className="font-medium" style={{ color: "#1D9E75" }}>
+                  Create a coach account
+                </Link>
+              </p>
+            </div>
           ) : showApplyForm ? (
             <div className="border border-gray-200 rounded-xl p-4">
               <div className="text-sm font-medium mb-2">Add a message (optional)</div>
@@ -168,6 +194,19 @@ export default function JobDetailPage() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
+              {applyError && (
+                <div className="mb-3 px-3 py-2 rounded-lg text-sm" style={{ background: "#FCEBEB", color: "#A32D2D" }}>
+                  {applyError}
+                  {applyError.includes("Coach profile") && (
+                    <>
+                      {" "}
+                      <Link href="/register/coach" className="underline font-medium">
+                        Set up your coach profile
+                      </Link>
+                    </>
+                  )}
+                </div>
+              )}
               <div className="flex gap-2">
                 <button
                   onClick={handleApply}
@@ -187,7 +226,10 @@ export default function JobDetailPage() {
             </div>
           ) : (
             <button
-              onClick={() => setShowApplyForm(true)}
+              onClick={() => {
+                setApplyError("");
+                setShowApplyForm(true);
+              }}
               className="w-full text-sm font-medium text-white py-3 rounded-xl"
               style={{ background: "#1D9E75" }}
             >

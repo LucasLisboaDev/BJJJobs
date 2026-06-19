@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Shield, Search, Filter } from "lucide-react";
+import { Search, Filter } from "lucide-react";
+import PublicNav from "@/components/public-nav";
 
 const BELT_LABELS: Record<string, string> = {
   WHITE: "White belt+", BLUE: "Blue belt+", PURPLE: "Purple belt+", BROWN: "Brown belt+", BLACK: "Black belt",
@@ -33,15 +34,7 @@ export default function JobsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="flex items-center justify-between px-8 py-4 border-b border-gray-100 bg-white">
-        <Link href="/" className="flex items-center gap-2 text-base font-medium">
-          <Shield className="w-5 h-5" style={{ color: "#1D9E75" }} />
-          BJJJobs
-        </Link>
-        <Link href="/post-job" className="text-sm font-medium text-white px-4 py-2 rounded-lg" style={{ background: "#1D9E75" }}>
-          Post a job
-        </Link>
-      </nav>
+      <PublicNav />
 
       <div className="px-8 py-8 max-w-4xl mx-auto">
         <h1 className="text-2xl font-medium mb-6">Browse coaching jobs</h1>
@@ -87,9 +80,9 @@ export default function JobsPage() {
         ) : jobs.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-lg font-medium mb-2">No jobs found</div>
-            <p className="text-sm text-gray-500 mb-6">Try adjusting your filters, or be the first to post a job.</p>
-            <Link href="/post-job" className="text-sm font-medium text-white px-5 py-2.5 rounded-lg" style={{ background: "#1D9E75" }}>
-              Post a job
+            <p className="text-sm text-gray-500 mb-6">Try adjusting your filters, or check back soon for new listings.</p>
+            <Link href="/register" className="text-sm font-medium text-white px-5 py-2.5 rounded-lg" style={{ background: "#1D9E75" }}>
+              Create an account
             </Link>
           </div>
         ) : (

@@ -2,7 +2,13 @@ import { SignIn } from "@clerk/nextjs";
 import Link from "next/link";
 import { Shield } from "lucide-react";
 
-export default function LoginPage() {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: { redirect_url?: string };
+}) {
+  const redirectUrl = searchParams.redirect_url ?? "/dashboard";
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex items-center justify-between px-7 py-3.5 border-b border-gray-100 bg-white">
@@ -15,7 +21,7 @@ export default function LoginPage() {
         </Link>
       </div>
       <div className="flex items-center justify-center py-12">
-        <SignIn signUpUrl="/register" forceRedirectUrl="/dashboard" />
+        <SignIn signUpUrl="/register" forceRedirectUrl={redirectUrl} />
       </div>
     </div>
   );

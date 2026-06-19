@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { Shield, MapPin, Award, Star, ChevronLeft, Briefcase } from "lucide-react";
+import { MapPin, Award, Star, ChevronLeft, Briefcase } from "lucide-react";
+import PublicNav from "@/components/public-nav";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -61,19 +62,7 @@ export default function CoachProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="flex items-center justify-between px-8 py-4 border-b border-gray-100 bg-white">
-        <Link href="/" className="flex items-center gap-2 text-base font-medium">
-          <Shield className="w-5 h-5" style={{ color: "#1D9E75" }} />
-          BJJJobs
-        </Link>
-        <Link
-          href="/jobs"
-          className="text-sm font-medium text-white px-4 py-2 rounded-lg"
-          style={{ background: "#1D9E75" }}
-        >
-          Browse jobs
-        </Link>
-      </nav>
+      <PublicNav />
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         <Link
