@@ -12,6 +12,12 @@ export default function PublicNav() {
       </Link>
 
       <div className="flex items-center gap-3">
+        <Link href="/jobs" className="text-sm text-gray-500 hover:text-gray-900">
+          Browse jobs
+        </Link>
+        <Link href="/about" className="text-sm text-gray-500 hover:text-gray-900">
+          About us
+        </Link>
         <SignedOut>
           <Link href="/login" className="text-sm text-gray-500 hover:text-gray-900">
             Sign in

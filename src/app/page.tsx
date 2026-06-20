@@ -51,6 +51,7 @@ export default function HomePage() {
         </div>
         <div className="flex items-center gap-4">
           <Link href="/jobs" className="text-sm text-gray-500 hover:text-gray-900">Browse jobs</Link>
+          <Link href="/about" className="text-sm text-gray-500 hover:text-gray-900">About us</Link>
           <Link href="/login" className="text-sm text-gray-500 hover:text-gray-900">Sign in</Link>
           <Link
             href="/register"
@@ -267,6 +268,7 @@ export default function HomePage() {
       <footer className="flex items-center justify-between px-8 py-5 border-t border-gray-100">
         <div className="text-sm text-gray-400">BJJJobs.com · 2025</div>
         <div className="flex gap-5 text-xs text-gray-400">
+          <Link href="/about">About us</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
           <Link href="/contact">Contact</Link>
