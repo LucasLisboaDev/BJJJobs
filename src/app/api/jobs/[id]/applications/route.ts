@@ -7,7 +7,12 @@ import {
 } from "@/lib/email/send";
 
 const applicationInclude = {
-  coach: { include: { user: true } },
+  coach: {
+    include: {
+      user: true,
+      experiences: { orderBy: { sortOrder: "asc" as const } },
+    },
+  },
   job: { include: { gym: { include: { user: true } } } },
 } as const;
 
@@ -34,7 +39,13 @@ export async function GET(
 
     const applications = await prisma.application.findMany({
       where: { jobId: params.id },
-      include: { coach: true },
+      include: {
+        coach: {
+          include: {
+            experiences: { orderBy: { sortOrder: "asc" } },
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
 

@@ -5,4 +5,5 @@ node_modules/
 out/
 *.log
 .cursor/
-tsconfig.tsbuildinfo
+/public/uploads/resumes/*
+!/public/uploads/resumes/.gitkeep

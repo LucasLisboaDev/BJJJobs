@@ -9,6 +9,7 @@ export async function GET(
     const coach = await prisma.coach.findUnique({
       where: { id: params.id },
       include: {
+        experiences: { orderBy: { sortOrder: "asc" } },
         _count: { select: { applications: true } },
       },
     });

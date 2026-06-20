@@ -21,6 +21,7 @@ import {
   Eye,
 } from "lucide-react";
 import { US_STATES } from "@/lib/utils";
+import { CoachExperienceSection } from "@/components/coach-experience-section";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -460,8 +461,9 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
                           return (
                             <div
                               key={app.id}
-                              className="bg-white border border-gray-100 rounded-xl p-4 flex items-start gap-3"
+                              className="bg-white border border-gray-100 rounded-xl p-4"
                             >
+                              <div className="flex items-start gap-3">
                               <div
                                 className="w-9 h-9 rounded-lg flex items-center justify-center text-sm flex-shrink-0 font-medium"
                                 style={{ background: "#E1F5EE", color: "#0F6E56" }}
@@ -550,6 +552,8 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
                                   </div>
                                 )}
                               </div>
+                              </div>
+                              <CoachExperienceSection coach={app.coach} compact />
                             </div>
                           );
                         })}

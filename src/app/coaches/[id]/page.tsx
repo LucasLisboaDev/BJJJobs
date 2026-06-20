@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { MapPin, Award, Star, ChevronLeft, Briefcase } from "lucide-react";
 import PublicNav from "@/components/public-nav";
+import { CoachExperienceSection } from "@/components/coach-experience-section";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -142,6 +143,9 @@ export default function CoachProfilePage() {
             </div>
           )}
         </div>
+
+        {/* Teaching experience */}
+        <CoachExperienceSection coach={coach} />
 
         {/* Bio */}
         {coach.bio && (
