@@ -1,7 +1,11 @@
+"use client";
 import Link from "next/link";
 import { Shield, Users, Building2 } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 
 export default function RegisterRolePicker() {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex items-center justify-between px-7 py-3.5 border-b border-gray-100 bg-white">
@@ -10,15 +14,13 @@ export default function RegisterRolePicker() {
           BJJJobs
         </Link>
         <Link href="/login" className="text-sm text-gray-500 hover:text-gray-900">
-          Sign in
+          {t("nav.signIn")}
         </Link>
       </div>
 
       <div className="max-w-lg mx-auto px-6 py-16 text-center">
-        <h1 className="text-2xl font-medium mb-2">Create your account</h1>
-        <p className="text-sm text-gray-500 mb-10">
-          Choose how you&apos;ll use BJJJobs — you can always browse jobs without an account.
-        </p>
+        <h1 className="text-2xl font-medium mb-2">{t("register.createTitle")}</h1>
+        <p className="text-sm text-gray-500 mb-10">{t("register.createSub")}</p>
 
         <div className="flex flex-col gap-3">
           <Link
@@ -32,10 +34,8 @@ export default function RegisterRolePicker() {
               <Users className="w-5 h-5" style={{ color: "#1D9E75" }} />
             </div>
             <div>
-              <div className="text-sm font-medium">I&apos;m a coach</div>
-              <div className="text-xs text-gray-500 mt-0.5">
-                Build a profile, browse jobs, and apply to gyms
-              </div>
+              <div className="text-sm font-medium">{t("register.coachTitle")}</div>
+              <div className="text-xs text-gray-500 mt-0.5">{t("register.coachDesc")}</div>
             </div>
           </Link>
 
@@ -50,18 +50,16 @@ export default function RegisterRolePicker() {
               <Building2 className="w-5 h-5" style={{ color: "#1D9E75" }} />
             </div>
             <div>
-              <div className="text-sm font-medium">I&apos;m a gym</div>
-              <div className="text-xs text-gray-500 mt-0.5">
-                Create your gym profile and post open positions
-              </div>
+              <div className="text-sm font-medium">{t("register.gymTitle")}</div>
+              <div className="text-xs text-gray-500 mt-0.5">{t("register.gymDesc")}</div>
             </div>
           </Link>
         </div>
 
         <p className="text-xs text-gray-400 mt-8">
-          Already have an account?{" "}
+          {t("register.alreadyHave")}{" "}
           <Link href="/login" className="font-medium" style={{ color: "#1D9E75" }}>
-            Sign in
+            {t("nav.signIn")}
           </Link>
         </p>
       </div>

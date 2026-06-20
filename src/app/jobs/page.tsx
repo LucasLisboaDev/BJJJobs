@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Search, Filter } from "lucide-react";
 import PublicNav from "@/components/public-nav";
+import { useLanguage } from "@/components/language-provider";
 
 const BELT_LABELS: Record<string, string> = {
   WHITE: "White belt+", BLUE: "Blue belt+", PURPLE: "Purple belt+", BROWN: "Brown belt+", BLACK: "Black belt",
@@ -12,6 +13,7 @@ const JOB_TYPE_LABELS: Record<string, string> = {
 };
 
 export default function JobsPage() {
+  const { t } = useLanguage();
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
@@ -37,14 +39,14 @@ export default function JobsPage() {
       <PublicNav />
 
       <div className="px-8 py-8 max-w-4xl mx-auto">
-        <h1 className="text-2xl font-medium mb-6">Browse coaching jobs</h1>
+        <h1 className="text-2xl font-medium mb-6">{t("jobs.title")}</h1>
 
         <div className="flex items-center gap-3 mb-6 bg-white border border-gray-100 rounded-xl p-3">
           <div className="flex items-center gap-2 flex-1">
             <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
             <input
               className="text-sm outline-none flex-1 bg-transparent"
-              placeholder="Search jobs..."
+              placeholder={t("jobs.searchPlaceholder")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -52,7 +54,7 @@ export default function JobsPage() {
           <div className="w-px h-5 bg-gray-200" />
           <input
             className="text-sm outline-none text-gray-500 bg-transparent w-32"
-            placeholder="City..."
+            placeholder={t("jobs.cityPlaceholder")}
             value={city}
             onChange={(e) => setCity(e.target.value)}
           />
@@ -62,7 +64,7 @@ export default function JobsPage() {
             value={belt}
             onChange={(e) => setBelt(e.target.value)}
           >
-            <option value="">All belt levels</option>
+            <option value="">{t("jobs.allBelts")}</option>
             <option value="WHITE">White belt+</option>
             <option value="BLUE">Blue belt+</option>
             <option value="PURPLE">Purple belt+</option>
@@ -71,18 +73,18 @@ export default function JobsPage() {
           </select>
           <button className="flex items-center gap-1.5 text-sm text-gray-500 border border-gray-200 px-3 py-1.5 rounded-lg" onClick={fetchJobs}>
             <Filter className="w-4 h-4" />
-            Search
+            {t("common.search")}
           </button>
         </div>
 
         {loading ? (
-          <div className="text-center py-16 text-sm text-gray-400">Loading jobs...</div>
+          <div className="text-center py-16 text-sm text-gray-400">{t("jobs.loading")}</div>
         ) : jobs.length === 0 ? (
           <div className="text-center py-16">
-            <div className="text-lg font-medium mb-2">No jobs found</div>
-            <p className="text-sm text-gray-500 mb-6">Try adjusting your filters, or check back soon for new listings.</p>
+            <div className="text-lg font-medium mb-2">{t("jobs.noneTitle")}</div>
+            <p className="text-sm text-gray-500 mb-6">{t("jobs.noneSub")}</p>
             <Link href="/register" className="text-sm font-medium text-white px-5 py-2.5 rounded-lg" style={{ background: "#1D9E75" }}>
-              Create an account
+              {t("nav.createAccount")}
             </Link>
           </div>
         ) : (
@@ -113,10 +115,10 @@ export default function JobsPage() {
                 </div>
                 <div className="text-right flex-shrink-0">
                   {job.featured && (
-                    <div className="text-xs font-medium text-white px-2 py-0.5 rounded-full mb-1 inline-block" style={{ background: "#1D9E75" }}>Featured</div>
+                    <div className="text-xs font-medium text-white px-2 py-0.5 rounded-full mb-1 inline-block" style={{ background: "#1D9E75" }}>{t("jobs.featured")}</div>
                   )}
                   <div className="text-sm font-medium">
-                    {job.minPay ? `$${job.minPay}${job.payType === "monthly" ? "/mo" : "/hr"}` : "Negotiable"}
+                    {job.minPay ? `$${job.minPay}${job.payType === "monthly" ? "/mo" : "/hr"}` : t("jobs.negotiable")}
                   </div>
                   <div className="text-xs text-gray-400 mt-0.5">
                     {new Date(job.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}

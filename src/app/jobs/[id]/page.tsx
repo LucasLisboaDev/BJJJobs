@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { MapPin, Clock, DollarSign, Award, CheckCircle, Building2, ChevronLeft } from "lucide-react";
 import PublicNav from "@/components/public-nav";
+import { useLanguage } from "@/components/language-provider";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#aaa", BLUE: "#3478c8", PURPLE: "#8b5cf6", BROWN: "#92400e", BLACK: "#1a1a1a",
@@ -17,6 +18,7 @@ const JOB_TYPE_LABELS: Record<string, string> = {
 };
 
 export default function JobDetailPage() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const { isLoaded, isSignedIn } = useAuth();
   const [job, setJob] = useState<any>(null);
@@ -65,7 +67,7 @@ export default function JobDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-sm text-gray-400">Loading...</div>
+        <div className="text-sm text-gray-400">{t("common.loading")}</div>
       </div>
     );
   }
@@ -74,8 +76,10 @@ export default function JobDetailPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-lg font-medium mb-2">Job not found</div>
-          <Link href="/jobs" className="text-sm" style={{ color: "#1D9E75" }}>← Back to jobs</Link>
+          <div className="text-lg font-medium mb-2">{t("jobDetail.notFound")}</div>
+          <Link href="/jobs" className="text-sm" style={{ color: "#1D9E75" }}>
+            ← {t("jobDetail.back")}
+          </Link>
         </div>
       </div>
     );
@@ -87,7 +91,7 @@ export default function JobDetailPage() {
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         <Link href="/jobs" className="flex items-center gap-1.5 text-sm text-gray-500 mb-6 hover:text-gray-900">
-          <ChevronLeft className="w-4 h-4" /> Back to jobs
+          <ChevronLeft className="w-4 h-4" /> {t("jobDetail.back")}
         </Link>
 
         {/* Header card */}
@@ -118,11 +122,11 @@ export default function JobDetailPage() {
             <div className="text-right flex-shrink-0">
               {job.featured && (
                 <div className="text-xs font-medium text-white px-2 py-0.5 rounded-full mb-2 inline-block" style={{ background: "#1D9E75" }}>
-                  Featured
+                  {t("jobs.featured")}
                 </div>
               )}
               <div className="text-lg font-medium">
-                {job.minPay && job.maxPay ? `$${job.minPay}–$${job.maxPay}/${job.payType === "monthly" ? "mo" : "hr"}` : "Pay negotiable"}
+                {job.minPay && job.maxPay ? `$${job.minPay}–$${job.maxPay}/${job.payType === "monthly" ? "mo" : "hr"}` : t("jobDetail.payNegotiable")}
               </div>
             </div>
           </div>
@@ -144,9 +148,9 @@ export default function JobDetailPage() {
           {/* Quick info row */}
           <div className="grid grid-cols-3 gap-3 mb-6">
             {[
-              { icon: Clock, label: "Job type", value: JOB_TYPE_LABELS[job.jobType] },
-              { icon: Award, label: "Min belt", value: BELT_LABELS[job.minBelt] },
-              { icon: DollarSign, label: "Pay", value: job.minPay ? `$${job.minPay}${job.payType === "monthly" ? "/mo" : "/hr"}+` : "Negotiable" },
+              { icon: Clock, label: t("jobDetail.jobType"), value: JOB_TYPE_LABELS[job.jobType] },
+              { icon: Award, label: t("jobDetail.minBelt"), value: BELT_LABELS[job.minBelt] },
+              { icon: DollarSign, label: t("jobDetail.pay"), value: job.minPay ? `$${job.minPay}${job.payType === "monthly" ? "/mo" : "/hr"}+` : t("jobs.negotiable") },
             ].map((item) => (
               <div key={item.label} className="bg-gray-50 rounded-xl p-3.5">
                 <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-1">
@@ -162,11 +166,11 @@ export default function JobDetailPage() {
           {applied ? (
             <div className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium" style={{ background: "#E1F5EE", color: "#0F6E56" }}>
               <CheckCircle className="w-4 h-4" />
-              Application sent — the gym will be in touch
+              {t("jobDetail.applied")}
             </div>
           ) : !isLoaded ? (
             <div className="w-full text-sm text-center text-gray-400 py-3 rounded-xl border border-gray-100">
-              Loading...
+              {t("common.loading")}
             </div>
           ) : !isSignedIn ? (
             <div>
@@ -175,22 +179,22 @@ export default function JobDetailPage() {
                 className="block w-full text-center text-sm font-medium text-white py-3 rounded-xl"
                 style={{ background: "#1D9E75" }}
               >
-                Sign in and apply for this position
+                {t("jobDetail.signInApply")}
               </Link>
               <p className="text-xs text-gray-500 text-center mt-3">
-                Don&apos;t have an account?{" "}
+                {t("jobDetail.noAccount")}{" "}
                 <Link href="/register?role=coach" className="font-medium" style={{ color: "#1D9E75" }}>
-                  Create a coach account
+                  {t("jobDetail.createCoach")}
                 </Link>
               </p>
             </div>
           ) : showApplyForm ? (
             <div className="border border-gray-200 rounded-xl p-4">
-              <div className="text-sm font-medium mb-2">Add a message (optional)</div>
+              <div className="text-sm font-medium mb-2">{t("jobDetail.addMessage")}</div>
               <textarea
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-green-400 resize-none mb-3"
                 rows={3}
-                placeholder="Introduce yourself — your background, why you're interested in this gym..."
+                placeholder={t("jobDetail.messagePlaceholder")}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
@@ -214,13 +218,13 @@ export default function JobDetailPage() {
                   className="text-sm font-medium text-white px-5 py-2 rounded-lg disabled:opacity-60"
                   style={{ background: "#1D9E75" }}
                 >
-                  {applying ? "Sending..." : "Send application"}
+                  {applying ? t("jobDetail.sending") : t("jobDetail.sendApplication")}
                 </button>
                 <button
                   onClick={() => setShowApplyForm(false)}
                   className="text-sm px-5 py-2 rounded-lg border border-gray-200 text-gray-500"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
               </div>
             </div>
@@ -233,23 +237,21 @@ export default function JobDetailPage() {
               className="w-full text-sm font-medium text-white py-3 rounded-xl"
               style={{ background: "#1D9E75" }}
             >
-              Apply for this position
+              {t("jobDetail.apply")}
             </button>
           )}
         </div>
 
-        {/* Description */}
         <div className="bg-white border border-gray-100 rounded-2xl p-7 mb-4">
-          <h2 className="font-medium mb-4">About the role</h2>
+          <h2 className="font-medium mb-4">{t("jobDetail.aboutRole")}</h2>
           <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-            {job.description || "No description provided."}
+            {job.description || t("jobDetail.noDescription")}
           </p>
         </div>
 
-        {/* Perks */}
         {job.perks?.length > 0 && (
           <div className="bg-white border border-gray-100 rounded-2xl p-7 mb-4">
-            <h2 className="font-medium mb-4">Perks & benefits</h2>
+            <h2 className="font-medium mb-4">{t("jobDetail.perks")}</h2>
             <div className="flex flex-wrap gap-2">
               {job.perks.map((perk: string) => (
                 <span key={perk} className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full" style={{ background: "#E1F5EE", color: "#0F6E56" }}>
@@ -261,10 +263,9 @@ export default function JobDetailPage() {
           </div>
         )}
 
-        {/* About the gym */}
         {job.gym && (
           <div className="bg-white border border-gray-100 rounded-2xl p-7">
-            <h2 className="font-medium mb-4">About the gym</h2>
+            <h2 className="font-medium mb-4">{t("jobDetail.aboutGym")}</h2>
             <Link
               href={`/gyms/${job.gym.id}`}
               className="flex items-center gap-3 mb-3 group"
