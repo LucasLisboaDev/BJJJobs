@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { Shield, Users, Building2 } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
+import LanguageSwitcher from "@/components/language-switcher";
 
 export default function RegisterRolePicker() {
   const { t } = useLanguage();
@@ -13,9 +14,12 @@ export default function RegisterRolePicker() {
           <Shield className="w-5 h-5" style={{ color: "#1D9E75" }} />
           BJJJobs
         </Link>
-        <Link href="/login" className="text-sm text-gray-500 hover:text-gray-900">
-          {t("nav.signIn")}
-        </Link>
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher />
+          <Link href="/login" className="text-sm text-gray-500 hover:text-gray-900">
+            {t("nav.signIn")}
+          </Link>
+        </div>
       </div>
 
       <div className="max-w-lg mx-auto px-6 py-16 text-center">
@@ -24,7 +28,8 @@ export default function RegisterRolePicker() {
 
         <div className="flex flex-col gap-3">
           <Link
-            href="/register?role=coach"
+            href="/register/coach/account"
+            onClick={() => sessionStorage.setItem("bjjjobs_signup_role", "COACH")}
             className="flex items-center gap-4 border border-gray-200 rounded-xl px-6 py-5 hover:border-green-400 transition-colors bg-white text-left"
           >
             <div
@@ -40,7 +45,8 @@ export default function RegisterRolePicker() {
           </Link>
 
           <Link
-            href="/register?role=gym"
+            href="/register/gym/account"
+            onClick={() => sessionStorage.setItem("bjjjobs_signup_role", "GYM")}
             className="flex items-center gap-4 border border-gray-200 rounded-xl px-6 py-5 hover:border-green-400 transition-colors bg-white text-left"
           >
             <div

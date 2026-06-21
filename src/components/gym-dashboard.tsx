@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   Briefcase,
   Users,
@@ -10,10 +11,6 @@ import {
   ToggleRight,
   Plus,
   MapPin,
-  Award,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
   Building2,
   Globe,
   ExternalLink,
@@ -21,33 +18,13 @@ import {
   Eye,
 } from "lucide-react";
 import { US_STATES } from "@/lib/utils";
-import { CoachExperienceSection } from "@/components/coach-experience-section";
+import { ApplicantDetailPanel } from "@/components/applicant-detail-panel";
 
-const BELT_COLORS: Record<string, string> = {
-  WHITE: "#9ca3af",
-  BLUE: "#3b82f6",
-  PURPLE: "#8b5cf6",
-  BROWN: "#92400e",
-  BLACK: "#1a1a1a",
-};
-const BELT_LABELS: Record<string, string> = {
-  WHITE: "White belt",
-  BLUE: "Blue belt",
-  PURPLE: "Purple belt",
-  BROWN: "Brown belt",
-  BLACK: "Black belt",
-};
 const JOB_TYPE_LABELS: Record<string, string> = {
   FULL_TIME: "Full-time",
   PART_TIME: "Part-time",
   CONTRACT: "Contract",
   REVENUE_SHARE: "Revenue share",
-};
-
-const STATUS_CONFIG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
-  pending: { label: "Pending", icon: AlertCircle, color: "#92400e", bg: "#fef3c7" },
-  shortlisted: { label: "Shortlisted", icon: CheckCircle, color: "#0F6E56", bg: "#E1F5EE" },
-  rejected: { label: "Rejected", icon: XCircle, color: "#991b1b", bg: "#fee2e2" },
 };
 
 function GymProfilePanel({
@@ -272,8 +249,13 @@ function GymProfilePanel({
 }
 
 export default function GymDashboard({ gym: initialGym }: { gym: any }) {
+  const searchParams = useSearchParams();
+  const highlightJobId = searchParams.get("job");
   const [gym, setGym] = useState(initialGym);
-  const [expandedJob, setExpandedJob] = useState<string | null>(null);
+  const [expandedJob, setExpandedJob] = useState<string | null>(highlightJobId);
+  const [openApplicantId, setOpenApplicantId] = useState<string | null>(
+    searchParams.get("application")
+  );
   const [applicants, setApplicants] = useState<Record<string, any[]>>({});
   const [loadingApplicants, setLoadingApplicants] = useState<Record<string, boolean>>({});
   const [togglingJob, setTogglingJob] = useState<string | null>(null);
@@ -285,8 +267,18 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
   );
   const activeJobs = jobs.filter((j: any) => j.active).length;
 
-  async function loadApplicants(jobId: string) {
-    if (applicants[jobId]) {
+  useEffect(() => {
+    if (highlightJobId) {
+      loadApplicants(highlightJobId, true);
+    }
+    if (searchParams.get("application") && highlightJobId) {
+      setOpenApplicantId(searchParams.get("application"));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [highlightJobId, searchParams]);
+
+  async function loadApplicants(jobId: string, forceOpen = false) {
+    if (applicants[jobId] && !forceOpen) {
       setExpandedJob(expandedJob === jobId ? null : jobId);
       return;
     }
@@ -453,110 +445,17 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
                       </div>
                     ) : (
                       <div className="flex flex-col gap-3">
-                        {jobApplicants.map((app: any) => {
-                          const statusCfg =
-                            STATUS_CONFIG[app.status] ?? STATUS_CONFIG.pending;
-                          const StatusIcon = statusCfg.icon;
-
-                          return (
-                            <div
-                              key={app.id}
-                              className="bg-white border border-gray-100 rounded-xl p-4"
-                            >
-                              <div className="flex items-start gap-3">
-                              <div
-                                className="w-9 h-9 rounded-lg flex items-center justify-center text-sm flex-shrink-0 font-medium"
-                                style={{ background: "#E1F5EE", color: "#0F6E56" }}
-                              >
-                                {app.coach.firstName[0]}
-                                {app.coach.lastName[0]}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <Link
-                                    href={`/coaches/${app.coach.id}`}
-                                    className="text-sm font-medium hover:underline"
-                                    style={{ color: "#0F6E56" }}
-                                  >
-                                    {app.coach.firstName} {app.coach.lastName}
-                                  </Link>
-                                  <span className="flex items-center gap-1 text-xs text-gray-500">
-                                    <span
-                                      className="w-2 h-2 rounded-full inline-block"
-                                      style={{
-                                        background:
-                                          BELT_COLORS[app.coach.beltRank] ?? "#9ca3af",
-                                      }}
-                                    />
-                                    {BELT_LABELS[app.coach.beltRank]}
-                                  </span>
-                                  <span className="text-xs text-gray-400">
-                                    · {app.coach.yearsTeaching}yr exp
-                                  </span>
-                                </div>
-                                {app.coach.specialties?.length > 0 && (
-                                  <div className="flex flex-wrap gap-1 mb-2">
-                                    {app.coach.specialties.slice(0, 3).map((s: string) => (
-                                      <span
-                                        key={s}
-                                        className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500"
-                                      >
-                                        {s}
-                                      </span>
-                                    ))}
-                                  </div>
-                                )}
-                                {app.message && (
-                                  <p className="text-xs text-gray-500 italic leading-relaxed line-clamp-2">
-                                    &ldquo;{app.message}&rdquo;
-                                  </p>
-                                )}
-                                <div className="text-xs text-gray-400 mt-1.5">
-                                  Applied{" "}
-                                  {new Date(app.createdAt).toLocaleDateString("en-US", {
-                                    month: "short",
-                                    day: "numeric",
-                                  })}
-                                </div>
-                              </div>
-                              <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                                <span
-                                  className="flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium"
-                                  style={{
-                                    background: statusCfg.bg,
-                                    color: statusCfg.color,
-                                  }}
-                                >
-                                  <StatusIcon className="w-3 h-3" />
-                                  {statusCfg.label}
-                                </span>
-                                {app.status === "pending" && (
-                                  <div className="flex gap-1">
-                                    <button
-                                      onClick={() =>
-                                        updateStatus(job.id, app.id, "shortlisted")
-                                      }
-                                      className="text-xs px-2 py-1 rounded-lg font-medium"
-                                      style={{ background: "#E1F5EE", color: "#0F6E56" }}
-                                    >
-                                      Shortlist
-                                    </button>
-                                    <button
-                                      onClick={() =>
-                                        updateStatus(job.id, app.id, "rejected")
-                                      }
-                                      className="text-xs px-2 py-1 rounded-lg font-medium bg-red-50 text-red-700"
-                                    >
-                                      Decline
-                                    </button>
-                                  </div>
-                                )}
-                              </div>
-                              </div>
-                              <CoachExperienceSection coach={app.coach} compact />
-                            </div>
-                          );
-                        })}
+                        {jobApplicants.map((app: any) => (
+                          <ApplicantDetailPanel
+                            key={app.id}
+                            app={app}
+                            jobId={job.id}
+                            defaultOpen={openApplicantId === app.id}
+                            onStatusChange={(applicationId, status) =>
+                              updateStatus(job.id, applicationId, status)
+                            }
+                          />
+                        ))}
                       </div>
                     )}
                   </div>

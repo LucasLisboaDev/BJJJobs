@@ -183,7 +183,7 @@ export default function JobDetailPage() {
               </Link>
               <p className="text-xs text-gray-500 text-center mt-3">
                 {t("jobDetail.noAccount")}{" "}
-                <Link href="/register?role=coach" className="font-medium" style={{ color: "#1D9E75" }}>
+                <Link href="/register/coach/account" className="font-medium" style={{ color: "#1D9E75" }}>
                   {t("jobDetail.createCoach")}
                 </Link>
               </p>
@@ -284,7 +284,7 @@ export default function JobDetailPage() {
               className="inline-block mt-3 text-sm font-medium"
               style={{ color: "#1D9E75" }}
             >
-              View gym profile →
+              {t("jobDetail.viewGym")}
             </Link>
           </div>
         )}

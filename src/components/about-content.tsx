@@ -121,7 +121,7 @@ export default function AboutContent() {
             <h3 className="font-medium mb-2">{t("about.forCoaches")}</h3>
             <p className="text-sm text-gray-600 leading-relaxed mb-4">{t("about.coachesDesc")}</p>
             <Link
-              href="/register?role=coach"
+              href="/register/coach/account"
               className="inline-flex items-center gap-1.5 text-sm font-medium"
               style={{ color: "#1D9E75" }}
             >
@@ -139,7 +139,7 @@ export default function AboutContent() {
             <h3 className="font-medium mb-2">{t("about.forGyms")}</h3>
             <p className="text-sm text-gray-600 leading-relaxed mb-4">{t("about.gymsDesc")}</p>
             <Link
-              href="/register?role=gym"
+              href="/register/gym/account"
               className="inline-flex items-center gap-1.5 text-sm font-medium"
               style={{ color: "#1D9E75" }}
             >

@@ -2,9 +2,7 @@
 import { useEffect } from "react";
 import { SignUp } from "@clerk/nextjs";
 
-const REDIRECTS: Record<string, string> = {
-  coach: "/register/coach",
-};
+const SIGN_UP_PATH = "/register/coach/account";
 
 export default function CoachSignUp() {
   useEffect(() => {
@@ -14,7 +12,9 @@ export default function CoachSignUp() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <SignUp
-        forceRedirectUrl={REDIRECTS.coach}
+        path={SIGN_UP_PATH}
+        routing="path"
+        forceRedirectUrl="/register/coach"
         signInUrl="/login"
         unsafeMetadata={{ role: "COACH" }}
       />

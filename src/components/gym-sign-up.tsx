@@ -43,6 +43,8 @@ export default function GymSignUp() {
 
         {gymName.trim() ? (
           <SignUp
+            path="/register/gym/account"
+            routing="path"
             forceRedirectUrl="/register/gym"
             signInUrl="/login"
             unsafeMetadata={{ role: "GYM", gymName: gymName.trim() }}

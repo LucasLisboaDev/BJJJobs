@@ -37,10 +37,22 @@ export async function POST(
         coachId: user.coach.id,
         message,
         status: "pending",
+        conversation: {
+          create: {
+            messages: message
+              ? {
+                  create: {
+                    senderUserId: user.id,
+                    body: message,
+                  },
+                }
+              : undefined,
+          },
+        },
       },
       include: {
         job: { include: { gym: { include: { user: true } } } },
-        coach: { include: { user: true } },
+        coach: { include: { user: true, experiences: { orderBy: { sortOrder: "asc" } } } },
       },
     });
 

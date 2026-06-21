@@ -45,6 +45,14 @@ export async function GET(
             experiences: { orderBy: { sortOrder: "asc" } },
           },
         },
+        conversation: {
+          include: {
+            messages: {
+              orderBy: { createdAt: "desc" },
+              take: 1,
+            },
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });

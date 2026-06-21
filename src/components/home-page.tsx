@@ -130,7 +130,7 @@ export default function HomePage() {
 
         <div className="flex items-center justify-center gap-3">
           <Link
-            href="/register?role=coach"
+            href="/register/coach/account"
             className="flex items-center gap-3 border border-gray-200 rounded-xl px-6 py-3 hover:border-green-400 transition-colors"
           >
             <Users className="w-5 h-5" style={{ color: "#1D9E75" }} />
@@ -140,7 +140,7 @@ export default function HomePage() {
             </div>
           </Link>
           <Link
-            href="/register?role=gym"
+            href="/register/gym/account"
             className="flex items-center gap-3 border border-gray-200 rounded-xl px-6 py-3 hover:border-green-400 transition-colors"
           >
             <Building2 className="w-5 h-5" style={{ color: "#1D9E75" }} />
@@ -266,7 +266,7 @@ export default function HomePage() {
               {t("home.postJobFree")}
             </Link>
             <Link
-              href="/register?role=coach"
+              href="/register/coach/account"
               className="text-sm font-medium px-6 py-2.5 rounded-lg border text-white"
               style={{ borderColor: "rgba(255,255,255,0.3)" }}
             >

@@ -24,7 +24,7 @@ export default function GymRegisterPage() {
   useEffect(() => {
     if (!isLoaded) return;
     if (!userId) {
-      router.replace("/register?role=gym");
+      router.replace("/register/gym/account");
       return;
     }
 
@@ -99,7 +99,7 @@ export default function GymRegisterPage() {
             a gym.
           </p>
           <div className="flex flex-col gap-3">
-            <SignOutButton redirectUrl="/register?role=gym">
+            <SignOutButton redirectUrl="/register/gym/account">
               <button
                 className="text-sm font-medium text-white px-6 py-3 rounded-xl w-full"
                 style={{ background: "#1D9E75" }}
