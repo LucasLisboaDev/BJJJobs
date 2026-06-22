@@ -13,11 +13,12 @@ export default function LanguageSwitcher() {
 
   return (
     <div
-      className="flex items-center gap-1 rounded-lg border border-gray-200 p-0.5 bg-white"
+      className="flex items-center gap-0.5 rounded-[9px] p-0.5 bg-fill-tertiary"
+      style={{ background: "var(--fill-tertiary)" }}
       role="group"
       aria-label="Language"
     >
-      <Globe className="w-3.5 h-3.5 text-gray-400 ml-1.5 hidden sm:block" />
+      <Globe className="w-3.5 h-3.5 text-label-tertiary ml-1.5 hidden sm:block" />
       {OPTIONS.map((option) => {
         const active = locale === option.value;
         return (
@@ -25,12 +26,11 @@ export default function LanguageSwitcher() {
             key={option.value}
             type="button"
             onClick={() => setLocale(option.value)}
-            className="text-xs font-medium px-2.5 py-1 rounded-md transition-colors"
-            style={
+            className={`text-caption-2 font-semibold px-2.5 py-1 rounded-[7px] transition-all tap border-none ${
               active
-                ? { background: "#1D9E75", color: "#fff" }
-                : { color: "#6b7280" }
-            }
+                ? "bg-grouped-secondary text-label shadow-ios"
+                : "bg-transparent text-label-secondary"
+            }`}
             aria-pressed={active}
             title={option.value === "en" ? "English" : "Português (Brasil)"}
           >

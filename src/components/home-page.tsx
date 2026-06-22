@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
-import { Shield, Search, Users, Building2, ArrowRight, CheckCircle } from "lucide-react";
+import { Search, Users, Building2, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
-import LanguageSwitcher from "@/components/language-switcher";
+import { AppNav } from "@/components/ui/app-nav";
+import { PageShell, PageCol, SectionLabel } from "@/components/ui/page-shell";
 
 const FEATURED_JOBS = [
   {
@@ -11,10 +12,11 @@ const FEATURED_JOBS = [
     gym: "Alliance Jiu-Jitsu",
     city: "Miami, FL",
     type: "Full-time",
-    belt: "Black belt preferred",
+    belt: "Black belt",
     pay: "$4,500/mo",
     postedAt: "2 days ago",
     isNew: true,
+    beltColor: "#1a1a1a",
   },
   {
     id: "2",
@@ -26,6 +28,7 @@ const FEATURED_JOBS = [
     pay: "$28/hr",
     postedAt: "4 days ago",
     isNew: false,
+    beltColor: "#8b5cf6",
   },
   {
     id: "3",
@@ -37,6 +40,19 @@ const FEATURED_JOBS = [
     pay: "$5,200/mo",
     postedAt: "1 day ago",
     isNew: true,
+    beltColor: "#92400e",
+  },
+  {
+    id: "4",
+    title: "No-Gi Fundamentals Coach",
+    gym: "Atos Jiu-Jitsu",
+    city: "San Diego, CA",
+    type: "Part-time",
+    belt: "Brown belt+",
+    pay: "$32/hr",
+    postedAt: "5 days ago",
+    isNew: false,
+    beltColor: "#92400e",
   },
 ];
 
@@ -51,240 +67,186 @@ export default function HomePage() {
   ];
 
   const steps = [
-    { icon: Users, step: "01", title: t("home.steps.s1Title"), desc: t("home.steps.s1Desc") },
-    { icon: Search, step: "02", title: t("home.steps.s2Title"), desc: t("home.steps.s2Desc") },
-    { icon: CheckCircle, step: "03", title: t("home.steps.s3Title"), desc: t("home.steps.s3Desc") },
+    { n: "01", title: t("home.steps.s1Title"), desc: t("home.steps.s1Desc") },
+    { n: "02", title: t("home.steps.s2Title"), desc: t("home.steps.s2Desc") },
+    { n: "03", title: t("home.steps.s3Title"), desc: t("home.steps.s3Desc") },
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <nav className="flex items-center justify-between px-8 py-4 border-b border-gray-100">
-        <div className="flex items-center gap-2 text-lg font-medium">
-          <Shield className="w-5 h-5" style={{ color: "#1D9E75" }} />
-          BJJJobs
-          <span
-            className="text-xs text-white px-2 py-0.5 rounded-full ml-1"
-            style={{ background: "#1D9E75" }}
-          >
-            {t("home.beta")}
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link href="/jobs" className="text-sm text-gray-500 hover:text-gray-900">
-            {t("nav.browseJobs")}
-          </Link>
-          <Link href="/about" className="text-sm text-gray-500 hover:text-gray-900">
-            {t("nav.aboutUs")}
-          </Link>
-          <LanguageSwitcher />
-          <Link href="/login" className="text-sm text-gray-500 hover:text-gray-900">
-            {t("nav.signIn")}
-          </Link>
-          <Link
-            href="/register"
-            className="text-sm font-medium text-white px-4 py-2 rounded-lg"
-            style={{ background: "#1D9E75" }}
-          >
-            {t("nav.createAccount")}
-          </Link>
-        </div>
-      </nav>
+    <PageShell>
+      <AppNav variant="floating" showBeta />
 
-      <section className="text-center px-8 py-20">
-        <div
-          className="inline-block text-xs font-medium px-4 py-1.5 rounded-full mb-5"
-          style={{ background: "#E1F5EE", color: "#0F6E56" }}
-        >
-          {t("home.badge")}
-        </div>
-        <h1 className="text-5xl font-medium text-gray-900 leading-tight mb-4 max-w-xl mx-auto">
-          {t("home.heroTitle")}{" "}
-          <span style={{ color: "#1D9E75" }}>{t("home.heroHighlight")}</span>{" "}
-          {t("home.heroTitleEnd")}
-        </h1>
-        <p className="text-gray-500 text-lg max-w-md mx-auto mb-10">{t("home.heroSubtitle")}</p>
+      <div className="pt-[74px]">
+        <PageCol>
+          {/* Hero — Liquid Glass style */}
+          <div className="relative overflow-hidden rounded-[28px] p-10 md:p-11 mb-5 shadow-ios-lg hero-gradient">
+            <div
+              className="absolute inset-0 pointer-events-none opacity-30"
+              style={{
+                backgroundImage: "url(/images/covers/cover1.jpg)",
+                backgroundSize: "cover",
+                backgroundPosition: "center 28%",
+              }}
+            />
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/20 via-black/30 to-black/60" />
+            <div className="relative">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-capsule bg-white/20 backdrop-blur-sm border border-white/40 mb-5">
+                <span className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_9px_rgba(255,255,255,0.95)]" />
+                <span className="text-caption-1 font-semibold text-white">
+                  {t("home.badge")}
+                </span>
+              </div>
+              <h1 className="text-large-title text-white mb-3 max-w-md">
+                {t("home.heroTitle")}{" "}
+                <span className="text-white">{t("home.heroHighlight")}</span>{" "}
+                {t("home.heroTitleEnd")}
+              </h1>
+              <p className="text-body text-white/90 max-w-sm mb-0">{t("home.heroSubtitle")}</p>
+            </div>
+          </div>
 
-        <div className="flex items-center gap-3 max-w-xl mx-auto border border-gray-200 rounded-xl px-4 py-2 mb-6 bg-white shadow-sm">
-          <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
-          <input
-            type="text"
-            placeholder={t("home.searchPlaceholder")}
-            className="flex-1 text-sm outline-none bg-transparent"
-          />
-          <div className="w-px h-5 bg-gray-200" />
-          <select className="text-sm text-gray-500 outline-none bg-transparent pr-2">
-            <option>{t("home.allCities")}</option>
-            <option>Miami, FL</option>
-            <option>Dallas, TX</option>
-            <option>Los Angeles, CA</option>
-            <option>New York, NY</option>
-          </select>
+          {/* Search */}
           <Link
             href="/jobs"
-            className="text-sm font-medium text-white px-4 py-2 rounded-lg flex-shrink-0"
-            style={{ background: "#1D9E75" }}
+            className="tap lift flex items-center gap-3 ios-card-lg px-4 py-3.5 mb-7"
           >
-            {t("common.search")}
+            <Search className="w-5 h-5 text-label-secondary flex-shrink-0" />
+            <span className="text-body text-label-secondary flex-1">
+              {t("home.searchPlaceholder")}
+            </span>
+            <span className="btn-primary !py-2 !px-4 text-sm">{t("common.search")}</span>
           </Link>
-        </div>
 
-        <div className="flex items-center justify-center gap-3">
-          <Link
-            href="/register/coach/account"
-            className="flex items-center gap-3 border border-gray-200 rounded-xl px-6 py-3 hover:border-green-400 transition-colors"
-          >
-            <Users className="w-5 h-5" style={{ color: "#1D9E75" }} />
-            <div className="text-left">
-              <div className="text-sm font-medium">{t("home.imCoach")}</div>
-              <div className="text-xs text-gray-500">{t("home.coachSub")}</div>
-            </div>
-          </Link>
-          <Link
-            href="/register/gym/account"
-            className="flex items-center gap-3 border border-gray-200 rounded-xl px-6 py-3 hover:border-green-400 transition-colors"
-          >
-            <Building2 className="w-5 h-5" style={{ color: "#1D9E75" }} />
-            <div className="text-left">
-              <div className="text-sm font-medium">{t("home.imGym")}</div>
-              <div className="text-xs text-gray-500">{t("home.gymSub")}</div>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      <div className="flex items-center justify-center gap-16 py-6 border-y border-gray-100 bg-gray-50">
-        {stats.map((s) => (
-          <div key={s.label} className="text-center">
-            <div className="text-2xl font-medium">{s.num}</div>
-            <div className="text-xs text-gray-500 mt-0.5">{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      <section className="px-8 py-14 max-w-3xl mx-auto">
-        <div className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: "#1D9E75" }}>
-          {t("home.latestOpenings")}
-        </div>
-        <h2 className="text-2xl font-medium mb-1">{t("home.featuredJobs")}</h2>
-        <p className="text-sm text-gray-500 mb-8">{t("home.featuredSub")}</p>
-
-        <div className="flex flex-col gap-3">
-          {FEATURED_JOBS.map((job) => (
-            <Link
-              key={job.id}
-              href={`/jobs/${job.id}`}
-              className="flex items-center gap-4 border border-gray-100 rounded-xl p-4 hover:border-green-300 transition-colors group"
-            >
-              <div
-                className="w-11 h-11 rounded-lg flex items-center justify-center text-xl flex-shrink-0"
-                style={{ background: "#E1F5EE" }}
-              >
-                🥋
+          {/* Stats */}
+          <div className="stat-grid mb-8">
+            {stats.map((s) => (
+              <div key={s.label} className="stat-cell">
+                <div className="font-display font-bold text-xl">{s.num}</div>
+                <div className="text-caption-1 text-label-secondary mt-1">{s.label}</div>
               </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm text-gray-900">{job.title}</div>
-                <div className="text-xs text-gray-500 mt-0.5">
+            ))}
+          </div>
+
+          {/* Featured jobs grid */}
+          <SectionLabel>{t("home.latestOpenings")}</SectionLabel>
+          <h2 className="text-title-2 text-label mb-1">{t("home.featuredJobs")}</h2>
+          <p className="text-subheadline text-label-secondary mb-5">{t("home.featuredSub")}</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+            {FEATURED_JOBS.map((job) => (
+              <Link
+                key={job.id}
+                href={`/jobs/${job.id}`}
+                className="tap lift ios-card-lg p-4 block"
+              >
+                <div className="font-semibold text-[15px] leading-snug mb-0.5">{job.title}</div>
+                <div className="text-footnote text-label-secondary mb-3">
                   {job.gym} · {job.city}
                 </div>
-                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                <div className="flex items-center gap-1.5 mb-3">
                   <span
-                    className="text-xs px-2.5 py-0.5 rounded-full font-medium"
-                    style={{ background: "#E1F5EE", color: "#0F6E56" }}
-                  >
-                    {job.type}
-                  </span>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-600">
-                    {job.belt}
-                  </span>
+                    className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ background: job.beltColor }}
+                  />
+                  <span className="text-footnote text-label">{job.belt}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-display font-bold text-base">{job.pay}</span>
+                  <span className="chip text-brand bg-brand-light/60">{job.type}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center mb-10">
+            <Link
+              href="/jobs"
+              className="inline-flex items-center gap-2 text-subheadline font-semibold text-brand tap"
+            >
+              {t("home.viewAllJobs")} <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* How it works */}
+          <SectionLabel>{t("home.howItWorks")}</SectionLabel>
+          <h2 className="text-title-2 text-label mb-5">{t("home.howTitle")}</h2>
+          <div className="flex flex-col gap-2.5 mb-10">
+            {steps.map((item) => (
+              <div key={item.n} className="ios-card flex gap-3.5 p-4">
+                <div className="font-display font-bold text-[15px] text-brand w-6 flex-shrink-0">
+                  {item.n}
+                </div>
+                <div>
+                  <div className="text-headline mb-0.5">{item.title}</div>
+                  <div className="text-footnote text-label-secondary leading-relaxed">
+                    {item.desc}
+                  </div>
                 </div>
               </div>
-              <div className="text-right flex-shrink-0">
-                {job.isNew && (
-                  <div
-                    className="text-xs font-medium text-white px-2 py-0.5 rounded-full mb-1 inline-block"
-                    style={{ background: "#1D9E75" }}
-                  >
-                    {t("home.newBadge")}
-                  </div>
-                )}
-                <div className="text-sm font-medium">{job.pay}</div>
-                <div className="text-xs text-gray-400 mt-0.5">{job.postedAt}</div>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        <div className="text-center mt-6">
-          <Link
-            href="/jobs"
-            className="inline-flex items-center gap-2 text-sm font-medium"
-            style={{ color: "#1D9E75" }}
-          >
-            {t("home.viewAllJobs")} <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </section>
-
-      <section className="px-8 py-14 bg-gray-50">
-        <div className="text-center mb-10">
-          <div className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: "#1D9E75" }}>
-            {t("home.howItWorks")}
+            ))}
           </div>
-          <h2 className="text-2xl font-medium">{t("home.howTitle")}</h2>
-        </div>
-        <div className="grid grid-cols-3 gap-5 max-w-3xl mx-auto">
-          {steps.map((item) => (
-            <div key={item.step} className="bg-white rounded-xl p-6 border border-gray-100">
-              <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
-                style={{ background: "#E1F5EE" }}
-              >
-                <item.icon className="w-5 h-5" style={{ color: "#1D9E75" }} />
-              </div>
-              <div className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: "#1D9E75" }}>
-                {t("home.step")} {item.step}
-              </div>
-              <div className="font-medium text-sm mb-2">{item.title}</div>
-              <div className="text-xs text-gray-500 leading-relaxed">{item.desc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
 
-      <section className="px-8 py-10">
-        <div className="rounded-2xl p-10 text-center max-w-2xl mx-auto" style={{ background: "#0F6E56" }}>
-          <h2 className="text-2xl font-medium text-white mb-2">{t("home.footerCtaTitle")}</h2>
-          <p className="text-sm mb-6" style={{ color: "#9FE1CB" }}>
-            {t("home.footerCtaSub")}
-          </p>
-          <div className="flex items-center justify-center gap-3">
-            <Link
-              href="/post-job"
-              className="text-sm font-medium bg-white px-6 py-2.5 rounded-lg"
-              style={{ color: "#0F6E56" }}
-            >
-              {t("home.postJobFree")}
-            </Link>
+          {/* Role CTAs */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
             <Link
               href="/register/coach/account"
-              className="text-sm font-medium px-6 py-2.5 rounded-lg border text-white"
-              style={{ borderColor: "rgba(255,255,255,0.3)" }}
+              className="tap lift ios-card-lg p-5 flex items-center gap-4"
             >
-              {t("home.footerCoach")}
+              <div className="w-11 h-11 rounded-xl bg-brand-light flex items-center justify-center flex-shrink-0">
+                <Users className="w-5 h-5 text-brand" />
+              </div>
+              <div>
+                <div className="text-headline">{t("home.imCoach")}</div>
+                <div className="text-footnote text-label-secondary">{t("home.coachSub")}</div>
+              </div>
+            </Link>
+            <Link
+              href="/register/gym/account"
+              className="tap lift ios-card-lg p-5 flex items-center gap-4"
+            >
+              <div className="w-11 h-11 rounded-xl bg-brand-light flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-5 h-5 text-brand" />
+              </div>
+              <div>
+                <div className="text-headline">{t("home.imGym")}</div>
+                <div className="text-footnote text-label-secondary">{t("home.gymSub")}</div>
+              </div>
             </Link>
           </div>
-        </div>
-      </section>
 
-      <footer className="flex items-center justify-between px-8 py-5 border-t border-gray-100">
-        <div className="text-sm text-gray-400">BJJJobs.com · 2025</div>
-        <div className="flex gap-5 text-xs text-gray-400">
-          <Link href="/about">{t("nav.aboutUs")}</Link>
-          <Link href="/privacy">{t("footer.privacy")}</Link>
-          <Link href="/terms">{t("footer.terms")}</Link>
-          <Link href="/contact">{t("footer.contact")}</Link>
-        </div>
-      </footer>
-    </div>
+          {/* Footer CTA */}
+          <div className="rounded-[22px] p-8 text-center bg-brand">
+            <h2 className="text-title-2 text-white mb-2">{t("home.footerCtaTitle")}</h2>
+            <p className="text-subheadline text-white/80 mb-5">{t("home.footerCtaSub")}</p>
+            <div className="flex items-center justify-center gap-3 flex-wrap">
+              <Link
+                href="/post-job"
+                className="tap bg-white text-brand-dark rounded-capsule px-6 py-2.5 text-subheadline font-semibold"
+              >
+                {t("home.postJobFree")}
+              </Link>
+              <Link
+                href="/register/coach/account"
+                className="tap border border-white/30 text-white rounded-capsule px-6 py-2.5 text-subheadline font-semibold"
+              >
+                {t("home.footerCoach")}
+              </Link>
+            </div>
+          </div>
+        </PageCol>
+
+        <footer className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-5 border-t border-separator/30 max-w-3xl mx-auto">
+          <div className="text-footnote text-label-tertiary">BJJJobs.com · 2025</div>
+          <div className="flex gap-5 text-caption-1 text-label-tertiary">
+            <Link href="/about" className="hover:text-label-secondary">
+              {t("nav.aboutUs")}
+            </Link>
+            <Link href="/privacy">{t("footer.privacy")}</Link>
+            <Link href="/terms">{t("footer.terms")}</Link>
+            <Link href="/contact">{t("footer.contact")}</Link>
+          </div>
+        </footer>
+      </div>
+    </PageShell>
   );
 }

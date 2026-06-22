@@ -1,0 +1,63 @@
+/* ============================================================================
+   SPACING, RADII & LAYOUT METRICS — built on Apple's 4 / 8-pt grid.
+   ============================================================================ */
+
+:root {
+  /* ---- Spacing scale (4-pt base) ----------------------------------------- */
+  --space-0: 0px;
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;   /* default content inset on compact (iPhone) */
+  --space-6: 20px;   /* default content inset on regular (iPad/macOS) */
+  --space-7: 24px;
+  --space-8: 32px;
+  --space-9: 44px;   /* minimum touch target */
+  --space-10: 64px;
+
+  /* ---- Corner radii — iOS uses *continuous* (squircle) corners ----------- */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;     /* macOS window / popover */
+  --radius-lg: 12px;     /* iOS grouped-list container */
+  --radius-xl: 16px;
+  --radius-2xl: 20px;    /* cards, sheets corner */
+  --radius-3xl: 28px;    /* large sheets, alerts */
+  --radius-capsule: 999px; /* pills, Liquid Glass buttons, toggles */
+  /* Apple draws corners with continuous curvature; approximate in CSS with a
+     superellipse mask where fidelity matters, else a generous border-radius. */
+  --corner-smoothing: 0.6;
+
+  /* ---- Control heights --------------------------------------------------- */
+  --control-h-mini: 28px;
+  --control-h-small: 32px;
+  --control-h-regular: 38px;   /* macOS default button */
+  --control-h-large: 50px;     /* iOS prominent / filled button */
+  --touch-target: 44px;
+
+  /* ---- Hairline ---------------------------------------------------------- */
+  --hairline: 0.5px;           /* 1 device-pixel @2x */
+
+  /* ---- iOS layout metrics ------------------------------------------------ */
+  --ios-screen-w: 393px;       /* iPhone 16/17 logical width */
+  --ios-screen-h: 852px;
+  --ios-status-bar-h: 54px;    /* Dynamic Island devices */
+  --ios-nav-bar-h: 44px;
+  --ios-large-title-nav-h: 96px;
+  --ios-tab-bar-h: 49px;
+  --ios-home-indicator-h: 34px;
+  --ios-content-inset: 16px;
+  --ios-list-row-h: 44px;
+  --ios-list-row-h-large: 60px;
+  --ios-corner-radius-device: 55px; /* iPhone display corner */
+
+  /* ---- macOS layout metrics ---------------------------------------------- */
+  --mac-titlebar-h: 52px;      /* unified toolbar height */
+  --mac-traffic-light: 12px;   /* close/min/zoom dot diameter */
+  --mac-traffic-gap: 8px;
+  --mac-sidebar-w: 220px;
+  --mac-window-radius: 10px;
+  --mac-row-h: 28px;
+  --mac-menubar-h: 24px;
+}

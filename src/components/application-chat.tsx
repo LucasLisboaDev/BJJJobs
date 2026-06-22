@@ -70,20 +70,22 @@ export function ApplicationChat({
   }
 
   return (
-    <div className="border border-gray-100 rounded-xl overflow-hidden bg-white">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 bg-gray-50">
-        <MessageCircle className="w-4 h-4" style={{ color: "#1D9E75" }} />
-        <span className="text-sm font-medium">Messages</span>
-        <span className="text-xs text-gray-400">
+    <div className="ios-card overflow-hidden">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-separator/40 bg-fill-quaternary/30">
+        <MessageCircle className="w-4 h-4 text-brand" />
+        <span className="text-subheadline font-semibold">Messages</span>
+        <span className="text-caption-1 text-label-tertiary">
           {viewerRole === "gym" ? "Chat with this coach" : "Chat with the gym"}
         </span>
       </div>
 
       <div className="h-56 overflow-y-auto px-4 py-3 space-y-3">
         {loading ? (
-          <div className="text-xs text-gray-400 text-center py-8">Loading messages...</div>
+          <div className="text-caption-1 text-label-tertiary text-center py-8">
+            Loading messages...
+          </div>
         ) : messages.length === 0 ? (
-          <div className="text-xs text-gray-400 text-center py-8">
+          <div className="text-caption-1 text-label-tertiary text-center py-8">
             No messages yet. Say hello to start the conversation.
           </div>
         ) : (
@@ -93,19 +95,16 @@ export function ApplicationChat({
               className={`flex flex-col ${msg.isMine ? "items-end" : "items-start"}`}
             >
               {!msg.isMine && (
-                <span className="text-[10px] text-gray-400 mb-0.5">{msg.senderLabel}</span>
+                <span className="text-[10px] text-label-tertiary mb-0.5">{msg.senderLabel}</span>
               )}
               <div
-                className="max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed"
-                style={
-                  msg.isMine
-                    ? { background: "#1D9E75", color: "#fff" }
-                    : { background: "#f3f4f6", color: "#374151" }
-                }
+                className={`max-w-[85%] rounded-2xl px-3 py-2 text-subheadline leading-relaxed ${
+                  msg.isMine ? "bg-brand text-white" : "bg-fill-tertiary text-label"
+                }`}
               >
                 {msg.body}
               </div>
-              <span className="text-[10px] text-gray-400 mt-0.5">
+              <span className="text-[10px] text-label-tertiary mt-0.5">
                 {new Date(msg.createdAt).toLocaleString(undefined, {
                   month: "short",
                   day: "numeric",
@@ -119,9 +118,10 @@ export function ApplicationChat({
         <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={handleSend} className="border-t border-gray-100 p-3 flex gap-2">
+      <form onSubmit={handleSend} className="border-t border-separator/40 p-3 flex gap-2">
         <input
-          className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+          className="flex-1 rounded-xl px-3 py-2 text-subheadline outline-none border-none"
+          style={{ background: "var(--fill-tertiary)" }}
           placeholder="Write a message..."
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -130,13 +130,12 @@ export function ApplicationChat({
         <button
           type="submit"
           disabled={sending || !draft.trim()}
-          className="flex items-center justify-center w-10 h-10 rounded-lg text-white disabled:opacity-50"
-          style={{ background: "#1D9E75" }}
+          className="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center disabled:opacity-50 tap"
         >
           <Send className="w-4 h-4" />
         </button>
       </form>
-      {error && <p className="px-3 pb-2 text-xs text-red-600">{error}</p>}
+      {error && <p className="px-3 pb-2 text-caption-1 text-red-600">{error}</p>}
     </div>
   );
 }

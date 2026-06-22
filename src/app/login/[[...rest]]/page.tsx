@@ -9,7 +9,7 @@ export default function LoginPage({
   const redirectUrl = searchParams.redirect_url ?? "/dashboard";
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-grouped">
       <LoginHeader />
       <div className="flex items-center justify-center py-12">
         <SignIn signUpUrl="/register" forceRedirectUrl={redirectUrl} />

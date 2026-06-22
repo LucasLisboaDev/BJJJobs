@@ -91,51 +91,32 @@ function GymProfilePanel({
 
   if (editing) {
     return (
-      <div className="bg-white border border-gray-100 rounded-2xl p-6">
+      <div className="ios-card-lg p-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="font-medium">Edit gym profile</h2>
+          <h2 className="text-headline font-semibold">Edit gym profile</h2>
           <button
             onClick={() => setEditing(false)}
-            className="text-xs text-gray-500 hover:text-gray-900"
+            className="text-caption-1 text-label-secondary hover:text-label tap"
           >
             Cancel
           </button>
         </div>
 
-        {error && (
-          <div
-            className="mb-4 px-4 py-3 rounded-lg text-sm"
-            style={{ background: "#FCEBEB", color: "#A32D2D" }}
-          >
-            {error}
-          </div>
-        )}
+        {error && <div className="alert-error mb-4">{error}</div>}
 
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">Gym name</label>
-            <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <label className="field-label">Gym name</label>
+            <input className="ios-field" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">City</label>
-              <input
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
+              <label className="field-label">City</label>
+              <input className="ios-field" value={city} onChange={(e) => setCity(e.target.value)} />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">State</label>
-              <select
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400 bg-white"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-              >
+              <label className="field-label">State</label>
+              <select className="ios-field" value={state} onChange={(e) => setState(e.target.value)}>
                 {US_STATES.map((s) => (
                   <option key={s.abbr} value={s.abbr}>
                     {s.name}
@@ -145,38 +126,33 @@ function GymProfilePanel({
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">Affiliation</label>
+            <label className="field-label">Affiliation</label>
             <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+              className="ios-field"
               placeholder="e.g. Alliance, Gracie Barra..."
               value={affiliation}
               onChange={(e) => setAffiliation(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">Website</label>
+            <label className="field-label">Website</label>
             <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+              className="ios-field"
               placeholder="https://yourgym.com"
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">About your gym</label>
+            <label className="field-label">About your gym</label>
             <textarea
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400 resize-none"
+              className="ios-field resize-none"
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="w-full text-sm font-medium text-white py-2.5 rounded-lg disabled:opacity-60"
-            style={{ background: "#1D9E75" }}
-          >
+          <button onClick={handleSave} disabled={saving} className="btn-primary w-full disabled:opacity-60">
             {saving ? "Saving..." : "Save changes"}
           </button>
         </div>
@@ -185,22 +161,19 @@ function GymProfilePanel({
   }
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-6">
+    <div className="ios-card-lg p-6">
       <div className="flex items-start gap-4 mb-5">
-        <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
-          style={{ background: "#E1F5EE" }}
-        >
+        <div className="w-14 h-14 rounded-ios-lg flex items-center justify-center text-2xl shrink-0 bg-brand-light">
           🏛️
         </div>
         <div className="flex-1 min-w-0">
-          <h1 className="text-xl font-medium mb-1">{gym.name}</h1>
-          <p className="text-sm text-gray-500 flex items-center gap-1">
+          <h1 className="text-title-2 mb-1">{gym.name}</h1>
+          <p className="text-subheadline text-label-secondary flex items-center gap-1">
             <MapPin className="w-3.5 h-3.5" />
             {gym.city}, {gym.state}
           </p>
           {gym.affiliation && (
-            <p className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
+            <p className="text-subheadline text-label-secondary flex items-center gap-1 mt-0.5">
               <Building2 className="w-3.5 h-3.5" />
               {gym.affiliation}
             </p>
@@ -210,8 +183,7 @@ function GymProfilePanel({
               href={gym.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm mt-2 hover:underline"
-              style={{ color: "#1D9E75" }}
+              className="inline-flex items-center gap-1 text-subheadline mt-2 text-brand hover:underline tap"
             >
               <Globe className="w-3.5 h-3.5" />
               {gym.website.replace(/^https?:\/\//, "")}
@@ -222,23 +194,22 @@ function GymProfilePanel({
       </div>
 
       {gym.description && (
-        <p className="text-sm text-gray-600 leading-relaxed mb-5 whitespace-pre-line">
+        <p className="text-subheadline text-label-secondary leading-relaxed mb-5 whitespace-pre-line">
           {gym.description}
         </p>
       )}
 
-      <div className="flex gap-2 pt-4 border-t border-gray-100">
+      <div className="flex gap-2 pt-4 border-t border-separator/30 flex-wrap">
         <button
           onClick={startEdit}
-          className="flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg border border-gray-200 hover:border-green-300"
+          className="btn-secondary text-sm !py-2 !px-4 flex items-center gap-1.5"
         >
           <Pencil className="w-3.5 h-3.5" />
           Edit profile
         </button>
         <Link
           href={`/gyms/${gym.id}`}
-          className="flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg"
-          style={{ background: "#E1F5EE", color: "#0F6E56" }}
+          className="btn-secondary text-sm !py-2 !px-4 flex items-center gap-1.5 !bg-brand-light !text-brand-dark"
         >
           <Eye className="w-3.5 h-3.5" />
           Public page
@@ -318,7 +289,7 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
   }
 
   return (
-    <div className="px-8 py-8 max-w-5xl mx-auto">
+    <div className="page-col !pt-6">
       <GymProfilePanel gym={gym} onUpdate={setGym} />
 
       {/* Stats */}
@@ -328,10 +299,10 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
           { icon: ToggleRight, label: "Active listings", value: String(activeJobs) },
           { icon: Users, label: "Total applicants", value: String(totalApplicants) },
         ].map((stat) => (
-          <div key={stat.label} className="bg-white border border-gray-100 rounded-xl p-5">
-            <stat.icon className="w-5 h-5 mb-3" style={{ color: "#1D9E75" }} />
+          <div key={stat.label} className="stat-cell !py-4">
+            <stat.icon className="w-5 h-5 mb-3 text-brand" />
             <div className="text-2xl font-medium">{stat.value}</div>
-            <div className="text-xs text-gray-500 mt-0.5">{stat.label}</div>
+            <div className="text-footnote text-label-secondary mt-0.5">{stat.label}</div>
           </div>
         ))}
       </div>
@@ -339,27 +310,19 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
       {/* Job listings */}
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-medium">Your listings</h2>
-        <Link
-          href="/post-job"
-          className="flex items-center gap-1.5 text-sm font-medium text-white px-4 py-2 rounded-lg"
-          style={{ background: "#1D9E75" }}
-        >
+        <Link href="/post-job" className="btn-primary text-sm !py-2 !px-4 flex items-center gap-1.5">
           <Plus className="w-4 h-4" />
           Post a job
         </Link>
       </div>
 
       {jobs.length === 0 ? (
-        <div className="bg-white border border-gray-100 rounded-xl p-10 text-center">
-          <div className="text-sm text-gray-500 mb-1">No listings yet</div>
-          <p className="text-xs text-gray-400 mb-4">
+        <div className="ios-card-lg p-10 text-center">
+          <div className="text-subheadline text-label-secondary mb-1">No listings yet</div>
+          <p className="text-footnote text-label-tertiary mb-4">
             Your gym profile is live. Post your first job when you&apos;re ready to hire.
           </p>
-          <Link
-            href="/post-job"
-            className="text-sm font-medium text-white px-5 py-2.5 rounded-lg"
-            style={{ background: "#1D9E75" }}
-          >
+          <Link href="/post-job" className="btn-primary text-sm">
             Post your first job
           </Link>
         </div>
@@ -373,54 +336,48 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
             return (
               <div
                 key={job.id}
-                className="bg-white border border-gray-100 rounded-xl overflow-hidden"
+                className="bg-grouped-secondary rounded-2xl overflow-hidden shadow-ios"
               >
                 <div className="p-4 flex items-center gap-4">
-                  <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center text-lg flex-shrink-0"
-                    style={{ background: "#E1F5EE" }}
-                  >
+                  <div className="w-10 h-10 rounded-ios flex items-center justify-center text-lg shrink-0 bg-brand-light">
                     🥋
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <Link
                         href={`/jobs/${job.id}`}
-                        className="font-medium text-sm hover:underline"
-                        style={{ color: "#0F6E56" }}
+                        className="text-headline font-semibold hover:underline text-brand-dark"
                       >
                         {job.title}
                       </Link>
                       {!job.active && (
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
-                          Inactive
-                        </span>
+                        <span className="chip">Inactive</span>
                       )}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-footnote text-label-secondary">
                       {job.city}, {job.state} · {JOB_TYPE_LABELS[job.jobType]}
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 flex-shrink-0">
-                    <span className="text-xs text-gray-500">
+                  <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">
+                    <span className="text-footnote text-label-secondary">
                       {appCount} {appCount === 1 ? "applicant" : "applicants"}
                     </span>
                     <button
                       onClick={() => toggleActive(job)}
                       disabled={togglingJob === job.id}
-                      className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 disabled:opacity-50"
+                      className="flex items-center gap-1.5 text-caption-1 text-label-secondary hover:text-label disabled:opacity-50 tap"
                     >
                       {job.active ? (
-                        <ToggleRight className="w-5 h-5" style={{ color: "#1D9E75" }} />
+                        <ToggleRight className="w-5 h-5 text-brand" />
                       ) : (
-                        <ToggleLeft className="w-5 h-5 text-gray-400" />
+                        <ToggleLeft className="w-5 h-5 text-label-tertiary" />
                       )}
                       {job.active ? "Active" : "Inactive"}
                     </button>
                     {appCount > 0 && (
                       <button
                         onClick={() => loadApplicants(job.id)}
-                        className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 hover:border-green-300"
+                        className="btn-secondary text-xs !py-1.5 !px-3 flex items-center gap-1"
                       >
                         View applicants
                         {isExpanded ? (
@@ -434,13 +391,13 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
                 </div>
 
                 {isExpanded && (
-                  <div className="border-t border-gray-100 bg-gray-50 p-4">
+                  <div className="border-t border-separator/30 bg-fill-quaternary p-4">
                     {loadingApplicants[job.id] ? (
-                      <div className="text-xs text-gray-400 py-4 text-center">
+                      <div className="text-footnote text-label-tertiary py-4 text-center">
                         Loading applicants...
                       </div>
                     ) : jobApplicants.length === 0 ? (
-                      <div className="text-xs text-gray-400 py-4 text-center">
+                      <div className="text-footnote text-label-tertiary py-4 text-center">
                         No applications yet.
                       </div>
                     ) : (

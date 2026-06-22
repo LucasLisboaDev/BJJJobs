@@ -27,10 +27,10 @@ export function CoachExperienceSection({
   if (!hasResume && !hasExperiences) return null;
 
   return (
-    <div className={compact ? "space-y-3" : "bg-white border border-gray-100 rounded-2xl p-7 mb-4"}>
+    <div className={compact ? "space-y-3" : "ios-card p-6 mb-4"}>
       {!compact && (
-        <h2 className="font-medium mb-4 flex items-center gap-2">
-          <Briefcase className="w-4 h-4" style={{ color: "#1D9E75" }} />
+        <h2 className="text-headline mb-4 flex items-center gap-2">
+          <Briefcase className="w-4 h-4 text-brand" />
           Teaching experience
         </h2>
       )}
@@ -40,21 +40,18 @@ export function CoachExperienceSection({
           href={coach.resumeUrl!}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex items-center gap-3 rounded-xl border border-gray-100 hover:border-green-300 transition-colors ${
-            compact ? "p-3 bg-white" : "p-4 mb-4"
+          className={`flex items-center gap-3 rounded-xl ios-card tap ${
+            compact ? "p-3" : "p-4 mb-4"
           }`}
         >
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ background: "#E1F5EE" }}
-          >
-            <FileText className="w-5 h-5" style={{ color: "#1D9E75" }} />
+          <div className="w-10 h-10 rounded-lg bg-brand-light flex items-center justify-center flex-shrink-0">
+            <FileText className="w-5 h-5 text-brand" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm font-medium truncate">
               {coach.resumeFileName ?? "Resume.pdf"}
             </div>
-            <div className="text-xs text-gray-500">PDF resume</div>
+            <div className="text-footnote text-label-secondary">PDF resume</div>
           </div>
           <Download className="w-4 h-4 text-gray-400 flex-shrink-0" />
         </a>
@@ -65,7 +62,7 @@ export function CoachExperienceSection({
           {experiences.map((exp) => (
             <div
               key={exp.id}
-              className={`rounded-xl border border-gray-100 ${compact ? "p-3 bg-gray-50" : "p-4"}`}
+              className={`rounded-xl ios-card ${compact ? "p-3" : "p-4"}`}
             >
               <div className="flex items-start justify-between gap-3 mb-1">
                 <div>

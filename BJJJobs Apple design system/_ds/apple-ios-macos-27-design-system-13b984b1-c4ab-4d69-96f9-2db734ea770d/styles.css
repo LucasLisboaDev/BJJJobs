@@ -1,0 +1,12 @@
+/* ============================================================================
+   Apple iOS · macOS 27 Design System  —  global entry point.
+   Consumers link THIS one file. It only @imports the token layers below;
+   never add rules here directly.
+   ============================================================================ */
+
+@import url("tokens/colors.css");
+@import url("tokens/fonts.css");
+@import url("tokens/typography.css");
+@import url("tokens/spacing.css");
+@import url("tokens/materials.css");
+@import url("tokens/motion.css");

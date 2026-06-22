@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth, SignOutButton } from "@clerk/nextjs";
 import {
-  Shield,
   ShieldCheck,
   MapPin,
   Eye,
@@ -16,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { WorkExperienceInput } from "@/lib/coach-experience";
+import { Logo } from "@/components/ui/logo";
 
 const BELTS = ["WHITE", "BLUE", "PURPLE", "BROWN", "BLACK"];
 const BELT_LABELS: Record<string, string> = {
@@ -224,36 +224,28 @@ export default function CoachRegisterPage() {
 
   if (!isLoaded || checkingAccount) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-sm text-gray-400">Loading...</div>
+      <div className="min-h-screen bg-grouped flex items-center justify-center">
+        <div className="text-footnote text-label-tertiary">Loading...</div>
       </div>
     );
   }
 
   if (wrongAccount) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-        <div className="max-w-md text-center">
+      <div className="min-h-screen bg-grouped flex items-center justify-center px-6">
+        <div className="max-w-md text-center ios-card-lg p-8">
           <div className="text-3xl mb-4">🥋</div>
-          <h1 className="text-xl font-medium mb-2">This account is a gym</h1>
-          <p className="text-sm text-gray-500 mb-8 leading-relaxed">
+          <h1 className="text-title-2 mb-2">This account is a gym</h1>
+          <p className="text-subheadline text-label-secondary mb-8 leading-relaxed">
             You&apos;re signed in with a gym account. Coach and gym profiles use separate
             accounts — sign out and create a new account with a different email to register
             as a coach.
           </p>
           <div className="flex flex-col gap-3">
             <SignOutButton redirectUrl="/register/coach/account">
-              <button
-                className="text-sm font-medium text-white px-6 py-3 rounded-xl w-full"
-                style={{ background: "#1D9E75" }}
-              >
-                Sign out & create coach account
-              </button>
+              <button className="btn-primary w-full">Sign out & create coach account</button>
             </SignOutButton>
-            <Link
-              href="/dashboard"
-              className="text-sm px-6 py-3 rounded-xl border border-gray-200 text-gray-600"
-            >
+            <Link href="/dashboard" className="btn-secondary w-full text-center">
               Go to gym dashboard
             </Link>
           </div>
@@ -263,49 +255,41 @@ export default function CoachRegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex items-center justify-between px-7 py-3.5 border-b border-gray-100 bg-white">
-        <Link href="/" className="flex items-center gap-2 text-base font-medium">
-          <Shield className="w-5 h-5" style={{ color: "#1D9E75" }} />
-          BJJJobs
-        </Link>
-        <div className="flex items-center gap-2">
-          {STEPS.map((label, i) => (
-            <div key={label} className="flex items-center gap-1.5">
-              {i > 0 && <div className="w-6 h-px bg-gray-200" />}
-              <div
-                className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
-                style={
-                  step > i + 1
-                    ? { background: "#E1F5EE", color: "#0F6E56" }
-                    : step === i + 1
-                    ? { background: "#1D9E75", color: "#fff" }
-                    : { background: "#f3f4f6", color: "#9ca3af", border: "0.5px solid #e5e7eb" }
-                }
-              >
-                {step > i + 1 ? "✓" : i + 1}
+    <div className="min-h-screen bg-grouped">
+      <div className="sticky top-0 z-50 px-4 py-3 bg-grouped-secondary/90 backdrop-blur-xl border-b border-separator/30">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4 flex-wrap">
+          <Logo />
+          <div className="hidden sm:flex items-center gap-2">
+            {STEPS.map((label, i) => (
+              <div key={label} className="flex items-center gap-1.5">
+                {i > 0 && <div className="w-6 h-px bg-separator/40" />}
+                <div
+                  className={`step-dot ${
+                    step > i + 1 ? "step-dot-done" : step === i + 1 ? "step-dot-active" : "step-dot-pending"
+                  }`}
+                >
+                  {step > i + 1 ? "✓" : i + 1}
+                </div>
+                <span
+                  className={`text-caption-1 ${
+                    step === i + 1 ? "text-brand-dark font-semibold" : "text-label-tertiary"
+                  }`}
+                >
+                  {label}
+                </span>
               </div>
-              <span
-                className="text-xs"
-                style={{
-                  color: step === i + 1 ? "#0F6E56" : "#9ca3af",
-                  fontWeight: step === i + 1 ? 500 : 400,
-                }}
-              >
-                {label}
-              </span>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="text-caption-1 text-label-tertiary">Step {step} of 3</div>
         </div>
-        <div className="text-xs text-gray-400">Step {step} of 3</div>
       </div>
 
-      <div className="grid grid-cols-[260px_1fr] min-h-[calc(100vh-57px)]">
-        <div className="bg-white border-r border-gray-100 p-7">
-          <div className="font-medium text-sm mb-1">Build your coach profile</div>
-          <div className="text-xs text-gray-500 leading-relaxed mb-6">
-            Gyms want to see your belt rank and your teaching history before they hire.
-            A complete profile gets significantly more responses.
+      <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-0 lg:gap-6 px-4 py-6">
+        <div className="ios-card-lg p-6 mb-6 lg:mb-0 h-fit">
+          <div className="text-headline font-semibold mb-1">Build your coach profile</div>
+          <div className="text-footnote text-label-secondary leading-relaxed mb-6">
+            Gyms want to see your belt rank and your teaching history before they hire. A complete
+            profile gets significantly more responses.
           </div>
           {[
             { icon: ShieldCheck, title: "Belt & specialties", sub: "Show your rank and what you teach best" },
@@ -313,49 +297,39 @@ export default function CoachRegisterPage() {
             { icon: Eye, title: "Visible to gyms", sub: "Owners review your full background before hiring" },
           ].map((item) => (
             <div key={item.title} className="flex items-start gap-3 mb-4">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                style={{ background: "#E1F5EE" }}
-              >
-                <item.icon className="w-4 h-4" style={{ color: "#1D9E75" }} />
+              <div className="w-8 h-8 rounded-ios flex items-center justify-center shrink-0 bg-brand-light">
+                <item.icon className="w-4 h-4 text-brand" />
               </div>
               <div>
-                <div className="text-xs font-medium">{item.title}</div>
-                <div className="text-xs text-gray-500 leading-relaxed">{item.sub}</div>
+                <div className="text-caption-1 font-semibold">{item.title}</div>
+                <div className="text-caption-1 text-label-secondary leading-relaxed">{item.sub}</div>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="p-8 max-w-2xl">
-          {error && (
-            <div
-              className="mb-4 px-4 py-3 rounded-lg text-sm"
-              style={{ background: "#FCEBEB", color: "#A32D2D" }}
-            >
-              {error}
-            </div>
-          )}
+        <div className="max-w-2xl">
+          {error && <div className="alert-error mb-4">{error}</div>}
 
           {/* Step 1 — BJJ profile */}
           {step === 1 && (
             <>
-              <h1 className="text-lg font-medium mb-1">Your BJJ background</h1>
-              <p className="text-sm text-gray-500 mb-7">Tell gyms who you are on and off the mat</p>
+              <h1 className="text-title-2 mb-1">Your BJJ background</h1>
+              <p className="text-subheadline text-label-secondary mb-7">Tell gyms who you are on and off the mat</p>
 
               <div className="grid grid-cols-2 gap-4 mb-5">
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1.5">First name</label>
+                  <label className="field-label">First name</label>
                   <input
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+                    className="ios-field w-full"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1.5">Last name</label>
+                  <label className="field-label">Last name</label>
                   <input
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+                    className="ios-field w-full"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                   />
@@ -363,23 +337,15 @@ export default function CoachRegisterPage() {
               </div>
 
               <div className="mb-5">
-                <label className="block text-xs font-medium text-gray-500 mb-2">Belt rank</label>
+                <label className="field-label">Belt rank</label>
                 <div className="flex gap-2 flex-wrap">
                   {BELTS.map((belt) => (
                     <button
                       key={belt}
                       type="button"
                       onClick={() => setSelectedBelt(belt)}
-                      className="px-4 py-1.5 rounded-full text-xs font-medium border transition-all"
-                      style={{
-                        borderLeftWidth: "4px",
-                        borderLeftColor: BELT_COLORS[belt],
-                        borderTopColor: selectedBelt === belt ? "#1D9E75" : "#e5e7eb",
-                        borderRightColor: selectedBelt === belt ? "#1D9E75" : "#e5e7eb",
-                        borderBottomColor: selectedBelt === belt ? "#1D9E75" : "#e5e7eb",
-                        background: selectedBelt === belt ? "#E1F5EE" : "white",
-                        color: selectedBelt === belt ? "#0F6E56" : "#6b7280",
-                      }}
+                      className={`chip-toggle ${selectedBelt === belt ? "chip-toggle-active" : ""}`}
+                      style={{ borderLeftWidth: "4px", borderLeftColor: BELT_COLORS[belt] }}
                     >
                       {BELT_LABELS[belt]}
                     </button>
@@ -389,20 +355,20 @@ export default function CoachRegisterPage() {
 
               <div className="grid grid-cols-2 gap-4 mb-5">
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1.5">
-                    Affiliation <span className="font-normal text-gray-400">· optional</span>
+                  <label className="field-label">
+                    Affiliation <span className="font-normal text-label-tertiary">· optional</span>
                   </label>
                   <input
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+                    className="ios-field w-full"
                     placeholder="e.g. Alliance, Gracie Barra..."
                     value={affiliation}
                     onChange={(e) => setAffiliation(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1.5">Years teaching</label>
+                  <label className="field-label">Years teaching</label>
                   <select
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                    className="ios-field w-full"
                     value={yearsTeaching}
                     onChange={(e) => setYearsTeaching(Number(e.target.value))}
                   >
@@ -416,19 +382,14 @@ export default function CoachRegisterPage() {
               </div>
 
               <div className="mb-7">
-                <label className="block text-xs font-medium text-gray-500 mb-2">Specialties</label>
+                <label className="field-label">Specialties</label>
                 <div className="flex flex-wrap gap-2">
                   {SPECIALTIES.map((s) => (
                     <button
                       key={s}
                       type="button"
                       onClick={() => toggleSpec(s)}
-                      className="px-3.5 py-1.5 rounded-full text-xs border transition-all"
-                      style={{
-                        background: selectedSpecs.includes(s) ? "#E1F5EE" : "white",
-                        borderColor: selectedSpecs.includes(s) ? "#1D9E75" : "#e5e7eb",
-                        color: selectedSpecs.includes(s) ? "#0F6E56" : "#6b7280",
-                      }}
+                      className={`chip-toggle ${selectedSpecs.includes(s) ? "chip-toggle-active" : ""}`}
                     >
                       {s}
                     </button>
@@ -441,14 +402,14 @@ export default function CoachRegisterPage() {
           {/* Step 2 — Experience */}
           {step === 2 && (
             <>
-              <h1 className="text-lg font-medium mb-1">Teaching experience</h1>
-              <p className="text-sm text-gray-500 mb-7">
-                Upload your resume as a PDF, or add your coaching roles manually. Gyms use
-                this to evaluate your background before reaching out.
+              <h1 className="text-title-2 mb-1">Teaching experience</h1>
+              <p className="text-subheadline text-label-secondary mb-7">
+                Upload your resume as a PDF, or add your coaching roles manually. Gyms use this to
+                evaluate your background before reaching out.
               </p>
 
               <div className="mb-6">
-                <label className="block text-xs font-medium text-gray-500 mb-2">Resume (PDF)</label>
+                <label className="field-label">Resume (PDF)</label>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -461,16 +422,13 @@ export default function CoachRegisterPage() {
                 />
 
                 {resumeUrl ? (
-                  <div className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 bg-white">
-                    <div
-                      className="w-10 h-10 rounded-lg flex items-center justify-center"
-                      style={{ background: "#E1F5EE" }}
-                    >
-                      <FileText className="w-5 h-5" style={{ color: "#1D9E75" }} />
+                  <div className="flex items-center gap-3 p-4 rounded-ios ios-card">
+                    <div className="w-10 h-10 rounded-ios flex items-center justify-center bg-brand-light">
+                      <FileText className="w-5 h-5 text-brand" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium truncate">{resumeFileName}</div>
-                      <div className="text-xs text-gray-500">Resume uploaded</div>
+                      <div className="text-subheadline font-semibold truncate">{resumeFileName}</div>
+                      <div className="text-footnote text-label-secondary">Resume uploaded</div>
                     </div>
                     <button
                       type="button"
@@ -479,9 +437,9 @@ export default function CoachRegisterPage() {
                         setResumeFileName("");
                         if (fileInputRef.current) fileInputRef.current.value = "";
                       }}
-                      className="p-1.5 rounded-lg hover:bg-gray-100"
+                      className="p-1.5 rounded-ios hover:bg-fill-tertiary tap"
                     >
-                      <X className="w-4 h-4 text-gray-400" />
+                      <X className="w-4 h-4 text-label-tertiary" />
                     </button>
                   </div>
                 ) : (
@@ -489,10 +447,10 @@ export default function CoachRegisterPage() {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploadingResume}
-                    className="w-full flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-dashed border-gray-200 hover:border-green-400 transition-colors bg-white disabled:opacity-60"
+                    className="w-full flex flex-col items-center gap-2 p-6 rounded-ios border-2 border-dashed border-separator/40 hover:border-brand transition-colors ios-card disabled:opacity-60 tap"
                   >
-                    <Upload className="w-5 h-5 text-gray-400" />
-                    <span className="text-sm text-gray-600">
+                    <Upload className="w-5 h-5 text-label-tertiary" />
+                    <span className="text-subheadline text-label-secondary">
                       {uploadingResume ? "Uploading..." : "Click to upload your resume (PDF, max 5 MB)"}
                     </span>
                   </button>
@@ -502,16 +460,16 @@ export default function CoachRegisterPage() {
               {!resumeUrl && (
                 <>
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="flex-1 h-px bg-gray-200" />
-                    <span className="text-xs text-gray-400">or add experience manually</span>
-                    <div className="flex-1 h-px bg-gray-200" />
+                    <div className="flex-1 h-px bg-separator/40" />
+                    <span className="text-caption-1 text-label-tertiary">or add experience manually</span>
+                    <div className="flex-1 h-px bg-separator/40" />
                   </div>
 
                   <div className="space-y-4 mb-4">
                     {experiences.map((exp, index) => (
-                      <div key={index} className="p-4 rounded-xl border border-gray-200 bg-white">
+                      <div key={index} className="ios-card p-4">
                         <div className="flex items-center justify-between mb-3">
-                          <span className="text-xs font-medium text-gray-500">
+                          <span className="text-caption-1 font-semibold text-label-secondary">
                             Position {index + 1}
                           </span>
                           {experiences.length > 1 && (
@@ -520,7 +478,7 @@ export default function CoachRegisterPage() {
                               onClick={() =>
                                 setExperiences((prev) => prev.filter((_, i) => i !== index))
                               }
-                              className="text-xs text-gray-400 hover:text-red-600 flex items-center gap-1"
+                              className="text-caption-1 text-label-tertiary hover:text-red-500 flex items-center gap-1 tap"
                             >
                               <Trash2 className="w-3 h-3" /> Remove
                             </button>
@@ -529,18 +487,18 @@ export default function CoachRegisterPage() {
 
                         <div className="grid grid-cols-2 gap-3 mb-3">
                           <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">Position</label>
+                            <label className="field-label">Position</label>
                             <input
-                              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+                              className="ios-field w-full"
                               placeholder="e.g. Head Coach"
                               value={exp.position}
                               onChange={(e) => updateExperience(index, "position", e.target.value)}
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">Gym / organization</label>
+                            <label className="field-label">Gym / organization</label>
                             <input
-                              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+                              className="ios-field w-full"
                               placeholder="e.g. Alliance Dallas"
                               value={exp.organization}
                               onChange={(e) => updateExperience(index, "organization", e.target.value)}
@@ -549,9 +507,9 @@ export default function CoachRegisterPage() {
                         </div>
 
                         <div className="mb-3">
-                          <label className="block text-xs font-medium text-gray-500 mb-1">What you did</label>
+                          <label className="field-label">What you did</label>
                           <textarea
-                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400 resize-none"
+                            className="ios-field w-full resize-none"
                             rows={3}
                             placeholder="Classes taught, programs you ran, student growth, competition results..."
                             value={exp.description}
@@ -560,11 +518,11 @@ export default function CoachRegisterPage() {
                         </div>
 
                         <div className="mb-3">
-                          <label className="block text-xs font-medium text-gray-500 mb-1">
-                            Why you left <span className="font-normal text-gray-400">· optional</span>
+                          <label className="field-label">
+                            Why you left <span className="font-normal text-label-tertiary">· optional</span>
                           </label>
                           <input
-                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+                            className="ios-field w-full"
                             placeholder="e.g. Relocated, pursued competition full-time..."
                             value={exp.reasonLeft}
                             onChange={(e) => updateExperience(index, "reasonLeft", e.target.value)}
@@ -573,24 +531,24 @@ export default function CoachRegisterPage() {
 
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">From</label>
+                            <label className="field-label">From</label>
                             <input
                               type="month"
-                              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+                              className="ios-field w-full"
                               value={exp.startDate}
                               onChange={(e) => updateExperience(index, "startDate", e.target.value)}
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">To</label>
+                            <label className="field-label">To</label>
                             <input
                               type="month"
-                              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400 disabled:bg-gray-50"
+                              className="ios-field w-full disabled:opacity-50"
                               value={exp.endDate}
                               disabled={exp.isCurrent}
                               onChange={(e) => updateExperience(index, "endDate", e.target.value)}
                             />
-                            <label className="flex items-center gap-1.5 mt-2 text-xs text-gray-500">
+                            <label className="flex items-center gap-1.5 mt-2 text-caption-1 text-label-secondary">
                               <input
                                 type="checkbox"
                                 checked={exp.isCurrent}
@@ -610,8 +568,7 @@ export default function CoachRegisterPage() {
                   <button
                     type="button"
                     onClick={() => setExperiences((prev) => [...prev, emptyExperience()])}
-                    className="flex items-center gap-1.5 text-sm font-medium mb-6"
-                    style={{ color: "#1D9E75" }}
+                    className="flex items-center gap-1.5 text-subheadline font-semibold text-brand mb-6 tap"
                   >
                     <Plus className="w-4 h-4" /> Add another position
                   </button>
@@ -619,7 +576,7 @@ export default function CoachRegisterPage() {
               )}
 
               {resumeUrl && (
-                <p className="text-xs text-gray-500">
+                <p className="text-footnote text-label-secondary">
                   Your resume is all gyms need. You can continue to the next step.
                 </p>
               )}
@@ -629,24 +586,22 @@ export default function CoachRegisterPage() {
           {/* Step 3 — Preferences */}
           {step === 3 && (
             <>
-              <h1 className="text-lg font-medium mb-1">Job preferences</h1>
-              <p className="text-sm text-gray-500 mb-7">Where are you looking to coach?</p>
+              <h1 className="text-title-2 mb-1">Job preferences</h1>
+              <p className="text-subheadline text-label-secondary mb-7">Where are you looking to coach?</p>
 
               <div className="mb-7">
-                <label className="block text-xs font-medium text-gray-500 mb-1.5">Target city</label>
+                <label className="field-label">Target city</label>
                 <input
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+                  className="ios-field w-full"
                   placeholder="e.g. Miami, FL or Dallas, TX"
                   value={targetCity}
                   onChange={(e) => setTargetCity(e.target.value)}
                 />
               </div>
 
-              <div className="rounded-xl p-4 mb-6" style={{ background: "#E1F5EE" }}>
-                <div className="text-sm font-medium mb-1" style={{ color: "#0F6E56" }}>
-                  Profile summary
-                </div>
-                <div className="text-xs leading-relaxed" style={{ color: "#0F6E56" }}>
+              <div className="alert-brand mb-6">
+                <div className="text-subheadline font-semibold mb-1">Profile summary</div>
+                <div className="text-caption-1 leading-relaxed">
                   {firstName} {lastName} · {BELT_LABELS[selectedBelt]}
                   {resumeUrl ? " · Resume uploaded" : ` · ${experiences.filter((e) => e.position).length} experience entries`}
                 </div>
@@ -654,7 +609,7 @@ export default function CoachRegisterPage() {
             </>
           )}
 
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center justify-between pt-6 mt-6 border-t border-separator/30">
             {step > 1 ? (
               <button
                 type="button"
@@ -662,23 +617,18 @@ export default function CoachRegisterPage() {
                   setError("");
                   setStep(step - 1);
                 }}
-                className="text-sm px-5 py-2 border border-gray-200 rounded-lg text-gray-500"
+                className="btn-secondary text-sm !py-2 !px-4"
               >
                 ← Back
               </button>
             ) : (
-              <Link href="/" className="text-sm px-5 py-2 border border-gray-200 rounded-lg text-gray-500">
+              <Link href="/" className="btn-secondary text-sm !py-2 !px-4">
                 ← Back
               </Link>
             )}
 
             {step < 3 ? (
-              <button
-                type="button"
-                onClick={goNext}
-                className="text-sm font-medium text-white px-6 py-2 rounded-lg"
-                style={{ background: "#1D9E75" }}
-              >
+              <button type="button" onClick={goNext} className="btn-primary text-sm !py-2 !px-5">
                 Continue →
               </button>
             ) : (
@@ -686,8 +636,7 @@ export default function CoachRegisterPage() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={saving}
-                className="text-sm font-medium text-white px-6 py-2 rounded-lg disabled:opacity-60"
-                style={{ background: "#1D9E75" }}
+                className="btn-primary text-sm !py-2 !px-5 disabled:opacity-60"
               >
                 {saving ? "Creating profile..." : "Create profile →"}
               </button>

@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/apple-ios-macos-27-design-system-13b984b1-c4ab-4d69-96f9-2db734ea770d/tokens/colors.css">
+<link rel="stylesheet" href="_ds/apple-ios-macos-27-design-system-13b984b1-c4ab-4d69-96f9-2db734ea770d/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/apple-ios-macos-27-design-system-13b984b1-c4ab-4d69-96f9-2db734ea770d/tokens/typography.css">
+<link rel="stylesheet" href="_ds/apple-ios-macos-27-design-system-13b984b1-c4ab-4d69-96f9-2db734ea770d/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/apple-ios-macos-27-design-system-13b984b1-c4ab-4d69-96f9-2db734ea770d/tokens/materials.css">
+<link rel="stylesheet" href="_ds/apple-ios-macos-27-design-system-13b984b1-c4ab-4d69-96f9-2db734ea770d/tokens/motion.css">
+<link rel="stylesheet" href="_ds/apple-ios-macos-27-design-system-13b984b1-c4ab-4d69-96f9-2db734ea770d/styles.css">
+<script src="_ds/apple-ios-macos-27-design-system-13b984b1-c4ab-4d69-96f9-2db734ea770d/_ds_bundle.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--grouped-bg); }
+  .bjj-root { background: var(--grouped-bg); }
+  [data-accent="green"] { --tint: #1d9e75; --tint-pressed: #0f6e56; }
+  [data-accent="blue"] { --tint: var(--sys-blue); --tint-pressed: var(--tint-pressed); }
+  .bjj-root { min-height: 100vh; font-family: var(--font-system); color: var(--label); padding-top: 74px; -webkit-font-smoothing: antialiased; }
+  .ctrlbar { position: fixed; top: 11px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; align-items: center; gap: 14px; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding: 7px 14px; border-radius: 15px; max-width: calc(100vw - 20px); }
+  .ctrlbar::-webkit-scrollbar { height: 0; }
+  .ctrl-grp { flex: none; }
+  .ctrl-grp { display: flex; align-items: center; gap: 7px; }
+  .ctrl-lbl { font: 600 9px/1 var(--font-system); letter-spacing: .07em; text-transform: uppercase; color: var(--label-tertiary); }
+  .seg-wrap { display: flex; gap: 2px; padding: 2px; border-radius: 9px; background: var(--fill-tertiary); }
+  .stage { display: flex; justify-content: center; }
+  .device { width: 100%; max-width: 900px; }
+  .topnav { position: sticky; top: 62px; z-index: 60; display: flex; align-items: center; gap: 10px; padding: 11px 20px; margin: 0 16px; border-radius: 18px; }
+  .scroll { width: 100%; }
+  .col { width: 100%; max-width: 760px; margin: 0 auto; padding: 28px 24px 64px; }
+  .hidescroll::-webkit-scrollbar { width: 0; height: 0; }
+  .statusbar, .tabbar, .island { display: none; }
+
+  /* ---- MOBILE (iPhone frame) ---- */
+  .stage[data-mobile="true"] { padding: 36px 16px 56px; }
+  .stage[data-mobile="true"] .device { width: 393px; max-width: 393px; height: 852px; border-radius: 56px; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 0 0 13px #0b0b0d, 0 0 0 15px #2c2c2e, 0 30px 80px rgba(0,0,0,0.4); }
+  .stage[data-mobile="true"] .topnav { display: none; }
+  .stage[data-mobile="true"] .statusbar { display: flex; position: absolute; top: 0; left: 0; right: 0; height: 54px; z-index: 30; align-items: center; justify-content: space-between; padding: 0 32px 0 36px; }
+  .stage[data-mobile="true"] .island { display: block; position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 34px; background: #000; border-radius: 19px; z-index: 31; }
+  .stage[data-mobile="true"] .scroll { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; padding-top: 54px; padding-bottom: 112px; }
+  .stage[data-mobile="true"] .col { max-width: none; padding: 16px 18px 40px; }
+  .stage[data-mobile="true"] .tabbar { display: flex; position: absolute; left: 14px; right: 14px; bottom: 16px; height: 66px; z-index: 30; align-items: center; justify-content: space-around; padding: 0 6px; border-radius: 28px; }
+  .stage[data-mobile="true"] .home-ind { display: block; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: var(--label); opacity: .32; z-index: 31; }
+  .home-ind { display: none; }
+  .stage[data-mobile="true"] .desktop-only { display: none !important; }
+  .stage[data-mobile="true"] .featgrid { grid-template-columns: 1fr !important; }
+  @media (max-width: 560px) { .featgrid { grid-template-columns: 1fr !important; } }
+
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes popIn { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: none; } }
+  @keyframes heroFloat { 0%,100% { transform: scale(1.04) translateY(0); } 50% { transform: scale(1.07) translateY(-1.5%); } }
+  .tap { -webkit-tap-highlight-color: transparent; transition: transform .15s var(--ease-spring,cubic-bezier(0.34,1.56,0.64,1)), background .15s ease, border-color .15s ease, opacity .15s ease; cursor: pointer; }
+  .tap:active { transform: scale(.97); }
+  .lift { transition: transform .2s ease, box-shadow .2s ease; }
+  .lift:hover { transform: translateY(-2px); }
+</style>
+</helmet>
+
+<div class="bjj-root" data-theme="{{ theme }}" data-accent="{{ accent }}">
+
+  <!-- PROTOTYPE CONTROL BAR -->
+  <div class="ctrlbar lg-bar">
+    <div class="ctrl-grp">
+      <span class="ctrl-lbl">Mobile</span>
+      <div class="tap" style="{{ mobTrack }}" onClick="{{ onToggleMobile }}"><div style="{{ mobThumb }}"></div></div>
+    </div>
+    <div class="ctrl-grp">
+      <span class="ctrl-lbl">Theme</span>
+      <div class="seg-wrap"><sc-for list="{{ themeOpts }}" as="o" hint-placeholder-count="2"><button style="{{ o.style }}" onClick="{{ o.onClick }}">{{ o.label }}</button></sc-for></div>
+    </div>
+    <div class="ctrl-grp">
+      <span class="ctrl-lbl">Cover</span>
+      <div class="seg-wrap"><sc-for list="{{ coverOpts }}" as="o" hint-placeholder-count="2"><button style="{{ o.style }}" onClick="{{ o.onClick }}">{{ o.label }}</button></sc-for></div>
+    </div>
+    <div class="ctrl-grp">
+      <span class="ctrl-lbl">Accent</span>
+      <div class="seg-wrap"><sc-for list="{{ accentOpts }}" as="o" hint-placeholder-count="2"><button style="{{ o.style }}" onClick="{{ o.onClick }}">{{ o.label }}</button></sc-for></div>
+    </div>
+    <div class="ctrl-grp">
+      <span class="ctrl-lbl">Role</span>
+      <div class="seg-wrap"><sc-for list="{{ roleOpts }}" as="o" hint-placeholder-count="2"><button style="{{ o.style }}" onClick="{{ o.onClick }}">{{ o.label }}</button></sc-for></div>
+    </div>
+    <div class="ctrl-grp">
+      <span class="ctrl-lbl">Home</span>
+      <div class="seg-wrap"><sc-for list="{{ homeStyleOpts }}" as="o" hint-placeholder-count="3"><button style="{{ o.style }}" onClick="{{ o.onClick }}">{{ o.label }}</button></sc-for></div>
+    </div>
+  </div>
+
+  <div class="stage" data-mobile="{{ mobileAttr }}">
+    <div class="device">
+
+      <!-- iPhone status bar -->
+      <div class="island"></div>
+      <div class="statusbar">
+        <span style="font:600 15px/1 var(--font-system);color:var(--label);">9:41</span>
+        <span style="display:flex;align-items:center;gap:6px;color:var(--label);">
+          <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4.5" width="3" height="7.5" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" opacity=".4"/></svg>
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.5c2.3 0 4.4.9 6 2.4l1.4-1.5C13.9 1.5 11.3.4 8.5.4S3.1 1.5 1.1 3.4L2.5 4.9c1.6-1.5 3.7-2.4 6-2.4z"/><path d="M8.5 6.2c1.3 0 2.5.5 3.4 1.4l1.4-1.5c-1.3-1.3-3-2-4.8-2s-3.5.7-4.8 2l1.4 1.5c.9-.9 2.1-1.4 3.4-1.4z"/><circle cx="8.5" cy="10" r="1.6"/></svg>
+          <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="1" y="1" width="21" height="10" rx="3" stroke="currentColor" stroke-opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="1.5" height="4" rx=".75" fill="currentColor" fill-opacity=".4"/></svg>
+        </span>
+      </div>
+
+      <!-- DESKTOP top nav -->
+      <div class="topnav lg-bar desktop-only">
+        <div class="tap" onClick="{{ goHome }}" style="display:flex;align-items:center;gap:9px;margin-right:auto;">
+          <div style="width:30px;height:30px;border-radius:9px;background:var(--tint);display:flex;align-items:center;justify-content:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 L19.5 6 V11 C19.5 16 16.2 19.5 12 21 C7.8 19.5 4.5 16 4.5 11 V6 Z"/><path d="M9 12 l2.2 2.2 L15 9.6"/></svg>
+          </div>
+          <span style="font:700 18px/1 var(--font-display);letter-spacing:-.02em;">BJJ<span style="color:var(--tint);">Jobs</span></span>
+        </div>
+        <sc-for list="{{ navTabs }}" as="t" hint-placeholder-count="4"><button style="{{ t.style }}" onClick="{{ t.onClick }}">{{ t.label }}</button></sc-for>
+        <button class="tap" onClick="{{ goJobs }}" style="margin-left:8px;padding:9px 18px;border-radius:999px;border:none;background:var(--tint);color:#fff;font:600 14px/1 var(--font-system);cursor:pointer;">Get started</button>
+      </div>
+
+      <div class="scroll hidescroll">
+
+        <!-- ============ HOME ============ -->
+        <sc-if value="{{ scHome }}" hint-placeholder-val="{{ true }}">
+        <div data-screen-label="Home">
+
+          <!-- HOME A · Clean List -->
+          <sc-if value="{{ homeA }}" hint-placeholder-val="{{ false }}">
+          <div class="col" style="animation:popIn .4s ease both;">
+            <div style="font:600 13px/1 var(--font-system);color:var(--tint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">For coaches</div>
+            <h1 style="font:700 34px/1.05 var(--font-display);letter-spacing:-.02em;margin:0 0 10px;">Find your mat.</h1>
+            <p style="font:400 17px/1.45 var(--font-system);color:var(--label-secondary);margin:0 0 22px;max-width:30ch;">The job board built for Brazilian jiu-jitsu coaches and the gyms hiring them.</p>
+
+            <div class="tap" onClick="{{ goJobs }}" style="display:flex;align-items:center;gap:10px;background:var(--fill-tertiary);border-radius:14px;padding:13px 16px;margin-bottom:14px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--label-tertiary)" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.3"/><path d="M15.3 15.3 L20 20"/></svg>
+              <span style="font:400 16px/1 var(--font-system);color:var(--placeholder);">Search coaching jobs…</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:30px;">
+              <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+              <div style="background:var(--grouped-bg-secondary);border-radius:14px;padding:14px 8px;text-align:center;box-shadow:var(--shadow-1);">
+                <div style="font:700 20px/1 var(--font-display);">{{ s.n }}</div>
+                <div style="font:400 11px/1.2 var(--font-system);color:var(--label-secondary);margin-top:4px;">{{ s.l }}</div>
+              </div>
+              </sc-for>
+            </div>
+
+            <div style="font:600 13px/1 var(--font-system);color:var(--label-secondary);text-transform:uppercase;letter-spacing:.06em;margin:0 4px 8px;">Latest openings</div>
+            <div style="background:var(--grouped-bg-secondary);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-1);margin-bottom:30px;">
+              <sc-for list="{{ featuredJobs }}" as="job" hint-placeholder-count="4">
+              <div class="tap" onClick="{{ job.onOpen }}" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-bottom:0.5px solid var(--separator);">
+                <div style="width:46px;height:46px;border-radius:13px;background:{{ job.tile }};color:#fff;display:flex;align-items:center;justify-content:center;font:600 19px/1 var(--font-display);flex:none;">{{ job.initial }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font:600 16px/1.25 var(--font-system);">{{ job.title }}</div>
+                  <div style="font:400 13px/1.3 var(--font-system);color:var(--label-secondary);margin-top:2px;">{{ job.gym }} · {{ job.loc }}</div>
+                </div>
+                <div style="text-align:right;flex:none;">
+                  <div style="font:600 15px/1 var(--font-system);">{{ job.payShort }}</div>
+                  <div style="font:400 12px/1 var(--font-system);color:var(--label-tertiary);margin-top:4px;">{{ job.posted }}</div>
+                </div>
+                <svg width="9" height="15" viewBox="0 0 9 15" fill="none" stroke="var(--label-tertiary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M1.5 1.5 L7.5 7.5 L1.5 13.5"/></svg>
+              </div>
+              </sc-for>
+              <div class="tap" onClick="{{ goJobs }}" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;font:600 15px/1 var(--font-system);color:var(--tint);">View all jobs
+                <svg width="8" height="13" viewBox="0 0 9 15" fill="none" stroke="var(--tint)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 1.5 L7.5 7.5 L1.5 13.5"/></svg>
+              </div>
+            </div>
+
+            <div style="font:600 13px/1 var(--font-system);color:var(--label-secondary);text-transform:uppercase;letter-spacing:.06em;margin:0 4px 8px;">How it works</div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:30px;">
+              <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+              <div style="display:flex;gap:14px;background:var(--grouped-bg-secondary);border-radius:14px;padding:15px 16px;box-shadow:var(--shadow-1);">
+                <div style="font:700 15px/1 var(--font-display);color:var(--tint);flex:none;width:24px;">{{ s.n }}</div>
+                <div><div style="font:600 16px/1.2 var(--font-system);">{{ s.t }}</div><div style="font:400 14px/1.4 var(--font-system);color:var(--label-secondary);margin-top:3px;">{{ s.d }}</div></div>
+              </div>
+              </sc-for>
+            </div>
+
+            <div style="background:var(--tint);border-radius:22px;padding:28px;text-align:center;">
+              <h2 style="font:700 22px/1.15 var(--font-display);color:#fff;margin:0 0 6px;">Hiring a coach?</h2>
+              <p style="font:400 15px/1.4 var(--font-system);color:rgba(255,255,255,.82);margin:0 0 18px;">Post a listing free and reach 1,200+ verified coaches.</p>
+              <button class="tap" onClick="{{ goJobs }}" style="background:#fff;color:var(--tint);border:none;border-radius:999px;padding:12px 26px;font:600 15px/1 var(--font-system);cursor:pointer;">Post a job</button>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- HOME B · Liquid Hero -->
+          <sc-if value="{{ homeB }}" hint-placeholder-val="{{ false }}">
+          <div style="animation:popIn .4s ease both;">
+            <div class="col">
+              <div style="position:relative;overflow:hidden;border-radius:28px;padding:44px 34px 38px;margin-bottom:18px;box-shadow:var(--shadow-3);background:linear-gradient(152deg, color-mix(in srgb, var(--tint) 80%, #ffffff 12%) 0%, var(--tint) 36%, color-mix(in srgb, var(--tint) 46%, #000000 54%) 100%);">
+                <div aria-hidden="true" style="{{ heroCoverStyle }}"></div>
+                <div aria-hidden="true" style="{{ heroCoverShade }}"></div>
+                <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(72% 95% at 90% 4%, rgba(255,255,255,.30), transparent 55%), radial-gradient(60% 80% at 4% 106%, rgba(0,0,0,.30), transparent 60%);"></div>
+                <div style="position:relative;">
+                  <div style="display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.4);margin-bottom:18px;">
+                    <span style="width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 9px rgba(255,255,255,.95);"></span>
+                    <span style="font:600 12px/1 var(--font-system);color:#fff;">340 jobs open this week</span>
+                  </div>
+                  <h1 style="font:700 38px/1.05 var(--font-display);letter-spacing:-.025em;color:#fff;margin:0 0 12px;">Where BJJ coaches<br>get hired.</h1>
+                  <p style="font:400 16px/1.45 var(--font-system);color:rgba(255,255,255,.94);margin:0;max-width:34ch;">Browse competition, kids, and no-gi roles at academies across the country.</p>
+                </div>
+              </div>
+
+              <div class="tap" onClick="{{ goJobs }}" style="display:flex;align-items:center;gap:12px;padding:13px 16px;margin-bottom:28px;background:var(--grouped-bg-secondary);border-radius:16px;box-shadow:var(--shadow-2);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--label-secondary)" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.3"/><path d="M15.3 15.3 L20 20"/></svg>
+                <span style="font:400 16px/1 var(--font-system);color:var(--label-secondary);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Search by role, gym, or city…</span>
+                <span style="background:var(--tint);color:#fff;border-radius:999px;padding:9px 18px;font:600 14px/1 var(--font-system);">Search</span>
+              </div>
+
+              <div class="featgrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:30px;">
+                <sc-for list="{{ featuredJobs }}" as="job" hint-placeholder-count="4">
+                <div class="tap lift" onClick="{{ job.onOpen }}" style="background:var(--grouped-bg-secondary);border-radius:18px;padding:16px;box-shadow:var(--shadow-2);position:relative;">
+                  <div style="display:flex;align-items:center;gap:11px;margin-bottom:12px;">
+                    {{ job.coachNode }}
+                    <div style="min-width:0;flex:1;"><div style="font:600 15px/1.2 var(--font-system);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ job.title }}</div><div style="font:400 13px/1.2 var(--font-system);color:var(--label-secondary);margin-top:2px;">{{ job.gym }}</div></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px;">
+                    <span style="width:9px;height:9px;border-radius:50%;background:{{ job.beltColor }};flex:none;"></span>
+                    <span style="font:500 13px/1.3 var(--font-system);color:var(--label);">{{ job.beltLabel }} belt+ <span style="color:var(--label-secondary);font-weight:400;">· {{ job.loc }}</span></span>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font:700 16px/1 var(--font-display);">{{ job.payShort }}</span>
+                    <span style="font:500 11px/1 var(--font-system);color:var(--tint);background:var(--fill-tertiary);padding:5px 10px;border-radius:999px;">{{ job.typeLabel }}</span>
+                  </div>
+                </div>
+                </sc-for>
+              </div>
+
+              <div style="padding:20px;background:var(--grouped-bg-secondary);border-radius:18px;box-shadow:var(--shadow-1);margin-bottom:18px;">
+                <div style="font:600 12px/1 var(--font-system);color:var(--label-secondary);text-transform:uppercase;letter-spacing:.08em;text-align:center;margin-bottom:13px;">Gyms hiring now</div>
+                <div style="display:flex;align-items:center;gap:10px 24px;flex-wrap:wrap;justify-content:center;">
+                  <sc-for list="{{ featuredJobs }}" as="job" hint-placeholder-count="4"><span style="font:600 16px/1 var(--font-display);color:var(--label);">{{ job.gym }}</span></sc-for>
+                </div>
+              </div>
+
+              <div style="padding:28px;text-align:center;margin-bottom:8px;background:var(--grouped-bg-secondary);border-radius:22px;box-shadow:var(--shadow-2);">
+                <h2 style="font:700 22px/1.15 var(--font-display);margin:0 0 6px;">Two roles, one room.</h2>
+                <p style="font:400 15px/1.4 var(--font-system);color:var(--label-secondary);margin:0 0 18px;">Coaches find work. Gyms find talent. Free to start.</p>
+                <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+                  <button class="tap" onClick="{{ goJobs }}" style="background:var(--tint);color:#fff;border:none;border-radius:999px;padding:12px 24px;font:600 15px/1 var(--font-system);cursor:pointer;">Browse jobs</button>
+                  <button class="tap" onClick="{{ goProfile }}" style="background:var(--fill-tertiary);color:var(--label);border:none;border-radius:999px;padding:12px 24px;font:600 15px/1 var(--font-system);cursor:pointer;">Post a job</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- HOME C · Editorial -->
+          <sc-if value="{{ homeC }}" hint-placeholder-val="{{ false }}">
+          <div class="col" style="animation:popIn .4s ease both;">
+            <div style="display:flex;align-items:center;gap:8px;font:600 12px/1 var(--font-system);color:var(--label-tertiary);text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px;">
+              <span style="width:18px;height:2px;background:var(--tint);"></span>BJJJobs — est. 2025
+            </div>
+            <h1 style="font:800 46px/.98 var(--font-display);letter-spacing:-.035em;margin:0 0 18px;">The mat is<br>hiring.</h1>
+            <p style="font:400 17px/1.5 var(--font-system);color:var(--label-secondary);margin:0 0 22px;max-width:40ch;">A focused board for jiu-jitsu coaching work — competition teams, kids programs, no-gi rooms. No noise.</p>
+
+            <div style="display:flex;gap:10px;margin-bottom:26px;flex-wrap:wrap;">
+              <button class="tap" onClick="{{ goJobs }}" style="background:var(--label);color:var(--bg);border:none;border-radius:12px;padding:13px 22px;font:600 15px/1 var(--font-system);cursor:pointer;">Browse 340 jobs</button>
+              <button class="tap" onClick="{{ goProfile }}" style="background:transparent;color:var(--label);border:1.5px solid var(--separator);border-radius:12px;padding:13px 22px;font:600 15px/1 var(--font-system);cursor:pointer;">For gyms</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--separator);border-bottom:1px solid var(--separator);margin-bottom:30px;">
+              <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+              <div style="display:flex;align-items:baseline;gap:6px;"><span style="font:700 19px/1 var(--font-display);">{{ s.n }}</span><span style="font:400 13px/1 var(--font-system);color:var(--label-secondary);">{{ s.l }}</span></div>
+              </sc-for>
+            </div>
+
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin:0 0 4px;">
+              <h2 style="font:700 15px/1 var(--font-system);text-transform:uppercase;letter-spacing:.06em;margin:0;">Latest openings</h2>
+              <span class="tap" onClick="{{ goJobs }}" style="font:600 13px/1 var(--font-system);color:var(--tint);">All →</span>
+            </div>
+            <div>
+              <sc-for list="{{ featuredJobs }}" as="job" hint-placeholder-count="4">
+              <div class="tap" onClick="{{ job.onOpen }}" style="display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--separator);">
+                <div style="width:4px;height:42px;border-radius:2px;background:{{ job.beltColor }};flex:none;"></div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font:700 17px/1.2 var(--font-display);letter-spacing:-.01em;">{{ job.title }}</div>
+                  <div style="font:400 13px/1.3 var(--font-system);color:var(--label-secondary);margin-top:3px;">{{ job.gym }} — {{ job.loc }} · {{ job.typeLabel }}</div>
+                </div>
+                <div style="font:600 15px/1 var(--font-system);flex:none;">{{ job.payShort }}</div>
+              </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+
+        </div>
+        </sc-if>
+
+        <!-- ============ JOBS BROWSE ============ -->
+        <sc-if value="{{ scJobs }}" hint-placeholder-val="{{ false }}">
+        <div class="col" data-screen-label="Jobs" style="animation:popIn .35s ease both;">
+          <h1 style="font:700 30px/1.05 var(--font-display);letter-spacing:-.02em;margin:0 0 16px;">Browse jobs</h1>
+          <div style="display:flex;align-items:center;gap:10px;background:var(--fill-tertiary);border-radius:13px;padding:11px 14px;margin-bottom:10px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--label-tertiary)" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.3"/><path d="M15.3 15.3 L20 20"/></svg>
+            <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Role, gym, or style" style="flex:1;border:none;background:transparent;outline:none;font:400 16px/1 var(--font-system);color:var(--label);min-width:0;" />
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;background:var(--fill-tertiary);border-radius:13px;padding:11px 14px;margin-bottom:14px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--label-tertiary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4-4.2 6-7.6 6-10.5a6 6 0 1 0-12 0C6 13.4 8 16.8 12 21z"/><circle cx="12" cy="10.5" r="2.2"/></svg>
+            <input value="{{ city }}" onInput="{{ onCity }}" placeholder="Any city" style="flex:1;border:none;background:transparent;outline:none;font:400 16px/1 var(--font-system);color:var(--label);min-width:0;" />
+          </div>
+          <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:14px;margin-bottom:6px;" class="hidescroll">
+            <sc-for list="{{ beltOpts }}" as="b" hint-placeholder-count="6"><button style="{{ b.style }}" onClick="{{ b.onClick }}">{{ b.label }}</button></sc-for>
+          </div>
+          <div style="font:400 13px/1 var(--font-system);color:var(--label-secondary);margin:0 2px 12px;">{{ jobsCount }} open positions</div>
+
+          <sc-if value="{{ hasJobs }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <sc-for list="{{ jobsFiltered }}" as="job" hint-placeholder-count="5">
+            <div class="tap lift" onClick="{{ job.onOpen }}" style="display:flex;align-items:center;gap:14px;background:var(--grouped-bg-secondary);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow-1);">
+              <div style="width:48px;height:48px;border-radius:13px;background:{{ job.tile }};color:#fff;display:flex;align-items:center;justify-content:center;font:600 20px/1 var(--font-display);flex:none;">{{ job.initial }}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font:600 16px/1.25 var(--font-system);">{{ job.title }}</div>
+                <div style="font:400 13px/1.3 var(--font-system);color:var(--label-secondary);margin-top:2px;">{{ job.gym }} · {{ job.loc }}</div>
+                <div style="display:flex;align-items:center;gap:7px;margin-top:8px;flex-wrap:wrap;">
+                  <span style="display:inline-flex;align-items:center;gap:5px;font:500 11px/1 var(--font-system);color:var(--label-secondary);background:var(--fill-tertiary);padding:5px 9px;border-radius:999px;"><span style="width:7px;height:7px;border-radius:50%;background:{{ job.beltColor }};"></span>{{ job.beltLabel }}+</span>
+                  <span style="font:500 11px/1 var(--font-system);color:var(--tint);background:var(--fill-tertiary);padding:5px 9px;border-radius:999px;">{{ job.typeLabel }}</span>
+                </div>
+              </div>
+              <div style="text-align:right;flex:none;">
+                <div style="font:600 15px/1 var(--font-system);">{{ job.payShort }}</div>
+                <div style="font:400 12px/1 var(--font-system);color:var(--label-tertiary);margin-top:5px;">{{ job.posted }}</div>
+              </div>
+            </div>
+            </sc-for>
+          </div>
+          </sc-if>
+          <sc-if value="{{ appsEmpty }}" hint-placeholder-val="{{ false }}"></sc-if>
+          <sc-if value="{{ hasJobs }}" hint-placeholder-val="{{ true }}"></sc-if>
+        </div>
+        </sc-if>
+
+        <!-- ============ JOB DETAIL ============ -->
+        <sc-if value="{{ scJob }}" hint-placeholder-val="{{ false }}">
+        <div class="col" data-screen-label="Job Detail" style="animation:popIn .35s ease both;">
+          <div class="tap" onClick="{{ goJobs }}" style="display:inline-flex;align-items:center;gap:5px;font:500 15px/1 var(--font-system);color:var(--tint);margin-bottom:18px;">
+            <svg width="9" height="15" viewBox="0 0 9 15" fill="none" stroke="var(--tint)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 1.5 L1.5 7.5 L7.5 13.5"/></svg>Jobs
+          </div>
+
+          <div style="background:var(--grouped-bg-secondary);border-radius:22px;padding:22px;box-shadow:var(--shadow-2);margin-bottom:14px;">
+            <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;">
+              <div style="width:56px;height:56px;border-radius:16px;background:{{ selectedJob.tile }};color:#fff;display:flex;align-items:center;justify-content:center;font:600 24px/1 var(--font-display);flex:none;">{{ selectedJob.initial }}</div>
+              <div style="flex:1;min-width:0;">
+                <h1 style="font:700 22px/1.15 var(--font-display);letter-spacing:-.01em;margin:0 0 4px;">{{ selectedJob.title }}</h1>
+                <div style="font:400 14px/1.3 var(--font-system);color:var(--label-secondary);">{{ selectedJob.gym }} · {{ selectedJob.loc }}</div>
+              </div>
+              <div style="text-align:right;flex:none;"><div style="font:700 18px/1 var(--font-display);">{{ selectedJob.payShort }}</div></div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;">
+              <span style="font:600 12px/1 var(--font-system);color:var(--tint);background:var(--fill-tertiary);padding:7px 12px;border-radius:999px;">{{ selectedJob.typeLabel }}</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--font-system);color:var(--label-secondary);background:var(--fill-tertiary);padding:7px 12px;border-radius:999px;"><span style="width:8px;height:8px;border-radius:50%;background:{{ selectedJob.beltColor }};"></span>{{ selectedJob.beltLabel }} belt+</span>
+              <sc-for list="{{ selectedJob.styles }}" as="s" hint-placeholder-count="2"><span style="font:600 12px/1 var(--font-system);color:var(--label-secondary);background:var(--fill-tertiary);padding:7px 12px;border-radius:999px;">{{ s }}</span></sc-for>
+            </div>
+
+            <sc-if value="{{ selectedApplied }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--fill-tertiary);border-radius:14px;padding:14px;font:600 15px/1 var(--font-system);color:var(--sys-green);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sys-green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 L10 17.5 L19.5 6.5"/></svg>Application sent
+            </div>
+            </sc-if>
+            <sc-if value="{{ selectedApplied }}" hint-placeholder-val="{{ false }}"></sc-if>
+            <button class="tap" onClick="{{ openApply }}" style="width:100%;background:var(--tint);color:#fff;border:none;border-radius:14px;padding:15px;font:600 16px/1 var(--font-system);cursor:pointer;">Apply now</button>
+          </div>
+
+          <div style="background:var(--grouped-bg-secondary);border-radius:18px;padding:20px;box-shadow:var(--shadow-1);margin-bottom:14px;">
+            <h2 style="font:600 17px/1 var(--font-system);margin:0 0 12px;">About the role</h2>
+            <p style="font:400 15px/1.55 var(--font-system);color:var(--label-secondary);margin:0;">{{ selectedJob.desc }}</p>
+          </div>
+
+          <div style="background:var(--grouped-bg-secondary);border-radius:18px;padding:20px;box-shadow:var(--shadow-1);margin-bottom:14px;">
+            <h2 style="font:600 17px/1 var(--font-system);margin:0 0 14px;">Perks</h2>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <sc-for list="{{ selectedJob.perks }}" as="p" hint-placeholder-count="3">
+              <span style="display:inline-flex;align-items:center;gap:7px;font:500 14px/1 var(--font-system);color:var(--label);background:var(--fill-tertiary);padding:9px 14px;border-radius:999px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--tint)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 L10 17.5 L19.5 6.5"/></svg>{{ p }}
+              </span>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background:var(--grouped-bg-secondary);border-radius:18px;padding:20px;box-shadow:var(--shadow-1);">
+            <h2 style="font:600 17px/1 var(--font-system);margin:0 0 12px;">About {{ selectedJob.gym }}</h2>
+            <p style="font:400 15px/1.55 var(--font-system);color:var(--label-secondary);margin:0;">{{ selectedJob.gymDesc }}</p>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ APPLICATIONS ============ -->
+        <sc-if value="{{ scApps }}" hint-placeholder-val="{{ false }}">
+        <div class="col" data-screen-label="Applications" style="animation:popIn .35s ease both;">
+          <h1 style="font:700 30px/1.05 var(--font-display);letter-spacing:-.02em;margin:0 0 6px;">Applications</h1>
+          <p style="font:400 15px/1.4 var(--font-system);color:var(--label-secondary);margin:0 0 20px;">Track every gym you’ve applied to.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <sc-for list="{{ applications }}" as="job" hint-placeholder-count="3">
+            <div class="tap lift" onClick="{{ job.onOpen }}" style="display:flex;align-items:center;gap:14px;background:var(--grouped-bg-secondary);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow-1);">
+              <div style="width:46px;height:46px;border-radius:13px;background:{{ job.tile }};color:#fff;display:flex;align-items:center;justify-content:center;font:600 19px/1 var(--font-display);flex:none;">{{ job.initial }}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font:600 16px/1.25 var(--font-system);">{{ job.title }}</div>
+                <div style="font:400 13px/1.3 var(--font-system);color:var(--label-secondary);margin-top:2px;">{{ job.gym }} · {{ job.loc }}</div>
+              </div>
+              <span style="font:600 12px/1 var(--font-system);color:{{ job.statusColor }};background:{{ job.statusBg }};padding:7px 12px;border-radius:999px;flex:none;">{{ job.statusLabel }}</span>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ COACH PROFILE ============ -->
+        <sc-if value="{{ scProfile }}" hint-placeholder-val="{{ false }}">
+        <div class="col" data-screen-label="Profile" style="animation:popIn .35s ease both;">
+          <div style="background:var(--grouped-bg-secondary);border-radius:22px;padding:22px;box-shadow:var(--shadow-2);margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;">
+              {{ profile.avatarNode }}
+              <div style="flex:1;min-width:0;">
+                <h1 style="font:700 23px/1.1 var(--font-display);margin:0 0 6px;">{{ profile.name }}</h1>
+                <div style="display:inline-flex;align-items:center;gap:7px;background:var(--fill-tertiary);padding:5px 11px;border-radius:999px;">
+                  <span style="width:9px;height:9px;border-radius:50%;background:{{ profile.beltColor }};"></span>
+                  <span style="font:600 12px/1 var(--font-system);color:var(--label-secondary);">{{ profile.beltLabel }} belt · {{ profile.loc }}</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
+              <sc-for list="{{ profile.specialties }}" as="s" hint-placeholder-count="4"><span style="font:600 12px/1 var(--font-system);color:var(--tint);background:var(--fill-tertiary);padding:7px 13px;border-radius:999px;">{{ s }}</span></sc-for>
+            </div>
+            <button class="tap" style="width:100%;background:var(--fill-tertiary);color:var(--label);border:none;border-radius:13px;padding:13px;font:600 15px/1 var(--font-system);cursor:pointer;">Edit profile</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+            <sc-for list="{{ profile.record }}" as="r" hint-placeholder-count="3">
+            <div style="background:var(--grouped-bg-secondary);border-radius:14px;padding:16px 8px;text-align:center;box-shadow:var(--shadow-1);">
+              <div style="font:700 22px/1 var(--font-display);">{{ r.value }}</div>
+              <div style="font:400 11px/1.2 var(--font-system);color:var(--label-secondary);margin-top:5px;">{{ r.label }}</div>
+            </div>
+            </sc-for>
+          </div>
+
+          <div style="background:var(--grouped-bg-secondary);border-radius:18px;padding:20px;box-shadow:var(--shadow-1);margin-bottom:14px;">
+            <h2 style="font:600 17px/1 var(--font-system);margin:0 0 10px;">Bio</h2>
+            <p style="font:400 15px/1.55 var(--font-system);color:var(--label-secondary);margin:0;">{{ profile.bio }}</p>
+          </div>
+
+          <div style="background:var(--grouped-bg-secondary);border-radius:18px;padding:20px;box-shadow:var(--shadow-1);">
+            <h2 style="font:600 17px/1 var(--font-system);margin:0 0 16px;">Coaching experience</h2>
+            <div style="display:flex;flex-direction:column;gap:18px;">
+              <sc-for list="{{ profile.experience }}" as="e" hint-placeholder-count="2">
+              <div style="display:flex;gap:13px;">
+                <div style="width:9px;height:9px;border-radius:50%;background:var(--tint);margin-top:6px;flex:none;"></div>
+                <div style="flex:1;">
+                  <div style="font:600 16px/1.2 var(--font-system);">{{ e.role }}</div>
+                  <div style="font:400 13px/1.3 var(--font-system);color:var(--tint);margin-top:2px;">{{ e.org }}</div>
+                  <div style="font:400 12px/1.3 var(--font-system);color:var(--label-tertiary);margin-top:2px;">{{ e.dates }}</div>
+                  <div style="font:400 14px/1.45 var(--font-system);color:var(--label-secondary);margin-top:6px;">{{ e.desc }}</div>
+                </div>
+              </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ GYM DASHBOARD ============ -->
+        <sc-if value="{{ scDash }}" hint-placeholder-val="{{ false }}">
+        <div class="col" data-screen-label="Dashboard" style="animation:popIn .35s ease both;">
+          <div style="background:var(--grouped-bg-secondary);border-radius:22px;padding:22px;box-shadow:var(--shadow-2);margin-bottom:14px;">
+            <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;">
+              <div style="width:58px;height:58px;border-radius:16px;background:var(--sys-green);color:#fff;display:flex;align-items:center;justify-content:center;font:600 26px/1 var(--font-display);flex:none;">{{ gym.initial }}</div>
+              <div style="flex:1;min-width:0;">
+                <h1 style="font:700 22px/1.1 var(--font-display);margin:0 0 4px;">{{ gym.name }}</h1>
+                <div style="font:400 14px/1.3 var(--font-system);color:var(--label-secondary);">{{ gym.loc }} · {{ gym.affiliation }}</div>
+                <div style="font:500 13px/1.3 var(--font-system);color:var(--tint);margin-top:3px;">{{ gym.website }}</div>
+              </div>
+            </div>
+            <p style="font:400 14px/1.5 var(--font-system);color:var(--label-secondary);margin:0;">{{ gym.desc }}</p>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;">
+            <sc-for list="{{ dashStats }}" as="s" hint-placeholder-count="3">
+            <div style="background:var(--grouped-bg-secondary);border-radius:14px;padding:16px 8px;text-align:center;box-shadow:var(--shadow-1);">
+              <div style="font:700 24px/1 var(--font-display);">{{ s.v }}</div>
+              <div style="font:400 11px/1.2 var(--font-system);color:var(--label-secondary);margin-top:5px;">{{ s.l }}</div>
+            </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin:0 2px 12px;">
+            <h2 style="font:600 17px/1 var(--font-system);margin:0;">Your listings</h2>
+            <button class="tap" style="display:inline-flex;align-items:center;gap:5px;background:var(--tint);color:#fff;border:none;border-radius:999px;padding:8px 14px;font:600 13px/1 var(--font-system);cursor:pointer;"><span style="font-size:16px;line-height:1;">+</span>Post a job</button>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <sc-for list="{{ listings }}" as="L" hint-placeholder-count="3">
+            <div style="background:var(--grouped-bg-secondary);border-radius:16px;box-shadow:var(--shadow-1);overflow:hidden;">
+              <div style="display:flex;align-items:center;gap:13px;padding:15px 16px;">
+                <div style="width:42px;height:42px;border-radius:12px;background:var(--fill-tertiary);display:flex;align-items:center;justify-content:center;flex:none;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--label-secondary)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8 7 V5.5 A1.5 1.5 0 0 1 9.5 4 H14.5 A1.5 1.5 0 0 1 16 5.5 V7"/></svg>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font:600 16px/1.2 var(--font-system);">{{ L.title }}</div>
+                  <div style="font:400 13px/1.3 var(--font-system);color:var(--label-secondary);margin-top:2px;">{{ L.loc }} · {{ L.typeLabel }} · {{ L.count }} applicants</div>
+                </div>
+                <div class="tap" style="{{ L.switchTrack }}" onClick="{{ L.onToggle }}"><div style="{{ L.switchThumb }}"></div></div>
+              </div>
+              <sc-if value="{{ L.hasApplicants }}" hint-placeholder-val="{{ true }}">
+              <div class="tap" onClick="{{ L.onExpand }}" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:11px;border-top:0.5px solid var(--separator);font:600 13px/1 var(--font-system);color:var(--tint);">{{ L.statusText }} · View applicants</div>
+              <sc-if value="{{ L.expanded }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--grouped-bg);padding:12px;display:flex;flex-direction:column;gap:10px;">
+                <sc-for list="{{ L.applicants }}" as="p" hint-placeholder-count="2">
+                <div style="background:var(--grouped-bg-secondary);border-radius:14px;padding:14px;box-shadow:var(--shadow-1);">
+                  <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+                    {{ p.avatarNode }}
+                    <div style="flex:1;min-width:0;">
+                      <div style="font:600 15px/1.2 var(--font-system);">{{ p.name }}</div>
+                      <div style="display:inline-flex;align-items:center;gap:6px;margin-top:3px;"><span style="width:8px;height:8px;border-radius:50%;background:{{ p.beltColor }};"></span><span style="font:400 12px/1 var(--font-system);color:var(--label-secondary);">{{ p.beltLabel }} belt · {{ p.loc }}</span></div>
+                    </div>
+                    <span style="font:600 11px/1 var(--font-system);color:{{ p.statusColor }};background:{{ p.statusBg }};padding:6px 10px;border-radius:999px;flex:none;">{{ p.statusLabel }}</span>
+                  </div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+                    <sc-for list="{{ p.styles }}" as="s" hint-placeholder-count="2"><span style="font:500 11px/1 var(--font-system);color:var(--label-secondary);background:var(--fill-tertiary);padding:5px 9px;border-radius:999px;">{{ s }}</span></sc-for>
+                  </div>
+                  <p style="font:400 14px/1.5 var(--font-system);color:var(--label-secondary);margin:0 0 12px;">{{ p.msg }}</p>
+                  <div style="display:flex;gap:8px;">
+                    <button class="tap" onClick="{{ p.onShortlist }}" style="flex:1;background:var(--tint);color:#fff;border:none;border-radius:11px;padding:11px;font:600 14px/1 var(--font-system);cursor:pointer;">Shortlist</button>
+                    <button class="tap" onClick="{{ p.onDecline }}" style="flex:1;background:var(--fill-tertiary);color:var(--label-secondary);border:none;border-radius:11px;padding:11px;font:600 14px/1 var(--font-system);cursor:pointer;">Decline</button>
+                  </div>
+                </div>
+                </sc-for>
+              </div>
+              </sc-if>
+              </sc-if>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+      </div>
+
+      <!-- iPhone tab bar -->
+      <div class="tabbar lg-bar">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+        <div class="tap" onClick="{{ t.onClick }}" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:6px 0;">
+          <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ t.sw }}" stroke-linecap="round" stroke-linejoin="round" style="{{ t.iconStyle }}">
+            <sc-for list="{{ t.paths }}" as="p" hint-placeholder-count="2"><path d="{{ p.d }}"></path></sc-for>
+          </svg>
+          <span style="{{ t.labelStyle }}">{{ t.label }}</span>
+        </div>
+        </sc-for>
+      </div>
+
+      <div class="home-ind"></div>
+    </div>
+  </div>
+
+  <!-- APPLY SHEET -->
+  <sc-if value="{{ applyOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:300;display:flex;align-items:flex-end;justify-content:center;">
+    <div onClick="{{ closeApply }}" style="position:absolute;inset:0;background:rgba(0,0,0,.4);animation:fadeIn .25s ease;"></div>
+    <div class="glass-thick" style="position:relative;width:100%;max-width:480px;border-radius:28px 28px 0 0;padding:24px 22px 30px;animation:sheetUp .35s var(--ease-spring,cubic-bezier(0.34,1.4,0.5,1)) both;background:var(--grouped-bg-secondary);">
+      <div style="width:38px;height:5px;border-radius:3px;background:var(--separator);margin:0 auto 18px;"></div>
+      <h2 style="font:700 21px/1.15 var(--font-display);margin:0 0 4px;">Apply to {{ selectedJob.title }}</h2>
+      <p style="font:400 14px/1.4 var(--font-system);color:var(--label-secondary);margin:0 0 16px;">{{ selectedJob.gym }} · {{ selectedJob.loc }}</p>
+      <div style="font:600 13px/1 var(--font-system);color:var(--label-secondary);margin:0 0 8px;">Add a message (optional)</div>
+      <textarea value="{{ applyMsg }}" onInput="{{ onApplyMsg }}" placeholder="Tell the gym about your coaching style and experience…" style="width:100%;min-height:110px;border:none;background:var(--fill-tertiary);border-radius:14px;padding:14px;font:400 15px/1.5 var(--font-system);color:var(--label);outline:none;resize:none;margin-bottom:16px;box-sizing:border-box;"></textarea>
+      <div style="display:flex;gap:10px;">
+        <button class="tap" onClick="{{ closeApply }}" style="flex:none;background:var(--fill-tertiary);color:var(--label);border:none;border-radius:13px;padding:14px 20px;font:600 15px/1 var(--font-system);cursor:pointer;">Cancel</button>
+        <button class="tap" onClick="{{ submitApply }}" style="flex:1;background:var(--tint);color:#fff;border:none;border-radius:13px;padding:14px;font:600 15px/1 var(--font-system);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 L10.5 13.5"/><path d="M21 3 L14 21 L10.5 13.5 L3 10 Z"/></svg>Send application
+        </button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    screen: 'home', homeStyle: 'B', accent: 'green', theme: 'light',
+    mobile: false, role: 'coach', cover: 'cover1',
+    query: '', city: '', beltRank: 99,
+    selectedJobId: null, applyOpen: false, applyMsg: '', applyError: '',
+    applied: {}, appStatuses: {}, expanded: { l1: true },
+    listingActive: { l1: true, l2: true, l3: false },
+  };
+
+  A = '_ds/apple-ios-macos-27-design-system-13b984b1-c4ab-4d69-96f9-2db734ea770d/assets/';
+
+  BELTS = {
+    WHITE: { c: '#9b9ba0', l: 'White', r: 0 },
+    BLUE:  { c: '#2f6fd0', l: 'Blue',  r: 1 },
+    PURPLE:{ c: '#8b5cf6', l: 'Purple',r: 2 },
+    BROWN: { c: '#7a4a25', l: 'Brown', r: 3 },
+    BLACK: { c: '#1a1a1a', l: 'Black', r: 4 },
+  };
+  TYPEL = { FULL_TIME: 'Full-time', PART_TIME: 'Part-time', CONTRACT: 'Contract', REVENUE_SHARE: 'Revenue share' };
+
+  JOBS = [
+    { id:'1', title:'Head BJJ Coach', gym:'Alliance Jiu-Jitsu', loc:'Miami, FL', type:'FULL_TIME', minBelt:'BLACK', payShort:'$4,500/mo', payRange:'$4,500 – $5,500 / mo', posted:'2 days ago', featured:true, tile:'var(--sys-green)', initial:'A', styles:['Gi','Competition'],
+      desc:'Lead our adult competition program and own the technical curriculum across gi and no-gi. You’ll run 4–5 classes a week, build seasonal camps, and mentor our assistant instructors.', perks:['Health stipend','Competition travel','Family membership','Mat space for privates'], gymDesc:'One of Miami’s largest competition academies — 4,000 sq ft of mat, 600+ members, and a thriving kids program.' },
+    { id:'2', title:'Kids Program Instructor', gym:'Gracie Barra', loc:'Austin, TX', type:'PART_TIME', minBelt:'PURPLE', payShort:'$28/hr', payRange:'$28 – $34 / hr', posted:'4 days ago', featured:false, tile:'var(--sys-blue)', initial:'G', styles:['Gi','Kids'],
+      desc:'Run our after-school and Little Champions classes. We’re looking for someone patient, structured, and great with parents.', perks:['Free membership','Flexible hours','Belt promotions covered'], gymDesc:'A welcoming family academy in north Austin focused on fundamentals and youth development.' },
+    { id:'3', title:'Competition Team Coach', gym:'10th Planet', loc:'Los Angeles, CA', type:'FULL_TIME', minBelt:'BROWN', payShort:'$5,200/mo', payRange:'$5,200 – $6,000 / mo', posted:'1 day ago', featured:true, tile:'var(--sys-indigo)', initial:'X', styles:['No-Gi','Competition'],
+      desc:'Build and lead our no-gi competition team. Design game plans, run open mats, and travel to ADCC trials and EBI events with athletes.', perks:['Performance bonus','Travel covered','Seminar revenue share'], gymDesc:'The original no-gi system. High-paced rooms, leg-lock heavy, competition-first culture.' },
+    { id:'4', title:'No-Gi Fundamentals Coach', gym:'Atos Jiu-Jitsu', loc:'San Diego, CA', type:'PART_TIME', minBelt:'BROWN', payShort:'$32/hr', payRange:'$32 – $38 / hr', posted:'5 days ago', featured:false, tile:'var(--sys-teal)', initial:'A', styles:['No-Gi'],
+      desc:'Teach our beginner and intermediate no-gi curriculum three evenings a week. Strong fundamentals and clear communication required.', perks:['Free membership','Privates revenue split'], gymDesc:'A technical, systems-driven academy under one of the sport’s most decorated competitors.' },
+    { id:'5', title:'Assistant Instructor', gym:'Checkmat', loc:'Houston, TX', type:'CONTRACT', minBelt:'PURPLE', payShort:'$25/hr', payRange:'$25 / hr', posted:'1 week ago', featured:false, tile:'var(--sys-orange)', initial:'C', styles:['Gi'],
+      desc:'Support our head coach across evening adult classes. Help with warm-ups, drilling rounds, and new-student onboarding.', perks:['Free membership','Path to head-coach role'], gymDesc:'A tight-knit competition gym with a strong adult fundamentals pipeline.' },
+    { id:'6', title:'Women’s Class Lead', gym:'Unity Jiu-Jitsu', loc:'New York, NY', type:'PART_TIME', minBelt:'BROWN', payShort:'$35/hr', payRange:'$35 – $40 / hr', posted:'3 days ago', featured:false, tile:'var(--sys-pink)', initial:'U', styles:['Gi','Women'],
+      desc:'Own our growing women’s program — two classes a week plus monthly workshops. Help us build the most supportive room in the city.', perks:['Free membership','Workshop revenue share','Flexible schedule'], gymDesc:'A modern Manhattan academy known for its inclusive culture and clean facility.' },
+    { id:'7', title:'Morning Open Mat Coach', gym:'B-Team', loc:'Austin, TX', type:'REVENUE_SHARE', minBelt:'BLACK', payShort:'Revenue share', payRange:'Revenue share', posted:'6 days ago', featured:false, tile:'var(--sys-brown)', initial:'B', styles:['No-Gi'],
+      desc:'Lead 7am open mats and a weekly advanced no-gi class. Ideal for a competitor who wants mat time and a slice of the membership.', perks:['Revenue share','Full gym access','Coaching credit'], gymDesc:'A competitor-owned no-gi room built around hard training and a tight team.' },
+    { id:'8', title:'Youth Competition Coach', gym:'Tarsis Academy', loc:'Chicago, IL', type:'FULL_TIME', minBelt:'BLACK', payShort:'$4,200/mo', payRange:'$4,200 – $4,800 / mo', posted:'1 week ago', featured:false, tile:'var(--sys-cyan)', initial:'T', styles:['Gi','Kids','Competition'],
+      desc:'Develop our youth competition team from white to blue belt. Run technical classes, manage tournament registration, and coach mat-side.', perks:['Health stipend','Tournament travel','Free family membership'], gymDesc:'A championship-producing academy with one of the Midwest’s strongest kids programs.' },
+  ];
+
+  STATS = [ {n:'340+',l:'Open positions'}, {n:'180+',l:'Gyms hiring'}, {n:'1,200+',l:'Coaches'}, {n:'42',l:'States'} ];
+  STEPS = [
+    {n:'01',t:'Build your profile',d:'Add your belt, specialties, and competition record in minutes.'},
+    {n:'02',t:'Browse & apply',d:'Filter open positions by city and belt, then apply with one tap.'},
+    {n:'03',t:'Get hired',d:'Gyms message you directly. Track every application in one place.'},
+  ];
+
+  BASE_APPS = [ {jobId:'1', status:'SHORTLISTED'}, {jobId:'4', status:'PENDING'}, {jobId:'5', status:'DECLINED'} ];
+  APP_STATUS = {
+    PENDING:    {l:'Pending',     c:'var(--sys-orange)', bg:'rgba(255,149,0,0.14)'},
+    SHORTLISTED:{l:'Shortlisted', c:'var(--sys-green)',  bg:'rgba(52,199,89,0.16)'},
+    DECLINED:   {l:'Not selected',c:'var(--sys-gray)',   bg:'var(--fill-tertiary)'},
+  };
+  APPLICANT_STATUS = {
+    NEW:        {l:'New',         c:'var(--sys-blue)',  bg:'rgba(0,122,255,0.14)'},
+    SHORTLISTED:{l:'Shortlisted', c:'var(--sys-green)', bg:'rgba(52,199,89,0.16)'},
+    DECLINED:   {l:'Declined',    c:'var(--sys-gray)',  bg:'var(--fill-tertiary)'},
+  };
+
+  GYM = { name:'Alliance Jiu-Jitsu', loc:'Miami, FL', affiliation:'Alliance', initial:'A', website:'alliancemiami.com',
+    desc:'One of Miami’s largest competition academies. 4,000 sq ft of mat space, 600+ active members, and a thriving kids program.' };
+
+  LISTINGS = [
+    { id:'l1', title:'Head BJJ Coach', loc:'Miami, FL', type:'FULL_TIME', applicants:[
+      { id:'a1', name:'Marcus Silva', belt:'BLACK', loc:'Miami, FL', styles:['Gi','Competition'], av:'assets/trainers/trainer1.png', msg:'15 years on the mats and a 3× IBJJF Masters medalist. I run structured competition camps and love building team culture.' },
+      { id:'a2', name:'Bruno Costa', belt:'BROWN', loc:'Fort Lauderdale, FL', styles:['Gi','Kids'], av:'assets/trainers/trainer2.png', msg:'I specialize in kids and beginner programs — patient, structured, and great with parents.' },
+    ]},
+    { id:'l2', title:'Kids Program Assistant', loc:'Miami, FL', type:'PART_TIME', applicants:[
+      { id:'a3', name:'Diego Reyes', belt:'PURPLE', loc:'Miami, FL', styles:['Kids','Gi'], av:'assets/trainers/trainer3.png', msg:'Former schoolteacher, purple belt under Alliance. Kids love my classes and parents trust me.' },
+    ]},
+    { id:'l3', title:'Front Desk / Intro Coach', loc:'Miami, FL', type:'CONTRACT', applicants:[] },
+  ];
+
+  PROFILE = {
+    name:'Rafael Mendes', belt:'BLACK', loc:'Miami, FL', av:'assets/trainers/trainer4.png',
+    tagline:'Black belt · 12 years coaching',
+    specialties:['Gi','No-Gi','Competition','Kids'],
+    bio:'Black belt under Alliance with over a decade running competition and fundamentals programs. I build technical, repeatable curriculums and develop coaches as well as athletes.',
+    record:[ {label:'Years coaching', value:'12'}, {label:'Rank', value:'Black'}, {label:'IBJJF medals', value:'7'} ],
+    experience:[
+      { role:'Head Coach', org:'Gracie Barra Brickell', dates:'Mar 2019 – Present', desc:'Lead the adult competition team and own the fundamentals curriculum.' },
+      { role:'Assistant Instructor', org:'Alliance Miami', dates:'Jun 2015 – Feb 2019', desc:'Coached no-gi and kids classes; built the after-school program from scratch.' },
+    ],
+  };
+
+  // ---- handlers ----
+  go = (k) => this.setState({ screen: k });
+  openJob = (id) => this.setState({ screen: 'job', selectedJobId: id, applyOpen: false, applyError: '' });
+  openApply = () => this.setState({ applyOpen: true, applyMsg: '', applyError: '' });
+  closeApply = () => this.setState({ applyOpen: false });
+  onApplyMsg = (e) => this.setState({ applyMsg: e.target.value });
+  submitApply = () => {
+    const id = this.state.selectedJobId;
+    this.setState({ applied: { ...this.state.applied, [id]: true }, applyOpen: false });
+  };
+  onQuery = (e) => this.setState({ query: e.target.value });
+  onCity = (e) => this.setState({ city: e.target.value });
+  setBelt = (r) => this.setState({ beltRank: r });
+  setHomeStyle = (k) => this.setState({ homeStyle: k });
+  setAccent = (k) => this.setState({ accent: k });
+  setTheme = (k) => this.setState({ theme: k });
+  setCover = (k) => this.setState({ cover: k });
+  toggleMobile = () => this.setState({ mobile: !this.state.mobile });
+  setRole = (k) => {
+    let s = this.state.screen;
+    if (k === 'gym' && (s === 'applications')) s = 'dashboard';
+    if (k === 'coach' && (s === 'dashboard')) s = 'applications';
+    this.setState({ role: k, screen: s });
+  };
+  toggleListing = (id) => this.setState({ listingActive: { ...this.state.listingActive, [id]: !this.state.listingActive[id] } });
+  toggleExpand = (id) => this.setState({ expanded: { ...this.state.expanded, [id]: !this.state.expanded[id] } });
+  setApplicant = (id, status) => this.setState({ appStatuses: { ...this.state.appStatuses, [id]: status } });
+
+  SEG_ON = 'flex:1;text-align:center;padding:5px 10px;border-radius:7px;font:600 12px/1.4 var(--font-system);cursor:pointer;background:var(--bg);color:var(--label);box-shadow:0 1px 3px rgba(0,0,0,0.14);transition:all .2s;border:none;white-space:nowrap;';
+  SEG_OFF = 'flex:1;text-align:center;padding:5px 10px;border-radius:7px;font:500 12px/1.4 var(--font-system);cursor:pointer;background:transparent;color:var(--label-secondary);transition:all .2s;border:none;white-space:nowrap;';
+  seg(cur, opts, set) {
+    return opts.map(o => ({ label: o.label, onClick: () => set(o.k), style: o.k === cur ? this.SEG_ON : this.SEG_OFF }));
+  }
+
+  deco(j) {
+    const b = this.BELTS[j.minBelt];
+    const photos = ['assets/trainers/trainer1.png','assets/trainers/trainer2.png','assets/trainers/trainer3.png','assets/trainers/trainer4.png'];
+    const coachAv = photos[(parseInt(j.id, 10) - 1) % 4];
+    const coachNode = React.createElement('img', { src: coachAv, alt: '', style: { width: 57, height: 57, borderRadius: '50%', objectFit: 'cover', flex: 'none', boxShadow: 'inset 0 0 0 .5px rgba(0,0,0,.08)' } });
+    return { ...j, tile: 'linear-gradient(155deg, #5a606a 0%, #34383f 100%)', coachAv, coachNode, beltColor: b.c, beltLabel: b.l, typeLabel: this.TYPEL[j.type], applied: !!this.state.applied[j.id], onOpen: () => this.openJob(j.id) };
+  }
+
+  renderVals() {
+    const st = this.state;
+    const tint = st.accent === 'green' ? 'var(--sys-green)' : 'var(--sys-blue)';
+
+    // filtering
+    const q = st.query.trim().toLowerCase();
+    const city = st.city.trim().toLowerCase();
+    const filtered = this.JOBS.filter(j => {
+      if (q && !(j.title.toLowerCase().includes(q) || j.gym.toLowerCase().includes(q) || j.styles.join(' ').toLowerCase().includes(q))) return false;
+      if (city && !j.loc.toLowerCase().includes(city)) return false;
+      if (this.BELTS[j.minBelt].r > st.beltRank) return false;
+      return true;
+    }).map(j => this.deco(j));
+
+    const featured = this.JOBS.slice(0, 4).map(j => this.deco(j));
+    const selectedJob = st.selectedJobId ? this.deco(this.JOBS.find(j => j.id === st.selectedJobId)) : { styles: [], perks: [], record: [] };
+
+    // applications (coach)
+    const appMap = {};
+    this.BASE_APPS.forEach(a => appMap[a.jobId] = a.status);
+    Object.keys(st.applied).forEach(id => { if (!appMap[id]) appMap[id] = 'PENDING'; });
+    const applications = Object.keys(appMap).map(id => {
+      const j = this.JOBS.find(x => x.id === id);
+      const s = this.APP_STATUS[appMap[id]];
+      return { ...this.deco(j), statusLabel: s.l, statusColor: s.c, statusBg: s.bg };
+    });
+
+    // dashboard listings
+    const listings = this.LISTINGS.map(L => {
+      const active = st.listingActive[L.id];
+      const expanded = !!st.expanded[L.id];
+      const applicants = L.applicants.map(p => {
+        const sk = st.appStatuses[p.id] || 'NEW';
+        const s = this.APPLICANT_STATUS[sk];
+        const b = this.BELTS[p.belt];
+        const avSrc = p.av;
+        return { ...p, avatar: avSrc, avatarNode: React.createElement('img', { src: avSrc, alt: '', style: { width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', flex: 'none' } }), beltColor: b.c, beltLabel: b.l, statusLabel: s.l, statusColor: s.c, statusBg: s.bg,
+          onShortlist: () => this.setApplicant(p.id, 'SHORTLISTED'), onDecline: () => this.setApplicant(p.id, 'DECLINED') };
+      });
+      return { id: L.id, title: L.title, loc: L.loc, typeLabel: this.TYPEL[L.type], active, expanded,
+        count: L.applicants.length, hasApplicants: L.applicants.length > 0,
+        statusText: active ? 'Active' : 'Paused', applicants,
+        switchTrack: 'width:46px;height:28px;border-radius:14px;position:relative;cursor:pointer;flex:none;transition:background .25s;background:' + (active ? 'var(--sys-green)' : 'var(--fill)') + ';',
+        switchThumb: 'position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.3);transition:transform .25s var(--ease-spring,cubic-bezier(0.34,1.56,0.64,1));transform:translateX(' + (active ? '18px' : '0') + ');',
+        onToggle: () => this.toggleListing(L.id), onExpand: () => this.toggleExpand(L.id) };
+    });
+    const totalApplicants = this.LISTINGS.reduce((s, L) => s + L.applicants.length, 0);
+    const activeCount = this.LISTINGS.filter(L => st.listingActive[L.id]).length;
+    const dashStats = [ {v:String(this.LISTINGS.length), l:'Listings'}, {v:String(activeCount), l:'Active'}, {v:String(totalApplicants), l:'Applicants'} ];
+
+    // profile
+    const pb = this.BELTS[this.PROFILE.belt];
+    const profAv = this.PROFILE.av;
+    const profile = { ...this.PROFILE, avatar: profAv, avatarNode: React.createElement('img', { src: profAv, alt: '', style: { width: 74, height: 74, borderRadius: '50%', objectFit: 'cover', flex: 'none', boxShadow: 'var(--shadow-1)' } }), beltColor: pb.c, beltLabel: pb.l };
+
+    // belt filter options
+    const beltOpts = [ {l:'All',r:99}, {l:'White',r:0}, {l:'Blue',r:1}, {l:'Purple',r:2}, {l:'Brown',r:3}, {l:'Black',r:4} ]
+      .map(o => ({ label: o.l, active: st.beltRank === o.r, onClick: () => this.setBelt(o.r),
+        style: 'padding:7px 14px;border-radius:999px;font:600 13px/1 var(--font-system);cursor:pointer;border:none;white-space:nowrap;transition:all .2s;' +
+          (st.beltRank === o.r ? 'background:' + tint + ';color:#fff;' : 'background:var(--fill-tertiary);color:var(--label-secondary);') }));
+
+    // nav tabs
+    const ICON = {
+      home: ['M3 11.4 L12 4 L21 11.4','M5.6 9.9 V20 H18.4 V9.9'],
+      jobs: ['M10.5 4.2 a6.3 6.3 0 1 0 0.01 12.6 a6.3 6.3 0 0 0 -0.01 -12.6','M15.3 15.3 L20 20'],
+      applications: ['M5.5 4 H14 L18.5 8.5 V20 H5.5 Z','M14 4 V8.5 H18.5','M9 12.5 H15','M9 15.8 H15'],
+      profile: ['M12 11.6 a3.7 3.7 0 1 0 0 -7.4 a3.7 3.7 0 0 0 0 7.4','M5.2 20 a6.8 6.8 0 0 1 13.6 0'],
+      dashboard: ['M4 4 H11 V20 H4 Z','M13 9 H20 V20 H13 Z','M6.6 7.4 H8.4','M6.6 11 H8.4','M6.6 14.6 H8.4'],
+    };
+    const tabKeys = st.role === 'gym' ? ['home','jobs','dashboard','profile'] : ['home','jobs','applications','profile'];
+    const tabLabels = { home:'Home', jobs:'Jobs', applications:'Applications', dashboard:'Dashboard', profile:'Profile' };
+    const tabs = tabKeys.map(k => {
+      const active = st.screen === k || (k === 'jobs' && st.screen === 'job');
+      return { key: k, label: tabLabels[k], active, onClick: () => this.go(k),
+        paths: ICON[k].map(d => ({ d })),
+        iconStyle: 'color:' + (active ? tint : 'var(--label-secondary)') + ';',
+        labelStyle: 'font:600 10px/1.2 var(--font-system);margin-top:3px;color:' + (active ? tint : 'var(--label-secondary)') + ';',
+        sw: active ? '2.1' : '1.7' };
+    });
+    const navTabs = tabKeys.map(k => {
+      const active = st.screen === k || (k === 'jobs' && st.screen === 'job');
+      return { label: tabLabels[k], onClick: () => this.go(k),
+        style: 'padding:7px 14px;border-radius:999px;font:600 14px/1 var(--font-system);cursor:pointer;text-decoration:none;transition:all .2s;border:none;background:' + (active ? 'var(--fill-tertiary)' : 'transparent') + ';color:' + (active ? 'var(--label)' : 'var(--label-secondary)') + ';' };
+    });
+
+    return {
+      tint, theme: st.theme, accent: st.accent,
+      mobileAttr: st.mobile ? 'true' : 'false', isMobile: st.mobile, isDesktop: !st.mobile,
+      scHome: st.screen === 'home', scJobs: st.screen === 'jobs', scJob: st.screen === 'job',
+      scApps: st.screen === 'applications', scProfile: st.screen === 'profile', scDash: st.screen === 'dashboard',
+      homeA: st.homeStyle === 'A', homeB: st.homeStyle === 'B', homeC: st.homeStyle === 'C',
+
+      // control bar
+      homeStyleOpts: this.seg(st.homeStyle, [{k:'A',label:'Clean'},{k:'B',label:'Hero'},{k:'C',label:'Editorial'}], this.setHomeStyle),
+      themeOpts: this.seg(st.theme, [{k:'light',label:'Light'},{k:'dark',label:'Dark'}], this.setTheme),
+      coverOpts: this.seg(st.cover, [{k:'gradient',label:'Gradient'},{k:'cover1',label:'Cover 1'},{k:'cover2',label:'Cover 2'}], this.setCover),
+      heroCoverStyle: 'position:absolute;inset:0;pointer-events:none;background-image:url(\'assets/covers/' + (st.cover === 'cover2' ? 'cover2' : 'cover1') + '.jpg\');background-size:cover;background-position:center 28%;transition:opacity .4s ease;opacity:' + (st.cover !== 'gradient' ? '1' : '0') + ';',
+      heroCoverShade: 'position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg, rgba(0,0,0,.28) 0%, rgba(0,0,0,.34) 45%, rgba(0,0,0,.66) 100%);transition:opacity .4s ease;opacity:' + (st.cover !== 'gradient' ? '1' : '0') + ';',
+      accentOpts: this.seg(st.accent, [{k:'green',label:'Green'},{k:'blue',label:'Blue'}], this.setAccent),
+      roleOpts: this.seg(st.role, [{k:'coach',label:'Coach'},{k:'gym',label:'Gym'}], this.setRole),
+      mobileOn: st.mobile, onToggleMobile: this.toggleMobile,
+      mobTrack: 'width:42px;height:25px;border-radius:13px;position:relative;cursor:pointer;flex:none;transition:background .25s;background:' + (st.mobile ? 'var(--sys-green)' : 'var(--fill)') + ';',
+      mobThumb: 'position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,0.3);transition:transform .25s var(--ease-spring,cubic-bezier(0.34,1.56,0.64,1));transform:translateX(' + (st.mobile ? '17px' : '0') + ');',
+
+      tabs, navTabs,
+      stats: this.STATS, steps: this.STEPS, featuredJobs: featured,
+      jobsFiltered: filtered, jobsCount: filtered.length, hasJobs: filtered.length > 0,
+      query: st.query, city: st.city, onQuery: this.onQuery, onCity: this.onCity, beltOpts,
+      goHome: () => this.go('home'), goJobs: () => this.go('jobs'),
+      goProfile: () => this.go(st.role === 'gym' ? 'dashboard' : 'profile'),
+
+      selectedJob, selectedApplied: selectedJob.applied,
+      applyOpen: st.applyOpen, applyMsg: st.applyMsg,
+      onApplyMsg: this.onApplyMsg, openApply: this.openApply, closeApply: this.closeApply, submitApply: this.submitApply,
+
+      applications, appsEmpty: applications.length === 0,
+      profile,
+      gym: this.GYM, listings, dashStats,
+    };
+  }
+}
+</script>
+</body>
+</html>

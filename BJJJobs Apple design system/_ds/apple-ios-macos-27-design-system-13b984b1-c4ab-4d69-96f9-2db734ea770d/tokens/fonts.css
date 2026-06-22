@@ -1,0 +1,76 @@
+/* ============================================================================
+   FONTS — the real San Francisco family, shipped as a webfont.
+
+   SF-Pro.ttf is the genuine Apple variable font (extracted from the official
+   iOS 27 Sketch UI Kit). It carries the full weight axis (1–1000) AND the
+   optical-size axis, so a single file renders both the "Text" (small) and
+   "Display" (large) designs — `font-optical-sizing: auto` (the browser default)
+   picks the right one per size. SF-Pro-Italic.ttf is the matching italic.
+
+   We register the variable file under all three family names the tokens use
+   ("SF Pro Text", "SF Pro Display", "SF Pro") so the design renders the real
+   typeface on EVERY platform, not just Apple devices. The `-apple-system`
+   stack still wins on Apple hardware (native, zero download); elsewhere these
+   @font-face rules load the genuine SF Pro.
+
+   NOTE: SF Pro is licensed by Apple for designing/developing on Apple
+   platforms; the binary is ~22 MB. It is shipped here for fidelity in this
+   internal design system — review Apple's font licence before redistributing.
+   ============================================================================ */
+
+/* ---- SF Pro Text (token: --font-system) -------------------------------- */
+@font-face {
+  font-family: "SF Pro Text";
+  src: url("../assets/fonts/SF-Pro.ttf") format("truetype");
+  font-weight: 1 1000;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "SF Pro Text";
+  src: url("../assets/fonts/SF-Pro-Italic.ttf") format("truetype");
+  font-weight: 1 1000;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ---- SF Pro Display (token: --font-display) ---------------------------- */
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("../assets/fonts/SF-Pro.ttf") format("truetype");
+  font-weight: 1 1000;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("../assets/fonts/SF-Pro-Italic.ttf") format("truetype");
+  font-weight: 1 1000;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ---- SF Pro (generic alias used in both token stacks) ------------------ */
+@font-face {
+  font-family: "SF Pro";
+  src: url("../assets/fonts/SF-Pro.ttf") format("truetype");
+  font-weight: 1 1000;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "SF Pro";
+  src: url("../assets/fonts/SF-Pro-Italic.ttf") format("truetype");
+  font-weight: 1 1000;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ---- SF Compact Rounded (token: --font-rounded, Medium weight only) ----- */
+@font-face {
+  font-family: "SF Pro Rounded";
+  src: url("../assets/fonts/SF-Compact-Rounded-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}

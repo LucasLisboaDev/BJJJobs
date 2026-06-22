@@ -1,0 +1,147 @@
+/* ============================================================================
+   TYPOGRAPHY — San Francisco system fonts + the iOS/macOS text-style ramp.
+
+   FONT STRATEGY: The genuine San Francisco fonts are shipped as a webfont
+   (see tokens/fonts.css — the real SF-Pro.ttf variable font from Apple's iOS 27
+   UI Kit, registered under "SF Pro Text" / "SF Pro Display" / "SF Pro"). On
+   Apple devices the `-apple-system` stack still wins (native, zero download);
+   on every other platform the @font-face rules load the real SF Pro, so the
+   design has true type parity everywhere. The font carries the optical-size
+   axis, so `font-optical-sizing: auto` renders the Text design at small sizes
+   and the Display design at large sizes from one file.
+   ============================================================================ */
+
+:root {
+  /* Variable SF Pro carries the optical-size axis — let it auto-switch between
+     the Text (small) and Display (large) designs. */
+  font-optical-sizing: auto;
+
+  /* San Francisco is tuned for grayscale antialiasing — match Apple rendering
+     everywhere and keep ligature/kerning quality high. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
+  /* ---- Font families ----------------------------------------------------- */
+  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro",
+    "Helvetica Neue", "Segoe UI", system-ui, Roboto, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro",
+    "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --font-rounded: ui-rounded, "SF Pro Rounded", -apple-system,
+    "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  /* ---- Weights (San Francisco's named weights) --------------------------- */
+  --weight-ultralight: 100;
+  --weight-thin: 200;
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-heavy: 800;
+  --weight-black: 900;
+
+  /* ---- Type ramp · size / line-height / tracking ------------------------- */
+  /* Large Title */
+  --text-large-title-size: 34px;
+  --text-large-title-line: 41px;
+  --text-large-title-track: 0.4px;
+  /* Title 1 */
+  --text-title1-size: 28px;
+  --text-title1-line: 34px;
+  --text-title1-track: 0.36px;
+  /* Title 2 */
+  --text-title2-size: 22px;
+  --text-title2-line: 28px;
+  --text-title2-track: 0.35px;
+  /* Title 3 */
+  --text-title3-size: 20px;
+  --text-title3-line: 25px;
+  --text-title3-track: 0.38px;
+  /* Headline (semibold body) */
+  --text-headline-size: 17px;
+  --text-headline-line: 22px;
+  --text-headline-track: -0.43px;
+  /* Body */
+  --text-body-size: 17px;
+  --text-body-line: 22px;
+  --text-body-track: -0.43px;
+  /* Callout */
+  --text-callout-size: 16px;
+  --text-callout-line: 21px;
+  --text-callout-track: -0.31px;
+  /* Subheadline */
+  --text-subheadline-size: 15px;
+  --text-subheadline-line: 20px;
+  --text-subheadline-track: -0.23px;
+  /* Footnote */
+  --text-footnote-size: 13px;
+  --text-footnote-line: 18px;
+  --text-footnote-track: -0.08px;
+  /* Caption 1 */
+  --text-caption1-size: 12px;
+  --text-caption1-line: 16px;
+  --text-caption1-track: 0px;
+  /* Caption 2 */
+  --text-caption2-size: 11px;
+  --text-caption2-line: 13px;
+  --text-caption2-track: 0.07px;
+}
+
+/* ---- Text-style utility classes (Dynamic Type defaults) ------------------ */
+.text-large-title {
+  font: var(--weight-bold) var(--text-large-title-size) / var(--text-large-title-line) var(--font-display);
+  letter-spacing: var(--text-large-title-track);
+}
+.text-title-1 {
+  font: var(--weight-bold) var(--text-title1-size) / var(--text-title1-line) var(--font-display);
+  letter-spacing: var(--text-title1-track);
+}
+.text-title-2 {
+  font: var(--weight-bold) var(--text-title2-size) / var(--text-title2-line) var(--font-display);
+  letter-spacing: var(--text-title2-track);
+}
+.text-title-3 {
+  font: var(--weight-regular) var(--text-title3-size) / var(--text-title3-line) var(--font-display);
+  letter-spacing: var(--text-title3-track);
+}
+.text-headline {
+  font: var(--weight-semibold) var(--text-headline-size) / var(--text-headline-line) var(--font-system);
+  letter-spacing: var(--text-headline-track);
+}
+.text-body {
+  font: var(--weight-regular) var(--text-body-size) / var(--text-body-line) var(--font-system);
+  letter-spacing: var(--text-body-track);
+}
+.text-callout {
+  font: var(--weight-regular) var(--text-callout-size) / var(--text-callout-line) var(--font-system);
+  letter-spacing: var(--text-callout-track);
+}
+.text-subheadline {
+  font: var(--weight-regular) var(--text-subheadline-size) / var(--text-subheadline-line) var(--font-system);
+  letter-spacing: var(--text-subheadline-track);
+}
+.text-footnote {
+  font: var(--weight-regular) var(--text-footnote-size) / var(--text-footnote-line) var(--font-system);
+  letter-spacing: var(--text-footnote-track);
+}
+.text-caption-1 {
+  font: var(--weight-regular) var(--text-caption1-size) / var(--text-caption1-line) var(--font-system);
+  letter-spacing: var(--text-caption1-track);
+}
+.text-caption-2 {
+  font: var(--weight-regular) var(--text-caption2-size) / var(--text-caption2-line) var(--font-system);
+  letter-spacing: var(--text-caption2-track);
+}
+
+/* ---- Placeholder text -----------------------------------------------------
+   Inline styles can't target ::placeholder, so set it globally. Uses the
+   semantic placeholder token so it stays legible in light AND dark (the
+   browser default placeholder color has poor contrast on dark fills). */
+input::placeholder,
+textarea::placeholder {
+  color: var(--placeholder);
+  opacity: 1; /* Firefox lowers placeholder opacity by default */
+}

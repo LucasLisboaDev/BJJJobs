@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Shield, Building2 } from "lucide-react";
-import Link from "next/link";
+import { Building2 } from "lucide-react";
 import { US_STATES } from "@/lib/utils";
+import { DashboardNav } from "@/components/ui/dashboard-nav";
 
 const STYLES = ["Gi", "No-Gi", "Kids program", "Competition team", "Self-defense", "Fundamentals"];
 const PERKS = ["Free membership", "Flexible schedule", "Competition support", "Health benefits", "Seminar opportunities", "Growth potential"];
@@ -96,260 +96,246 @@ export default function PostJobPage() {
 
   if (checkingGym) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-sm text-gray-400">Loading...</div>
+      <div className="min-h-screen bg-grouped flex items-center justify-center">
+        <div className="text-footnote text-label-tertiary">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="flex items-center justify-between px-7 py-3.5 border-b border-gray-100">
-        <div className="flex items-center gap-2">
-          <Link href="/dashboard" className="flex items-center gap-2 text-base font-medium">
-            <Shield className="w-5 h-5" style={{ color: "#1D9E75" }} />
-            BJJJobs
-          </Link>
-          <span className="text-xs text-gray-400 ml-1">/ Post a job</span>
+    <div className="min-h-screen bg-grouped">
+      <DashboardNav />
+
+      <div className="sticky top-[57px] z-40 px-4 py-3 bg-grouped-secondary/90 backdrop-blur-xl border-b border-separator/30">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+          <div>
+            <div className="text-caption-1 font-semibold text-label-tertiary uppercase tracking-wide">
+              Post a job
+            </div>
+            <div className="text-headline font-semibold">New listing</div>
+          </div>
+          <button
+            onClick={handlePublish}
+            disabled={saving}
+            className="btn-primary text-sm !py-2 !px-5 disabled:opacity-60"
+          >
+            {saving ? "Publishing..." : "Publish listing"}
+          </button>
         </div>
-        <button
-          onClick={handlePublish}
-          disabled={saving}
-          className="text-sm font-medium text-white px-4 py-1.5 rounded-lg disabled:opacity-60"
-          style={{ background: "#1D9E75" }}
-        >
-          {saving ? "Publishing..." : "Publish listing"}
-        </button>
       </div>
 
       {error && (
-        <div className="px-8 py-3 text-sm" style={{ background: "#FCEBEB", color: "#A32D2D" }}>
-          {error}
+        <div className="max-w-5xl mx-auto px-4 pt-4">
+          <div className="alert-error">{error}</div>
         </div>
       )}
 
-      <div className="grid grid-cols-[1fr_300px] min-h-[calc(100vh-57px)]">
-        <div className="p-8 border-r border-gray-100 max-w-2xl">
-          <div className="flex items-center gap-2 mb-6 text-sm px-4 py-2.5 rounded-xl" style={{ background: "#E1F5EE", color: "#0F6E56" }}>
-            <Building2 className="w-4 h-4" style={{ color: "#1D9E75" }} />
-            Posting as <span className="font-medium">{gymName}</span>
+      <div className="max-w-5xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
+        <div className="space-y-6">
+          <div className="alert-brand flex items-center gap-2">
+            <Building2 className="w-4 h-4 text-brand shrink-0" />
+            <span>
+              Posting as <span className="font-semibold">{gymName}</span>
+            </span>
           </div>
 
-          <h2 className="text-base font-medium mb-1">Job details</h2>
-          <p className="text-xs text-gray-400 mb-6">This is what coaches will see when browsing listings</p>
+          <section className="ios-card-lg p-6">
+            <h2 className="text-title-2 mb-1">Job details</h2>
+            <p className="text-footnote text-label-secondary mb-6">
+              This is what coaches will see when browsing listings
+            </p>
 
-          <div className="mb-5">
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">Job title</label>
-            <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-green-400"
-              placeholder="e.g. Head BJJ Coach, Kids Instructor, Competition Team Coach"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-4 mb-5">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Job type</label>
-              <select
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none"
-                value={jobType}
-                onChange={(e) => setJobType(e.target.value)}
-              >
-                <option value="FULL_TIME">Full-time</option>
-                <option value="PART_TIME">Part-time</option>
-                <option value="CONTRACT">Contract</option>
-                <option value="REVENUE_SHARE">Revenue share</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">City</label>
+            <div className="mb-5">
+              <label className="field-label">Job title</label>
               <input
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-green-400"
-                placeholder="Dallas"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
+                className="ios-field"
+                placeholder="e.g. Head BJJ Coach, Kids Instructor"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+              <div>
+                <label className="field-label">Job type</label>
+                <select className="ios-field" value={jobType} onChange={(e) => setJobType(e.target.value)}>
+                  <option value="FULL_TIME">Full-time</option>
+                  <option value="PART_TIME">Part-time</option>
+                  <option value="CONTRACT">Contract</option>
+                  <option value="REVENUE_SHARE">Revenue share</option>
+                </select>
+              </div>
+              <div>
+                <label className="field-label">City</label>
+                <input
+                  className="ios-field"
+                  placeholder="Dallas"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="field-label">State</label>
+                <select className="ios-field" value={state} onChange={(e) => setState(e.target.value)}>
+                  <option value="">Select state</option>
+                  {US_STATES.map((s) => (
+                    <option key={s.abbr} value={s.abbr}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <section className="ios-card-lg p-6">
+            <h2 className="text-title-2 mb-1">Requirements</h2>
+            <p className="text-footnote text-label-secondary mb-5">
+              Set the minimum belt rank and experience required
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+              <div>
+                <label className="field-label">Minimum belt rank</label>
+                <select className="ios-field" value={minBelt} onChange={(e) => setMinBelt(e.target.value)}>
+                  <option value="WHITE">Any belt</option>
+                  <option value="BLUE">Blue belt+</option>
+                  <option value="PURPLE">Purple belt+</option>
+                  <option value="BROWN">Brown belt+</option>
+                  <option value="BLACK">Black belt only</option>
+                </select>
+              </div>
+              <div>
+                <label className="field-label">Teaching experience</label>
+                <select
+                  className="ios-field"
+                  value={minYears}
+                  onChange={(e) => setMinYears(Number(e.target.value))}
+                >
+                  <option value={0}>No minimum</option>
+                  <option value={1}>1+ years</option>
+                  <option value={2}>2+ years</option>
+                  <option value={5}>5+ years</option>
+                </select>
+              </div>
+            </div>
+
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">State</label>
-              <select
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-green-400 bg-white"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-              >
-                <option value="">Select state</option>
-                {US_STATES.map((s) => (
-                  <option key={s.abbr} value={s.abbr}>
-                    {s.name}
-                  </option>
+              <label className="field-label">Style preference</label>
+              <div className="flex flex-wrap gap-2">
+                {STYLES.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => toggleStyle(s)}
+                    className={`chip-toggle ${selectedStyles.includes(s) ? "chip-toggle-active" : ""}`}
+                  >
+                    {s}
+                  </button>
                 ))}
-              </select>
+              </div>
             </div>
-          </div>
+          </section>
 
-          <div className="h-px bg-gray-100 my-6" />
-          <h2 className="text-base font-medium mb-1">Requirements</h2>
-          <p className="text-xs text-gray-400 mb-5">Set the minimum belt rank and experience required</p>
+          <section className="ios-card-lg p-6">
+            <h2 className="text-title-2 mb-1">Compensation</h2>
+            <p className="text-footnote text-label-secondary mb-5">
+              Listings with pay ranges get 2x more applications
+            </p>
 
-          <div className="grid grid-cols-2 gap-4 mb-5">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Minimum belt rank</label>
-              <select
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none"
-                value={minBelt}
-                onChange={(e) => setMinBelt(e.target.value)}
-              >
-                <option value="WHITE">Any belt</option>
-                <option value="BLUE">Blue belt+</option>
-                <option value="PURPLE">Purple belt+</option>
-                <option value="BROWN">Brown belt+</option>
-                <option value="BLACK">Black belt only</option>
-              </select>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+              <div>
+                <label className="field-label">Pay type</label>
+                <select className="ios-field" value={payType} onChange={(e) => setPayType(e.target.value)}>
+                  <option value="monthly">Monthly salary</option>
+                  <option value="hourly">Hourly rate</option>
+                  <option value="revenue_share">Revenue share</option>
+                  <option value="negotiable">Negotiable</option>
+                </select>
+              </div>
+              <div>
+                <label className="field-label">Min</label>
+                <input
+                  className="ios-field"
+                  placeholder="25"
+                  value={minPay}
+                  onChange={(e) => setMinPay(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="field-label">Max</label>
+                <input
+                  className="ios-field"
+                  placeholder="45"
+                  value={maxPay}
+                  onChange={(e) => setMaxPay(e.target.value)}
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Teaching experience</label>
-              <select
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none"
-                value={minYears}
-                onChange={(e) => setMinYears(Number(e.target.value))}
-              >
-                <option value={0}>No minimum</option>
-                <option value={1}>1+ years</option>
-                <option value={2}>2+ years</option>
-                <option value={5}>5+ years</option>
-              </select>
-            </div>
-          </div>
 
-          <div className="mb-5">
-            <label className="block text-xs font-medium text-gray-500 mb-2">Style preference</label>
-            <div className="flex flex-wrap gap-2">
-              {STYLES.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => toggleStyle(s)}
-                  className="px-3.5 py-1.5 rounded-full text-xs border transition-all"
-                  style={{
-                    background: selectedStyles.includes(s) ? "#E1F5EE" : "white",
-                    borderColor: selectedStyles.includes(s) ? "#1D9E75" : "#e5e7eb",
-                    color: selectedStyles.includes(s) ? "#0F6E56" : "#6b7280",
-                  }}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="h-px bg-gray-100 my-6" />
-          <h2 className="text-base font-medium mb-1">Compensation</h2>
-          <p className="text-xs text-gray-400 mb-5">Listings with pay ranges get 2x more applications</p>
-
-          <div className="grid grid-cols-3 gap-3 mb-5">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Pay type</label>
-              <select
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none"
-                value={payType}
-                onChange={(e) => setPayType(e.target.value)}
-              >
-                <option value="monthly">Monthly salary</option>
-                <option value="hourly">Hourly rate</option>
-                <option value="revenue_share">Revenue share</option>
-                <option value="negotiable">Negotiable</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Min</label>
-              <input
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-green-400"
-                placeholder="25"
-                value={minPay}
-                onChange={(e) => setMinPay(e.target.value)}
+            <div className="mb-5">
+              <label className="field-label">
+                Job description{" "}
+                <span className="font-normal text-label-tertiary">· What will this coach do day to day?</span>
+              </label>
+              <textarea
+                className="ios-field"
+                rows={4}
+                placeholder="Describe the role, schedule, class sizes, team culture..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
+
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Max</label>
-              <input
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-green-400"
-                placeholder="45"
-                value={maxPay}
-                onChange={(e) => setMaxPay(e.target.value)}
-              />
+              <label className="field-label">
+                Perks & benefits <span className="font-normal text-label-tertiary">· optional</span>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {PERKS.map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => togglePerk(p)}
+                    className={`chip-toggle ${selectedPerks.includes(p) ? "chip-toggle-active" : ""}`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-
-          <div className="mb-5">
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">
-              Job description{" "}
-              <span className="font-normal text-gray-400">· What will this coach do day to day?</span>
-            </label>
-            <textarea
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-green-400 resize-none"
-              rows={4}
-              placeholder="Describe the role, schedule, class sizes, team culture..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-xs font-medium text-gray-500 mb-2">
-              Perks & benefits <span className="font-normal text-gray-400">· optional</span>
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {PERKS.map((p) => (
-                <button
-                  key={p}
-                  onClick={() => togglePerk(p)}
-                  className="px-3.5 py-1.5 rounded-full text-xs border transition-all"
-                  style={{
-                    background: selectedPerks.includes(p) ? "#E1F5EE" : "white",
-                    borderColor: selectedPerks.includes(p) ? "#1D9E75" : "#e5e7eb",
-                    color: selectedPerks.includes(p) ? "#0F6E56" : "#6b7280",
-                  }}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-          </div>
+          </section>
 
           <button
             onClick={handlePublish}
             disabled={saving}
-            className="w-full text-sm font-medium text-white py-3 rounded-lg disabled:opacity-60"
-            style={{ background: "#1D9E75" }}
+            className="btn-primary w-full disabled:opacity-60"
           >
             {saving ? "Publishing..." : "Publish listing"}
           </button>
         </div>
 
-        <div className="p-6 bg-gray-50">
-          <div className="text-xs font-medium uppercase tracking-wider text-gray-400 mb-3">
+        <aside className="space-y-5 lg:sticky lg:top-32 lg:self-start">
+          <div className="text-caption-1 font-semibold uppercase tracking-wider text-label-tertiary">
             Live preview
           </div>
-          <div className="bg-white border border-gray-200 rounded-xl p-4 mb-5">
-            <div className="font-medium text-sm mb-1">{title || "Job title"}</div>
-            <div className="flex items-center gap-1 text-xs text-gray-500 mb-3">
-              <Building2 className="w-3 h-3" style={{ color: "#1D9E75" }} />
+          <div className="ios-card p-4">
+            <div className="text-headline font-semibold mb-1">{title || "Job title"}</div>
+            <div className="flex items-center gap-1 text-footnote text-label-secondary mb-3">
+              <Building2 className="w-3.5 h-3.5 text-brand" />
               {gymName} · {city || "City"}, {state || "State"}
             </div>
             <div className="flex flex-wrap gap-1.5 mb-3">
-              <span
-                className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ background: "#E1F5EE", color: "#0F6E56" }}
-              >
+              <span className="chip chip-active">
                 {jobType.replace("_", "-").toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}
               </span>
               {selectedStyles.slice(0, 2).map((s) => (
-                <span key={s} className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                <span key={s} className="chip">
                   {s}
                 </span>
               ))}
             </div>
-            <div className="text-sm font-medium">
+            <div className="text-headline font-semibold">
               {minPay && maxPay
                 ? `$${minPay}–$${maxPay}/${payType === "monthly" ? "mo" : "hr"}`
                 : minPay
@@ -358,39 +344,33 @@ export default function PostJobPage() {
             </div>
           </div>
 
-          <div className="text-xs font-medium text-gray-500 mb-3">Choose a plan</div>
-          <div className="flex flex-col gap-2 mb-4">
+          <div className="text-footnote font-semibold text-label-secondary">Choose a plan</div>
+          <div className="flex flex-col gap-2">
             {PLANS.map((plan) => (
               <button
                 key={plan.name}
+                type="button"
                 onClick={() => setSelectedPlan(plan.name)}
-                className="text-left border rounded-xl p-3.5 transition-all bg-white"
-                style={{
-                  borderWidth: selectedPlan === plan.name ? "2px" : "0.5px",
-                  borderColor: selectedPlan === plan.name ? "#1D9E75" : "#e5e7eb",
-                }}
+                className={`text-left ios-card p-4 transition-all tap ${
+                  selectedPlan === plan.name ? "ring-2 ring-brand" : ""
+                }`}
               >
                 <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-sm font-medium">{plan.name}</span>
-                  <span className="text-sm font-medium" style={{ color: "#1D9E75" }}>
-                    {plan.price}
-                  </span>
+                  <span className="text-headline font-semibold">{plan.name}</span>
+                  <span className="text-headline font-semibold text-brand">{plan.price}</span>
                 </div>
-                <div className="text-xs text-gray-400">{plan.desc}</div>
+                <div className="text-footnote text-label-secondary">{plan.desc}</div>
               </button>
             ))}
           </div>
 
-          <div className="rounded-xl p-3.5" style={{ background: "#E1F5EE" }}>
-            <div className="text-xs font-medium mb-1" style={{ color: "#0F6E56" }}>
-              💡 Pro tip
-            </div>
-            <div className="text-xs leading-relaxed" style={{ color: "#0F6E56" }}>
-              Listings with a pay range, belt minimum, and description get filled 40% faster
-              on average.
+          <div className="alert-brand">
+            <div className="text-footnote font-semibold mb-1">Pro tip</div>
+            <div className="text-caption-1 leading-relaxed">
+              Listings with a pay range, belt minimum, and description get filled 40% faster on average.
             </div>
           </div>
-        </div>
+        </aside>
       </div>
     </div>
   );

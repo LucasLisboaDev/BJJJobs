@@ -1,36 +1,34 @@
 "use client";
 import { useState } from "react";
 import { SignUp } from "@clerk/nextjs";
-import Link from "next/link";
-import { Shield } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
 
 export default function GymSignUp() {
   const [gymName, setGymName] = useState("");
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex items-center justify-between px-7 py-3.5 border-b border-gray-100 bg-white">
-        <Link href="/" className="flex items-center gap-2 text-base font-medium">
-          <Shield className="w-5 h-5" style={{ color: "#1D9E75" }} />
-          BJJJobs
-        </Link>
-        <div className="text-xs text-gray-400">Gym sign up</div>
+    <div className="min-h-screen bg-grouped">
+      <div className="sticky top-0 z-50 px-4 py-3 bg-grouped-secondary/90 backdrop-blur-xl border-b border-separator/30">
+        <div className="max-w-md mx-auto flex items-center justify-between">
+          <Logo />
+          <div className="text-caption-1 text-label-tertiary">Gym sign up</div>
+        </div>
       </div>
 
       <div className="flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-md mb-6 text-center">
-          <h1 className="text-xl font-medium mb-1">Create your gym account</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-title-2 mb-1">Create your gym account</h1>
+          <p className="text-subheadline text-label-secondary">
             Your name and email are for your login. The gym name is how coaches will find you.
           </p>
         </div>
 
         <div className="w-full max-w-md mb-4">
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">
+          <label className="field-label">
             Gym name <span className="text-red-500">*</span>
           </label>
           <input
-            className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-green-400 bg-white"
+            className="ios-field"
             placeholder="e.g. Alliance Miami"
             value={gymName}
             onChange={(e) => {
@@ -51,12 +49,12 @@ export default function GymSignUp() {
             appearance={{
               elements: {
                 rootBox: "w-full max-w-md",
-                card: "shadow-none border border-gray-100 rounded-xl",
+                card: "shadow-ios border-none rounded-ios-lg bg-grouped-secondary",
               },
             }}
           />
         ) : (
-          <div className="w-full max-w-md border border-dashed border-gray-200 rounded-xl p-8 text-center text-sm text-gray-400 bg-white">
+          <div className="w-full max-w-md border-2 border-dashed border-separator/40 rounded-ios-lg p-8 text-center text-subheadline text-label-tertiary ios-card">
             Enter your gym name above to continue with your account details.
           </div>
         )}

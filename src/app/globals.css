@@ -1,14 +1,50 @@
+@import "../styles/fonts.css";
+@import "../styles/tokens.css";
+@import "../styles/components.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --brand: #1D9E75;
-    --brand-dark: #0F6E56;
-    --brand-light: #E1F5EE;
+  * {
+    box-sizing: border-box;
   }
+
+  html {
+    font-family: var(--font-system);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-optical-sizing: auto;
+  }
+
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    margin: 0;
+    background: var(--grouped-bg);
+    color: var(--label);
+    font-family: var(--font-system);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--placeholder);
+    opacity: 1;
+  }
+
+  :focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--tint) 55%, transparent);
+    outline-offset: 1px;
+    border-radius: 6px;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
   }
 }

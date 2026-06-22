@@ -1,15 +1,30 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Search, Filter } from "lucide-react";
+import { Search, MapPin } from "lucide-react";
 import PublicNav from "@/components/public-nav";
 import { useLanguage } from "@/components/language-provider";
+import { PageShell, PageCol, PageTitle } from "@/components/ui/page-shell";
 
 const BELT_LABELS: Record<string, string> = {
-  WHITE: "White belt+", BLUE: "Blue belt+", PURPLE: "Purple belt+", BROWN: "Brown belt+", BLACK: "Black belt",
+  WHITE: "White belt+",
+  BLUE: "Blue belt+",
+  PURPLE: "Purple belt+",
+  BROWN: "Brown belt+",
+  BLACK: "Black belt",
+};
+const BELT_COLORS: Record<string, string> = {
+  WHITE: "#9ca3af",
+  BLUE: "#3b82f6",
+  PURPLE: "#8b5cf6",
+  BROWN: "#92400e",
+  BLACK: "#1a1a1a",
 };
 const JOB_TYPE_LABELS: Record<string, string> = {
-  FULL_TIME: "Full-time", PART_TIME: "Part-time", CONTRACT: "Contract", REVENUE_SHARE: "Revenue share",
+  FULL_TIME: "Full-time",
+  PART_TIME: "Part-time",
+  CONTRACT: "Contract",
+  REVENUE_SHARE: "Revenue share",
 };
 
 export default function JobsPage() {
@@ -32,103 +47,124 @@ export default function JobsPage() {
     setLoading(false);
   }, [query, city, belt]);
 
-  useEffect(() => { fetchJobs(); }, [fetchJobs]);
+  useEffect(() => {
+    fetchJobs();
+  }, [fetchJobs]);
+
+  const beltOptions = [
+    { value: "", label: t("jobs.allBelts") },
+    { value: "WHITE", label: "White belt+" },
+    { value: "BLUE", label: "Blue belt+" },
+    { value: "PURPLE", label: "Purple belt+" },
+    { value: "BROWN", label: "Brown belt+" },
+    { value: "BLACK", label: "Black belt" },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <PageShell>
       <PublicNav />
+      <PageCol>
+        <PageTitle>{t("jobs.title")}</PageTitle>
 
-      <div className="px-8 py-8 max-w-4xl mx-auto">
-        <h1 className="text-2xl font-medium mb-6">{t("jobs.title")}</h1>
-
-        <div className="flex items-center gap-3 mb-6 bg-white border border-gray-100 rounded-xl p-3">
-          <div className="flex items-center gap-2 flex-1">
-            <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
-            <input
-              className="text-sm outline-none flex-1 bg-transparent"
-              placeholder={t("jobs.searchPlaceholder")}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </div>
-          <div className="w-px h-5 bg-gray-200" />
+        <div className="search-field mb-2.5">
+          <Search className="w-[18px] h-[18px] text-label-tertiary flex-shrink-0" />
           <input
-            className="text-sm outline-none text-gray-500 bg-transparent w-32"
+            placeholder={t("jobs.searchPlaceholder")}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+
+        <div className="search-field mb-3.5">
+          <MapPin className="w-[18px] h-[18px] text-label-tertiary flex-shrink-0" />
+          <input
             placeholder={t("jobs.cityPlaceholder")}
             value={city}
             onChange={(e) => setCity(e.target.value)}
           />
-          <div className="w-px h-5 bg-gray-200" />
-          <select
-            className="text-sm outline-none text-gray-500 bg-transparent"
-            value={belt}
-            onChange={(e) => setBelt(e.target.value)}
-          >
-            <option value="">{t("jobs.allBelts")}</option>
-            <option value="WHITE">White belt+</option>
-            <option value="BLUE">Blue belt+</option>
-            <option value="PURPLE">Purple belt+</option>
-            <option value="BROWN">Brown belt+</option>
-            <option value="BLACK">Black belt</option>
-          </select>
-          <button className="flex items-center gap-1.5 text-sm text-gray-500 border border-gray-200 px-3 py-1.5 rounded-lg" onClick={fetchJobs}>
-            <Filter className="w-4 h-4" />
-            {t("common.search")}
-          </button>
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto pb-3.5 mb-1.5 scrollbar-none">
+          {beltOptions.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setBelt(opt.value)}
+              className={`chip tap ${belt === opt.value ? "chip-active" : ""}`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        <button type="button" onClick={fetchJobs} className="btn-primary w-full mb-4">
+          {t("common.search")}
+        </button>
+
+        <div className="text-footnote text-label-secondary mb-3 px-0.5">
+          {loading ? t("jobs.loading") : `${jobs.length} open positions`}
         </div>
 
         {loading ? (
-          <div className="text-center py-16 text-sm text-gray-400">{t("jobs.loading")}</div>
+          <div className="text-center py-16 text-footnote text-label-tertiary">
+            {t("jobs.loading")}
+          </div>
         ) : jobs.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="text-lg font-medium mb-2">{t("jobs.noneTitle")}</div>
-            <p className="text-sm text-gray-500 mb-6">{t("jobs.noneSub")}</p>
-            <Link href="/register" className="text-sm font-medium text-white px-5 py-2.5 rounded-lg" style={{ background: "#1D9E75" }}>
+          <div className="ios-card-lg p-10 text-center">
+            <div className="text-headline mb-2">{t("jobs.noneTitle")}</div>
+            <p className="text-footnote text-label-secondary mb-6">{t("jobs.noneSub")}</p>
+            <Link href="/register" className="btn-primary">
               {t("nav.createAccount")}
             </Link>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2.5">
             {jobs.map((job) => (
               <Link
                 key={job.id}
                 href={`/jobs/${job.id}`}
-                className="flex items-center gap-4 bg-white border border-gray-100 rounded-xl p-4 hover:border-green-300 transition-colors"
+                className="tap lift ios-card-lg p-4 flex items-center gap-3.5"
               >
-                <div className="w-11 h-11 rounded-lg flex items-center justify-center text-xl flex-shrink-0" style={{ background: "#E1F5EE" }}>
+                <div className="w-12 h-12 rounded-[13px] bg-brand-light text-brand flex items-center justify-center text-xl flex-shrink-0">
                   🥋
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm">{job.title}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">{job.gym?.name} · {job.city}, {job.state}</div>
-                  <div className="flex items-center gap-2 mt-2 flex-wrap">
-                    <span className="text-xs px-2.5 py-0.5 rounded-full font-medium" style={{ background: "#E1F5EE", color: "#0F6E56" }}>
-                      {JOB_TYPE_LABELS[job.jobType]}
-                    </span>
-                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                  <div className="text-headline truncate">{job.title}</div>
+                  <div className="text-footnote text-label-secondary mt-0.5">
+                    {job.gym?.name} · {job.city}, {job.state}
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                    <span className="chip text-brand">{JOB_TYPE_LABELS[job.jobType]}</span>
+                    <span className="chip">
+                      <span
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ background: BELT_COLORS[job.minBelt] }}
+                      />
                       {BELT_LABELS[job.minBelt]}
                     </span>
-                    {job.styles?.slice(0, 2).map((s: string) => (
-                      <span key={s} className="text-xs px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-500">{s}</span>
-                    ))}
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
                   {job.featured && (
-                    <div className="text-xs font-medium text-white px-2 py-0.5 rounded-full mb-1 inline-block" style={{ background: "#1D9E75" }}>{t("jobs.featured")}</div>
+                    <span className="chip chip-active text-[10px] mb-1">{t("jobs.featured")}</span>
                   )}
-                  <div className="text-sm font-medium">
-                    {job.minPay ? `$${job.minPay}${job.payType === "monthly" ? "/mo" : "/hr"}` : t("jobs.negotiable")}
+                  <div className="text-headline">
+                    {job.minPay
+                      ? `$${job.minPay}${job.payType === "monthly" ? "/mo" : "/hr"}`
+                      : t("jobs.negotiable")}
                   </div>
-                  <div className="text-xs text-gray-400 mt-0.5">
-                    {new Date(job.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  <div className="text-caption-1 text-label-tertiary mt-1">
+                    {new Date(job.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}
                   </div>
                 </div>
               </Link>
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </PageCol>
+    </PageShell>
   );
 }
