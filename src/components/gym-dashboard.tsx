@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { US_STATES } from "@/lib/utils";
 import { ApplicantDetailPanel } from "@/components/applicant-detail-panel";
+import { InstagramLink } from "@/components/instagram-link";
 
 const JOB_TYPE_LABELS: Record<string, string> = {
   FULL_TIME: "Full-time",
@@ -42,6 +43,7 @@ function GymProfilePanel({
   const [state, setState] = useState(gym.state);
   const [affiliation, setAffiliation] = useState(gym.affiliation ?? "");
   const [website, setWebsite] = useState(gym.website ?? "");
+  const [instagram, setInstagram] = useState(gym.instagram ?? "");
   const [description, setDescription] = useState(gym.description ?? "");
 
   function startEdit() {
@@ -50,6 +52,7 @@ function GymProfilePanel({
     setState(gym.state);
     setAffiliation(gym.affiliation ?? "");
     setWebsite(gym.website ?? "");
+    setInstagram(gym.instagram ?? "");
     setDescription(gym.description ?? "");
     setError("");
     setEditing(true);
@@ -72,6 +75,7 @@ function GymProfilePanel({
           state,
           affiliation: affiliation || undefined,
           website: website || undefined,
+          instagram: instagram || undefined,
           description: description || undefined,
         }),
       });
@@ -144,6 +148,15 @@ function GymProfilePanel({
             />
           </div>
           <div>
+            <label className="field-label">Instagram</label>
+            <input
+              className="ios-field"
+              placeholder="@yourgym or instagram.com/yourgym"
+              value={instagram}
+              onChange={(e) => setInstagram(e.target.value)}
+            />
+          </div>
+          <div>
             <label className="field-label">About your gym</label>
             <textarea
               className="ios-field resize-none"
@@ -189,6 +202,11 @@ function GymProfilePanel({
               {gym.website.replace(/^https?:\/\//, "")}
               <ExternalLink className="w-3 h-3" />
             </a>
+          )}
+          {gym.instagram && (
+            <div className="mt-2">
+              <InstagramLink handle={gym.instagram} className="text-subheadline text-brand" />
+            </div>
           )}
         </div>
       </div>

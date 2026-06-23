@@ -15,6 +15,7 @@ export interface Coach {
   specialties: string[];
   targetCity?: string;
   bio?: string;
+  instagram?: string;
   minPay?: number;
   maxPay?: number;
 }
@@ -27,6 +28,7 @@ export interface Gym {
   city: string;
   state: string;
   website?: string;
+  instagram?: string;
   description?: string;
 }
 

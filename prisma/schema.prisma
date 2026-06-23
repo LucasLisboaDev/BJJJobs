@@ -57,6 +57,7 @@ model Coach {
   maxPay            Float?
   resumeUrl         String?
   resumeFileName    String?
+  instagram         String?
   applications      Application[]
   experiences       WorkExperience[]
   createdAt         DateTime           @default(now())
@@ -87,6 +88,7 @@ model Gym {
   city        String
   state       String
   website     String?
+  instagram   String?
   description String?
   jobs        Job[]
   createdAt   DateTime @default(now())

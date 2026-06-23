@@ -18,6 +18,7 @@ export default function GymRegisterPage() {
   const [state, setState] = useState("");
   const [affiliation, setAffiliation] = useState("");
   const [website, setWebsite] = useState("");
+  const [instagram, setInstagram] = useState("");
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -69,6 +70,7 @@ export default function GymRegisterPage() {
           state,
           affiliation: affiliation || undefined,
           website: website || undefined,
+          instagram: instagram || undefined,
           description: description || undefined,
         }),
       });
@@ -191,6 +193,18 @@ export default function GymRegisterPage() {
               placeholder="https://yourgym.com"
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="field-label">
+              Instagram <span className="font-normal text-label-tertiary">· optional</span>
+            </label>
+            <input
+              className="ios-field"
+              placeholder="@yourgym or instagram.com/yourgym"
+              value={instagram}
+              onChange={(e) => setInstagram(e.target.value)}
             />
           </div>
 

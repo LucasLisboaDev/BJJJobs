@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { BELT_LABELS, JOB_TYPE_LABELS, formatPay } from "@/lib/utils";
 import PublicNav from "@/components/public-nav";
+import { InstagramLink } from "@/components/instagram-link";
 
 export default function GymProfilePage() {
   const { id } = useParams();
@@ -93,6 +94,11 @@ export default function GymProfilePage() {
                   {gym.website.replace(/^https?:\/\//, "")}
                   <ExternalLink className="w-3 h-3" />
                 </a>
+              )}
+              {gym.instagram && (
+                <div className="mt-2">
+                  <InstagramLink handle={gym.instagram} className="text-subheadline text-brand" />
+                </div>
               )}
             </div>
           </div>

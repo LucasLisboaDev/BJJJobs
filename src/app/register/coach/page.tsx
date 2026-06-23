@@ -57,6 +57,7 @@ export default function CoachRegisterPage() {
   const [selectedBelt, setSelectedBelt] = useState("BROWN");
   const [selectedSpecs, setSelectedSpecs] = useState<string[]>(["Gi", "No-Gi"]);
   const [affiliation, setAffiliation] = useState("");
+  const [instagram, setInstagram] = useState("");
   const [yearsTeaching, setYearsTeaching] = useState(5);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -163,6 +164,7 @@ export default function CoachRegisterPage() {
         lastName,
         beltRank: selectedBelt,
         affiliation,
+        instagram: instagram || undefined,
         yearsTeaching,
         specialties: selectedSpecs,
         targetCity,
@@ -380,6 +382,21 @@ export default function CoachRegisterPage() {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              <div className="mb-5">
+                <label className="field-label">
+                  Instagram <span className="font-normal text-label-tertiary">· optional</span>
+                </label>
+                <input
+                  className="ios-field w-full"
+                  placeholder="@yourhandle or instagram.com/yourhandle"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                />
+                <p className="text-caption-1 text-label-tertiary mt-1.5">
+                  Gyms often review your teaching clips and competition footage on Instagram.
+                </p>
               </div>
 
               <div className="mb-7">

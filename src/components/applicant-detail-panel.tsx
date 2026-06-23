@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { CoachExperienceSection } from "@/components/coach-experience-section";
 import { ApplicationChat } from "@/components/application-chat";
+import { InstagramLink } from "@/components/instagram-link";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -123,6 +124,9 @@ export function ApplicantDetailPanel({
                       <Award className="w-3 h-3" />
                       {coach.yearsTeaching} years teaching
                     </span>
+                  )}
+                  {coach.instagram && (
+                    <InstagramLink handle={coach.instagram} className="text-brand" />
                   )}
                 </div>
               </div>

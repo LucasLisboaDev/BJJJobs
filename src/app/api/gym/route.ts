@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { syncClerkEmail } from "@/lib/email/get-user-email";
+import { optionalInstagramSchema } from "@/lib/instagram";
 import { z } from "zod";
 
 const gymSchema = z.object({
@@ -10,6 +11,7 @@ const gymSchema = z.object({
   state: z.string().min(1),
   affiliation: z.string().optional(),
   website: z.string().url().optional().or(z.literal("")),
+  instagram: optionalInstagramSchema,
   description: z.string().optional(),
 });
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { MapPin, Award, Star, ChevronLeft, Briefcase } from "lucide-react";
 import PublicNav from "@/components/public-nav";
 import { CoachExperienceSection } from "@/components/coach-experience-section";
+import { InstagramLink } from "@/components/instagram-link";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -114,6 +115,9 @@ export default function CoachProfilePage() {
                       ? `$${coach.minPay}+/hr`
                       : `Up to $${coach.maxPay}/hr`}
                   </span>
+                )}
+                {coach.instagram && (
+                  <InstagramLink handle={coach.instagram} className="text-footnote text-brand" />
                 )}
               </div>
             </div>

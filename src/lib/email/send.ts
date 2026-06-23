@@ -10,6 +10,7 @@ type ApplicationWithRelations = {
     lastName: string;
     beltRank: string;
     affiliation?: string | null;
+    instagram?: string | null;
     yearsTeaching?: number;
     specialties: string[];
     targetCity?: string | null;
@@ -38,6 +39,7 @@ export async function sendNewApplicationEmail(
 
   const details: string[] = [];
   if (application.coach.affiliation) details.push(`Affiliation: ${application.coach.affiliation}`);
+  if (application.coach.instagram) details.push(`Instagram: @${application.coach.instagram}`);
   if (application.coach.yearsTeaching) {
     details.push(`${application.coach.yearsTeaching}+ years teaching`);
   }

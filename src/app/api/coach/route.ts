@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { syncClerkEmail } from "@/lib/email/get-user-email";
+import { optionalInstagramSchema } from "@/lib/instagram";
 import { z } from "zod";
 
 const experienceSchema = z.object({
@@ -27,6 +28,7 @@ const coachSchema = z
     maxPay: z.number().optional(),
     resumeUrl: z.string().optional(),
     resumeFileName: z.string().optional(),
+    instagram: optionalInstagramSchema,
     experiences: z.array(experienceSchema).default([]),
   })
   .refine((data) => data.resumeUrl || data.experiences.length > 0, {
