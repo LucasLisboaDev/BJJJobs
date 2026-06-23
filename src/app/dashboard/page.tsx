@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Briefcase, CheckCircle, AlertCircle } from "lucide-react";
+import { Briefcase, CheckCircle, AlertCircle, PartyPopper } from "lucide-react";
 import GymDashboard from "@/components/gym-dashboard";
 import { CoachApplicationCard } from "@/components/coach-application-card";
 import { useLanguage } from "@/components/language-provider";
@@ -11,13 +11,53 @@ import { PageShell } from "@/components/ui/page-shell";
 import { BELT_COLORS, BELT_LABELS } from "@/lib/utils";
 import { readStored } from "@/lib/brand";
 
-function CoachDashboard({ coach }: { coach: any }) {
+function CoachDashboardInner() {
   const { t } = useLanguage();
   const searchParams = useSearchParams();
   const highlightApplicationId = searchParams.get("application");
+  const [coach, setCoach] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"all" | "pending" | "shortlisted" | "rejected" | "hired">(
+    "all"
+  );
+
+  const fetchCoach = useCallback(async () => {
+    const res = await fetch("/api/dashboard");
+    const json = await res.json();
+    if (json.coach) setCoach(json.coach);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchCoach();
+    const interval = setInterval(fetchCoach, 20000);
+    return () => clearInterval(interval);
+  }, [fetchCoach]);
+
+  if (loading || !coach) {
+    return (
+      <div className="flex items-center justify-center min-h-[40vh]">
+        <div className="text-footnote text-label-tertiary">{t("dashboard.loading")}</div>
+      </div>
+    );
+  }
+
   const applications = coach.applications ?? [];
   const pending = applications.filter((a: any) => a.status === "pending").length;
   const shortlisted = applications.filter((a: any) => a.status === "shortlisted").length;
+  const rejected = applications.filter((a: any) => a.status === "rejected").length;
+  const hired = applications.filter((a: any) => a.status === "hired").length;
+
+  const filteredApps =
+    filter === "all" ? applications : applications.filter((a: any) => a.status === filter);
+
+  const FILTER_TABS = [
+    { key: "all" as const, label: "All", count: applications.length },
+    { key: "pending" as const, label: "Pending", count: pending },
+    { key: "shortlisted" as const, label: "Shortlisted", count: shortlisted },
+    { key: "hired" as const, label: "Hired", count: hired },
+    { key: "rejected" as const, label: "Declined", count: rejected },
+  ];
 
   return (
     <div className="page-col !pt-6">
@@ -45,11 +85,12 @@ function CoachDashboard({ coach }: { coach: any }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2.5 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-6">
         {[
-          { icon: Briefcase, label: t("dashboard.applicationsSent"), value: String(applications.length) },
-          { icon: AlertCircle, label: t("dashboard.pendingReview"), value: String(pending) },
-          { icon: CheckCircle, label: t("dashboard.shortlisted"), value: String(shortlisted) },
+          { icon: Briefcase, label: t("dashboard.applicationsSent"), value: applications.length },
+          { icon: AlertCircle, label: t("dashboard.pendingReview"), value: pending },
+          { icon: CheckCircle, label: t("dashboard.shortlisted"), value: shortlisted },
+          { icon: PartyPopper, label: "Hired", value: hired },
         ].map((stat) => (
           <div key={stat.label} className="stat-cell !py-4">
             <stat.icon className="w-5 h-5 mb-2 text-brand mx-auto" />
@@ -71,17 +112,43 @@ function CoachDashboard({ coach }: { coach: any }) {
           </Link>
         </div>
       ) : (
-        <div className="flex flex-col gap-2.5">
-          {applications.map((app: any) => (
-            <CoachApplicationCard
-              key={app.id}
-              app={app}
-              defaultOpen={highlightApplicationId === app.id}
-            />
-          ))}
-        </div>
+        <>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {FILTER_TABS.filter((tab) => tab.key === "all" || tab.count > 0).map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setFilter(tab.key)}
+                className={`chip-toggle text-sm ${filter === tab.key ? "chip-toggle-active" : ""}`}
+              >
+                {tab.label} ({tab.count})
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-col gap-2.5">
+            {filteredApps.map((app: any) => (
+              <CoachApplicationCard
+                key={app.id}
+                app={app}
+                defaultOpen={highlightApplicationId === app.id}
+              />
+            ))}
+          </div>
+        </>
       )}
     </div>
+  );
+}
+
+function CoachDashboard() {
+  return (
+    <Suspense
+      fallback={
+        <div className="text-center py-16 text-footnote text-label-tertiary">Loading...</div>
+      }
+    >
+      <CoachDashboardInner />
+    </Suspense>
   );
 }
 
@@ -143,13 +210,7 @@ export default function DashboardPage() {
           <GymDashboard gym={data.gym} />
         </Suspense>
       ) : data.role === "COACH" && data.coach ? (
-        <Suspense
-          fallback={
-            <div className="text-center py-16 text-footnote text-label-tertiary">Loading...</div>
-          }
-        >
-          <CoachDashboard coach={data.coach} />
-        </Suspense>
+        <CoachDashboard />
       ) : (
         <div className="max-w-lg mx-auto px-6 py-24 text-center">
           <div className="text-4xl mb-4">🥋</div>

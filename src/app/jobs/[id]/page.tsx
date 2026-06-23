@@ -46,6 +46,8 @@ export default function JobDetailPage() {
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
   const [applied, setApplied] = useState(false);
+  const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
+  const [isGymAccount, setIsGymAccount] = useState(false);
   const [applyError, setApplyError] = useState("");
   const [message, setMessage] = useState("");
   const [showApplyForm, setShowApplyForm] = useState(false);
@@ -67,7 +69,11 @@ export default function JobDetailPage() {
     if (!id || !isLoaded || !isSignedIn) return;
     fetch(`/api/jobs/${id}/apply`)
       .then((r) => r.json())
-      .then((data) => setApplied(data.applied));
+      .then((data) => {
+        setApplied(data.applied);
+        setApplicationStatus(data.application?.status ?? null);
+        setIsGymAccount(!!data.isGym);
+      });
   }, [id, isLoaded, isSignedIn]);
 
   async function handleApply() {
@@ -80,10 +86,13 @@ export default function JobDetailPage() {
     });
     if (res.ok) {
       setApplied(true);
+      setApplicationStatus("pending");
       setShowApplyForm(false);
     } else {
       const data = await res.json();
-      setApplyError(data.error || "Something went wrong. Please try again.");
+      setApplyError(
+        typeof data.error === "string" ? data.error : "Something went wrong. Please try again."
+      );
     }
     setApplying(false);
   }
@@ -163,7 +172,10 @@ export default function JobDetailPage() {
               />
               {BELT_LABELS[job.minBelt]}+
             </span>
-            {job.styles?.map((s: string) => (
+            {job.minYearsTeaching > 0 && (
+            <span className="chip">{job.minYearsTeaching}+ years teaching</span>
+          )}
+          {job.styles?.map((s: string) => (
               <span key={s} className="chip">
                 {s}
               </span>
@@ -192,12 +204,29 @@ export default function JobDetailPage() {
             ))}
           </div>
 
-          {applied ? (
-            <div className="flex items-center justify-center gap-2 rounded-[14px] py-3.5 text-subheadline font-semibold text-brand bg-brand-light">
-              <CheckCircle className="w-4 h-4" />
-              {t("jobDetail.applied")}
+          {!job.active && (
+            <div className="rounded-[14px] py-3.5 px-4 text-subheadline text-center text-label-secondary bg-fill-tertiary mb-4">
+              This position is no longer accepting applications.
             </div>
-          ) : !isLoaded ? (
+          )}
+
+          {applied ? (
+            <div className="flex flex-col items-center gap-2 rounded-[14px] py-3.5 text-subheadline font-semibold text-brand bg-brand-light">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4" />
+                {applicationStatus === "hired"
+                  ? "You were hired for this role!"
+                  : applicationStatus === "shortlisted"
+                    ? "You've been shortlisted — check your dashboard"
+                    : applicationStatus === "rejected"
+                      ? "Application declined — browse other jobs"
+                      : t("jobDetail.applied")}
+              </div>
+              <Link href="/dashboard" className="text-footnote font-semibold underline">
+                View on dashboard →
+              </Link>
+            </div>
+          ) : !job.active ? null : !isLoaded ? (
             <div className="text-center text-footnote text-label-tertiary py-3 ios-card">
               {t("common.loading")}
             </div>
@@ -212,6 +241,13 @@ export default function JobDetailPage() {
                   {t("jobDetail.createCoach")}
                 </Link>
               </p>
+            </div>
+          ) : isGymAccount ? (
+            <div className="rounded-[14px] py-3.5 px-4 text-subheadline text-center text-label-secondary bg-fill-tertiary">
+              You&apos;re signed in with a gym account.{" "}
+              <Link href="/dashboard" className="font-semibold text-brand">
+                Go to gym dashboard
+              </Link>
             </div>
           ) : (
             <button

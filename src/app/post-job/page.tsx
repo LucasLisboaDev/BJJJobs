@@ -1,21 +1,28 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Building2 } from "lucide-react";
 import { US_STATES } from "@/lib/utils";
 import { DashboardNav } from "@/components/ui/dashboard-nav";
 
 const STYLES = ["Gi", "No-Gi", "Kids program", "Competition team", "Self-defense", "Fundamentals"];
-const PERKS = ["Free membership", "Flexible schedule", "Competition support", "Health benefits", "Seminar opportunities", "Growth potential"];
-const PLANS = [
-  { name: "Free", price: "$0", desc: "1 active listing · standard placement" },
-  { name: "Featured", price: "$39/mo", desc: "Unlimited listings · top of search · badge" },
-  { name: "Pro gym", price: "$79/mo", desc: "Everything + gym profile page + analytics" },
+const PERKS = [
+  "Free membership",
+  "Flexible schedule",
+  "Competition support",
+  "Health benefits",
+  "Seminar opportunities",
+  "Growth potential",
 ];
 
-export default function PostJobPage() {
+function PostJobForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editJobId = searchParams.get("edit");
+  const isEditing = !!editJobId;
+
   const [checkingGym, setCheckingGym] = useState(true);
+  const [loadingJob, setLoadingJob] = useState(isEditing);
   const [gymName, setGymName] = useState("");
 
   const [title, setTitle] = useState("");
@@ -30,7 +37,6 @@ export default function PostJobPage() {
   const [minPay, setMinPay] = useState("");
   const [maxPay, setMaxPay] = useState("");
   const [description, setDescription] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState("Free");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,15 +46,42 @@ export default function PostJobPage() {
       .then((data) => {
         if (data?.id) {
           setGymName(data.name);
-          setCity(data.city);
-          setState(data.state);
+          if (!isEditing) {
+            setCity(data.city);
+            setState(data.state);
+          }
         } else {
           router.replace("/register/gym");
         }
       })
       .catch(() => router.replace("/register/gym"))
       .finally(() => setCheckingGym(false));
-  }, [router]);
+  }, [router, isEditing]);
+
+  useEffect(() => {
+    if (!editJobId) return;
+    fetch(`/api/jobs/${editJobId}`)
+      .then((r) => r.json())
+      .then((job) => {
+        if (job.error) {
+          setError("Could not load this listing");
+          return;
+        }
+        setTitle(job.title);
+        setJobType(job.jobType);
+        setCity(job.city);
+        setState(job.state);
+        setMinBelt(job.minBelt);
+        setMinYears(job.minYearsTeaching);
+        setSelectedStyles(job.styles ?? []);
+        setSelectedPerks(job.perks ?? []);
+        setPayType(job.payType ?? "hourly");
+        setMinPay(job.minPay != null ? String(job.minPay) : "");
+        setMaxPay(job.maxPay != null ? String(job.maxPay) : "");
+        setDescription(job.description ?? "");
+      })
+      .finally(() => setLoadingJob(false));
+  }, [editJobId]);
 
   const toggleStyle = (s: string) =>
     setSelectedStyles((p) => (p.includes(s) ? p.filter((x) => x !== s) : [...p, s]));
@@ -60,32 +93,43 @@ export default function PostJobPage() {
       setError("Please fill in title, city, state, and description");
       return;
     }
+    if (minPay && maxPay && Number(minPay) > Number(maxPay)) {
+      setError("Minimum pay cannot be greater than maximum pay");
+      return;
+    }
+
     setSaving(true);
     setError("");
+    const payload = {
+      title,
+      jobType,
+      city,
+      state,
+      minBelt,
+      minYearsTeaching: minYears,
+      styles: selectedStyles,
+      perks: selectedPerks,
+      payType,
+      minPay: minPay ? Number(minPay) : undefined,
+      maxPay: maxPay ? Number(maxPay) : undefined,
+      description,
+    };
+
     try {
-      const res = await fetch("/api/jobs", {
-        method: "POST",
+      const res = await fetch(isEditing ? `/api/jobs/${editJobId}` : "/api/jobs", {
+        method: isEditing ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          jobType,
-          city,
-          state,
-          minBelt,
-          minYearsTeaching: minYears,
-          styles: selectedStyles,
-          perks: selectedPerks,
-          payType,
-          minPay: minPay ? Number(minPay) : undefined,
-          maxPay: maxPay ? Number(maxPay) : undefined,
-          description,
-        }),
+        body: JSON.stringify(payload),
       });
+      const data = await res.json();
       if (res.ok) {
-        router.push("/dashboard");
+        if (isEditing) {
+          router.push("/dashboard");
+        } else {
+          router.push(`/dashboard?published=${data.id}`);
+        }
       } else {
-        const data = await res.json();
-        setError(data.error || "Something went wrong");
+        setError(typeof data.error === "string" ? data.error : "Something went wrong");
       }
     } catch {
       setError("Something went wrong. Please try again.");
@@ -94,7 +138,7 @@ export default function PostJobPage() {
     }
   }
 
-  if (checkingGym) {
+  if (checkingGym || loadingJob) {
     return (
       <div className="min-h-screen bg-grouped flex items-center justify-center">
         <div className="text-footnote text-label-tertiary">Loading...</div>
@@ -110,16 +154,18 @@ export default function PostJobPage() {
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
           <div>
             <div className="text-caption-1 font-semibold text-label-tertiary uppercase tracking-wide">
-              Post a job
+              {isEditing ? "Edit listing" : "Post a job"}
             </div>
-            <div className="text-headline font-semibold">New listing</div>
+            <div className="text-headline font-semibold">
+              {isEditing ? title || "Edit job" : "New listing"}
+            </div>
           </div>
           <button
             onClick={handlePublish}
             disabled={saving}
             className="btn-primary text-sm !py-2 !px-5 disabled:opacity-60"
           >
-            {saving ? "Publishing..." : "Publish listing"}
+            {saving ? "Saving..." : isEditing ? "Save changes" : "Publish listing"}
           </button>
         </div>
       </div>
@@ -240,7 +286,7 @@ export default function PostJobPage() {
           <section className="ios-card-lg p-6">
             <h2 className="text-title-2 mb-1">Compensation</h2>
             <p className="text-footnote text-label-secondary mb-5">
-              Listings with pay ranges get 2x more applications
+              Listings with pay ranges get more applications
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
@@ -311,7 +357,7 @@ export default function PostJobPage() {
             disabled={saving}
             className="btn-primary w-full disabled:opacity-60"
           >
-            {saving ? "Publishing..." : "Publish listing"}
+            {saving ? "Saving..." : isEditing ? "Save changes" : "Publish listing"}
           </button>
         </div>
 
@@ -339,39 +385,33 @@ export default function PostJobPage() {
               {minPay && maxPay
                 ? `$${minPay}–$${maxPay}/${payType === "monthly" ? "mo" : "hr"}`
                 : minPay
-                ? `$${minPay}+`
-                : "Pay negotiable"}
+                  ? `$${minPay}+`
+                  : "Pay negotiable"}
             </div>
-          </div>
-
-          <div className="text-footnote font-semibold text-label-secondary">Choose a plan</div>
-          <div className="flex flex-col gap-2">
-            {PLANS.map((plan) => (
-              <button
-                key={plan.name}
-                type="button"
-                onClick={() => setSelectedPlan(plan.name)}
-                className={`text-left ios-card p-4 transition-all tap ${
-                  selectedPlan === plan.name ? "ring-2 ring-brand" : ""
-                }`}
-              >
-                <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-headline font-semibold">{plan.name}</span>
-                  <span className="text-headline font-semibold text-brand">{plan.price}</span>
-                </div>
-                <div className="text-footnote text-label-secondary">{plan.desc}</div>
-              </button>
-            ))}
           </div>
 
           <div className="alert-brand">
             <div className="text-footnote font-semibold mb-1">Pro tip</div>
             <div className="text-caption-1 leading-relaxed">
-              Listings with a pay range, belt minimum, and description get filled 40% faster on average.
+              Listings with a pay range, belt minimum, and description get filled faster on average.
             </div>
           </div>
         </aside>
       </div>
     </div>
+  );
+}
+
+export default function PostJobPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-grouped flex items-center justify-center">
+          <div className="text-footnote text-label-tertiary">Loading...</div>
+        </div>
+      }
+    >
+      <PostJobForm />
+    </Suspense>
   );
 }

@@ -66,6 +66,34 @@ export async function sendNewApplicationEmail(
   });
 }
 
+export async function sendApplicationConfirmationEmail(
+  application: ApplicationWithRelations
+): Promise<void> {
+  const resend = getResend();
+  if (!resend) return;
+
+  const coachEmail = await getUserEmail(application.coach.user.clerkId);
+  if (!coachEmail) return;
+
+  const appUrl = getAppUrl();
+  const dashboardUrl = `${appUrl}/dashboard?application=${application.id}`;
+
+  await resend.emails.send({
+    from: getFromEmail(),
+    to: coachEmail,
+    subject: `Application sent — ${application.job.title}`,
+    html: `
+      <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto;">
+        <h2 style="color: #1a1a1a;">Application sent</h2>
+        <p>Your application for <strong>${application.job.title}</strong> at <strong>${application.job.gym.name}</strong> was submitted successfully.</p>
+        <p>The gym will review your profile and may message you on JiuJitsuJobs. You'll get an email when they update your status.</p>
+        <p><a href="${dashboardUrl}" style="display: inline-block; background: #1D9E75; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">View your applications</a></p>
+        <p style="color: #999; font-size: 12px;">JiuJitsuJobs — The job board for BJJ coaches</p>
+      </div>
+    `,
+  });
+}
+
 export async function sendNewMessageEmail({
   applicationId,
   jobId,
@@ -150,24 +178,36 @@ export async function sendApplicationStatusEmail(
   const resend = getResend();
   if (!resend) return;
 
-  if (status !== "shortlisted" && status !== "rejected") return;
+  if (status !== "shortlisted" && status !== "rejected" && status !== "hired") return;
 
   const coachEmail = await getUserEmail(application.coach.user.clerkId);
   if (!coachEmail) return;
 
   const appUrl = getAppUrl();
-  const dashboardUrl = `${appUrl}/dashboard?job=${application.job.id}&application=${application.id}`;
+  const dashboardUrl = `${appUrl}/dashboard?application=${application.id}`;
   const jobsUrl = `${appUrl}/jobs`;
 
   const isShortlisted = status === "shortlisted";
-  const subject = isShortlisted
-    ? `You've been shortlisted for ${application.job.title}`
-    : `Update on your application for ${application.job.title}`;
+  const isHired = status === "hired";
+  const subject = isHired
+    ? `Congratulations — you were hired for ${application.job.title}!`
+    : isShortlisted
+      ? `You've been shortlisted for ${application.job.title}`
+      : `Update on your application for ${application.job.title}`;
 
-  const headline = isShortlisted ? "You've been shortlisted!" : "Application update";
-  const body = isShortlisted
-    ? `<strong>${application.job.gym.name}</strong> shortlisted you for <strong>${application.job.title}</strong>. Open your dashboard to message them and discuss next steps.`
-    : `<strong>${application.job.gym.name}</strong> has decided not to move forward with your application for <strong>${application.job.title}</strong> at this time. Don't get discouraged — keep applying to other positions.`;
+  const headline = isHired
+    ? "You got the job!"
+    : isShortlisted
+      ? "You've been shortlisted!"
+      : "Application update";
+  const body = isHired
+    ? `<strong>${application.job.gym.name}</strong> marked you as hired for <strong>${application.job.title}</strong>. Open your dashboard to coordinate next steps with the gym.`
+    : isShortlisted
+      ? `<strong>${application.job.gym.name}</strong> shortlisted you for <strong>${application.job.title}</strong>. Open your dashboard to message them and discuss next steps.`
+      : `<strong>${application.job.gym.name}</strong> has decided not to move forward with your application for <strong>${application.job.title}</strong> at this time. Don't get discouraged — keep applying to other positions.`;
+
+  const ctaLabel = isHired || isShortlisted ? "Open dashboard" : "Browse more jobs";
+  const ctaUrl = isHired || isShortlisted ? dashboardUrl : jobsUrl;
 
   await resend.emails.send({
     from: getFromEmail(),
@@ -177,7 +217,7 @@ export async function sendApplicationStatusEmail(
       <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto;">
         <h2 style="color: #1a1a1a;">${headline}</h2>
         <p>${body}</p>
-        <p><a href="${isShortlisted ? dashboardUrl : jobsUrl}" style="display: inline-block; background: #1D9E75; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">${isShortlisted ? "Open messages" : "Browse more jobs"}</a></p>
+        <p><a href="${ctaUrl}" style="display: inline-block; background: #1D9E75; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">${ctaLabel}</a></p>
         <p style="color: #999; font-size: 12px;">JiuJitsuJobs — The job board for BJJ coaches</p>
       </div>
     `,

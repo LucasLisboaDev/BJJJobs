@@ -24,6 +24,10 @@ export async function GET() {
             jobs: {
               include: {
                 _count: { select: { applications: true } },
+                applications: {
+                  where: { status: "pending" },
+                  select: { id: true, viewedAt: true },
+                },
               },
               orderBy: { createdAt: "desc" },
             },

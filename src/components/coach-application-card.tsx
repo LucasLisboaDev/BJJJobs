@@ -1,15 +1,11 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Clock, ChevronDown, ChevronUp, AlertCircle, CheckCircle, XCircle } from "lucide-react";
+import { Clock, ChevronDown, ChevronUp, Eye } from "lucide-react";
 import { ApplicationChat } from "@/components/application-chat";
+import { InstagramLink } from "@/components/instagram-link";
 import { JOB_TYPE_LABELS } from "@/lib/utils";
-
-const STATUS_CONFIG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
-  pending: { label: "Pending", icon: AlertCircle, color: "#92400e", bg: "rgba(255,149,0,0.14)" },
-  shortlisted: { label: "Shortlisted", icon: CheckCircle, color: "#0F6E56", bg: "rgba(52,199,89,0.16)" },
-  rejected: { label: "Rejected", icon: XCircle, color: "#991b1b", bg: "rgba(255,59,48,0.12)" },
-};
+import { STATUS_CONFIG } from "@/lib/application-status";
 
 export function CoachApplicationCard({
   app,
@@ -37,9 +33,15 @@ export function CoachApplicationCard({
           <div className="text-footnote text-label-secondary">
             {app.job.gym?.name} · {app.job.city}, {app.job.state}
           </div>
-          <span className="chip text-brand mt-2 inline-flex">
-            {JOB_TYPE_LABELS[app.job.jobType]}
-          </span>
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <span className="chip text-brand">{JOB_TYPE_LABELS[app.job.jobType]}</span>
+            {app.viewedAt && app.status === "pending" && (
+              <span className="flex items-center gap-1 text-caption-1 text-label-tertiary">
+                <Eye className="w-3 h-3" />
+                Viewed by gym
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
           <span
@@ -66,6 +68,42 @@ export function CoachApplicationCard({
 
       {open && (
         <div className="border-t border-separator/50 p-4 space-y-4 bg-grouped">
+          {app.status === "hired" && (
+            <div className="rounded-ios p-4 bg-blue-50 border border-blue-100">
+              <div className="text-subheadline font-semibold text-blue-900 mb-1">
+                Congratulations — you got the job!
+              </div>
+              <p className="text-footnote text-blue-800">
+                {app.job.gym?.name} marked you as hired for this role. Message them below to
+                coordinate your start date.
+              </p>
+            </div>
+          )}
+
+          {app.status === "shortlisted" && (
+            <div className="rounded-ios p-4 bg-brand-light">
+              <div className="text-subheadline font-semibold text-brand-dark mb-1">
+                You&apos;re shortlisted
+              </div>
+              <p className="text-footnote text-label-secondary">
+                The gym is interested. Send a message to introduce yourself or schedule a trial
+                class.
+              </p>
+            </div>
+          )}
+
+          {app.status === "rejected" && (
+            <div className="rounded-ios p-4 bg-red-50 border border-red-100">
+              <div className="text-subheadline font-semibold text-red-900 mb-1">Not this time</div>
+              <p className="text-footnote text-red-800 mb-3">
+                This gym decided not to move forward. Keep applying — the right fit is out there.
+              </p>
+              <Link href="/jobs" className="text-footnote font-semibold text-brand">
+                Browse more jobs →
+              </Link>
+            </div>
+          )}
+
           {app.message && (
             <div className="ios-card p-4">
               <div className="text-caption-1 font-semibold text-label-secondary mb-1">
@@ -76,9 +114,21 @@ export function CoachApplicationCard({
               </p>
             </div>
           )}
-          <Link href={`/jobs/${app.job.id}`} className="text-footnote font-semibold text-brand tap">
-            View job listing →
-          </Link>
+
+          <div className="flex flex-wrap gap-3 text-footnote">
+            <Link href={`/jobs/${app.job.id}`} className="font-semibold text-brand tap">
+              View job listing →
+            </Link>
+            {app.job.gym?.id && (
+              <Link href={`/gyms/${app.job.gym.id}`} className="font-semibold text-brand tap">
+                View gym profile →
+              </Link>
+            )}
+            {app.job.gym?.instagram && (
+              <InstagramLink handle={app.job.gym.instagram} className="text-brand text-footnote" />
+            )}
+          </div>
+
           <ApplicationChat applicationId={app.id} viewerRole="coach" />
         </div>
       )}

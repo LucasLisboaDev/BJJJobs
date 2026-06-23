@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   Briefcase,
   Users,
@@ -16,6 +16,9 @@ import {
   ExternalLink,
   Pencil,
   Eye,
+  CheckCircle,
+  Copy,
+  X,
 } from "lucide-react";
 import { US_STATES } from "@/lib/utils";
 import { ApplicantDetailPanel } from "@/components/applicant-detail-panel";
@@ -27,6 +30,8 @@ const JOB_TYPE_LABELS: Record<string, string> = {
   CONTRACT: "Contract",
   REVENUE_SHARE: "Revenue share",
 };
+
+type ApplicantFilter = "all" | "pending" | "shortlisted" | "rejected" | "hired";
 
 function GymProfilePanel({
   gym,
@@ -237,15 +242,58 @@ function GymProfilePanel({
   );
 }
 
+function PublishedBanner({ jobId, onDismiss }: { jobId: string; onDismiss: () => void }) {
+  const [copied, setCopied] = useState(false);
+  const listingUrl =
+    typeof window !== "undefined" ? `${window.location.origin}/jobs/${jobId}` : `/jobs/${jobId}`;
+
+  async function copyLink() {
+    await navigator.clipboard.writeText(listingUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <div className="ios-card-lg p-5 mb-6 border border-brand/30 bg-brand-light/40">
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2">
+          <CheckCircle className="w-5 h-5 text-brand shrink-0" />
+          <div className="text-headline font-semibold text-brand-dark">Your listing is live!</div>
+        </div>
+        <button onClick={onDismiss} className="text-label-tertiary hover:text-label tap">
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+      <p className="text-footnote text-label-secondary mb-4">
+        Coaches can now find and apply to your job. Share the link or check back for applicants.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <Link href={`/jobs/${jobId}`} className="btn-primary text-sm !py-2">
+          View listing
+        </Link>
+        <button onClick={copyLink} className="btn-secondary text-sm !py-2 flex items-center gap-1.5">
+          <Copy className="w-3.5 h-3.5" />
+          {copied ? "Copied!" : "Copy link"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function GymDashboard({ gym: initialGym }: { gym: any }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const highlightJobId = searchParams.get("job");
+  const publishedJobId = searchParams.get("published");
+  const [showPublishedBanner, setShowPublishedBanner] = useState(!!publishedJobId);
+
   const [gym, setGym] = useState(initialGym);
   const [expandedJob, setExpandedJob] = useState<string | null>(highlightJobId);
   const [openApplicantId, setOpenApplicantId] = useState<string | null>(
     searchParams.get("application")
   );
   const [applicants, setApplicants] = useState<Record<string, any[]>>({});
+  const [applicantFilters, setApplicantFilters] = useState<Record<string, ApplicantFilter>>({});
   const [loadingApplicants, setLoadingApplicants] = useState<Record<string, boolean>>({});
   const [togglingJob, setTogglingJob] = useState<string | null>(null);
   const [jobs, setJobs] = useState<any[]>(gym.jobs ?? []);
@@ -266,6 +314,16 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [highlightJobId, searchParams]);
 
+  function dismissPublishedBanner() {
+    setShowPublishedBanner(false);
+    router.replace("/dashboard", { scroll: false });
+  }
+
+  function getNewApplicantCount(job: any) {
+    if (!job.applications) return 0;
+    return job.applications.filter((a: any) => !a.viewedAt).length;
+  }
+
   async function loadApplicants(jobId: string, forceOpen = false) {
     if (applicants[jobId] && !forceOpen) {
       setExpandedJob(expandedJob === jobId ? null : jobId);
@@ -277,40 +335,83 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
     const data = await res.json();
     setApplicants((prev) => ({ ...prev, [jobId]: Array.isArray(data) ? data : [] }));
     setLoadingApplicants((prev) => ({ ...prev, [jobId]: false }));
+
+    setJobs((prev) =>
+      prev.map((j) =>
+        j.id === jobId
+          ? {
+              ...j,
+              applications: (j.applications ?? []).map((a: any) => ({ ...a, viewedAt: new Date() })),
+            }
+          : j
+      )
+    );
   }
 
   async function toggleActive(job: any) {
     setTogglingJob(job.id);
-    await fetch(`/api/jobs/${job.id}`, {
+    const res = await fetch(`/api/jobs/${job.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ active: !job.active }),
     });
-    setJobs((prev) =>
-      prev.map((j) => (j.id === job.id ? { ...j, active: !j.active } : j))
-    );
+    if (res.ok) {
+      setJobs((prev) =>
+        prev.map((j) => (j.id === job.id ? { ...j, active: !j.active } : j))
+      );
+    }
     setTogglingJob(null);
   }
 
-  async function updateStatus(jobId: string, applicationId: string, status: string) {
-    await fetch(`/api/jobs/${jobId}/applications`, {
+  async function updateStatus(
+    jobId: string,
+    applicationId: string,
+    status: string,
+    options?: { closeJob?: boolean }
+  ) {
+    const res = await fetch(`/api/jobs/${jobId}/applications`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ applicationId, status }),
+      body: JSON.stringify({ applicationId, status, closeJob: options?.closeJob }),
     });
-    setApplicants((prev) => ({
-      ...prev,
-      [jobId]: prev[jobId].map((a) =>
-        a.id === applicationId ? { ...a, status } : a
-      ),
-    }));
+    if (res.ok) {
+      const data = await res.json();
+      setApplicants((prev) => ({
+        ...prev,
+        [jobId]: prev[jobId].map((a) =>
+          a.id === applicationId ? { ...a, status: data.status } : a
+        ),
+      }));
+      if (options?.closeJob) {
+        setJobs((prev) =>
+          prev.map((j) => (j.id === jobId ? { ...j, active: false } : j))
+        );
+      }
+    }
   }
+
+  function filterApplicants(jobId: string, list: any[]) {
+    const filter = applicantFilters[jobId] ?? "all";
+    if (filter === "all") return list;
+    return list.filter((a) => a.status === filter);
+  }
+
+  const FILTER_TABS: { key: ApplicantFilter; label: string }[] = [
+    { key: "all", label: "All" },
+    { key: "pending", label: "Pending" },
+    { key: "shortlisted", label: "Shortlisted" },
+    { key: "hired", label: "Hired" },
+    { key: "rejected", label: "Declined" },
+  ];
 
   return (
     <div className="page-col !pt-6">
+      {showPublishedBanner && publishedJobId && (
+        <PublishedBanner jobId={publishedJobId} onDismiss={dismissPublishedBanner} />
+      )}
+
       <GymProfilePanel gym={gym} onUpdate={setGym} />
 
-      {/* Stats */}
       <div className="grid grid-cols-3 gap-4 my-6">
         {[
           { icon: Briefcase, label: "Total listings", value: String(jobs.length) },
@@ -325,7 +426,6 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
         ))}
       </div>
 
-      {/* Job listings */}
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-medium">Your listings</h2>
         <Link href="/post-job" className="btn-primary text-sm !py-2 !px-4 flex items-center gap-1.5">
@@ -349,7 +449,9 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
           {jobs.map((job: any) => {
             const isExpanded = expandedJob === job.id;
             const jobApplicants = applicants[job.id] ?? [];
+            const filteredApplicants = filterApplicants(job.id, jobApplicants);
             const appCount = job._count?.applications ?? 0;
+            const newCount = getNewApplicantCount(job);
 
             return (
               <div
@@ -361,25 +463,35 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
                     🥋
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
+                    <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <Link
                         href={`/jobs/${job.id}`}
                         className="text-headline font-semibold hover:underline text-brand-dark"
                       >
                         {job.title}
                       </Link>
-                      {!job.active && (
-                        <span className="chip">Inactive</span>
+                      {!job.active && <span className="chip">Inactive</span>}
+                      {newCount > 0 && (
+                        <span className="chip chip-active !bg-orange-100 !text-orange-800">
+                          {newCount} new
+                        </span>
                       )}
                     </div>
                     <div className="text-footnote text-label-secondary">
                       {job.city}, {job.state} · {JOB_TYPE_LABELS[job.jobType]}
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">
+                  <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
                     <span className="text-footnote text-label-secondary">
                       {appCount} {appCount === 1 ? "applicant" : "applicants"}
                     </span>
+                    <Link
+                      href={`/post-job?edit=${job.id}`}
+                      className="btn-secondary text-xs !py-1.5 !px-3 flex items-center gap-1"
+                    >
+                      <Pencil className="w-3 h-3" />
+                      Edit
+                    </Link>
                     <button
                       onClick={() => toggleActive(job)}
                       disabled={togglingJob === job.id}
@@ -419,19 +531,49 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
                         No applications yet.
                       </div>
                     ) : (
-                      <div className="flex flex-col gap-3">
-                        {jobApplicants.map((app: any) => (
-                          <ApplicantDetailPanel
-                            key={app.id}
-                            app={app}
-                            jobId={job.id}
-                            defaultOpen={openApplicantId === app.id}
-                            onStatusChange={(applicationId, status) =>
-                              updateStatus(job.id, applicationId, status)
-                            }
-                          />
-                        ))}
-                      </div>
+                      <>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {FILTER_TABS.map((tab) => {
+                            const count =
+                              tab.key === "all"
+                                ? jobApplicants.length
+                                : jobApplicants.filter((a) => a.status === tab.key).length;
+                            if (tab.key !== "all" && count === 0) return null;
+                            const active = (applicantFilters[job.id] ?? "all") === tab.key;
+                            return (
+                              <button
+                                key={tab.key}
+                                type="button"
+                                onClick={() =>
+                                  setApplicantFilters((prev) => ({ ...prev, [job.id]: tab.key }))
+                                }
+                                className={`chip-toggle text-xs ${active ? "chip-toggle-active" : ""}`}
+                              >
+                                {tab.label} ({count})
+                              </button>
+                            );
+                          })}
+                        </div>
+                        {filteredApplicants.length === 0 ? (
+                          <div className="text-footnote text-label-tertiary py-4 text-center">
+                            No applicants in this category.
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-3">
+                            {filteredApplicants.map((app: any) => (
+                              <ApplicantDetailPanel
+                                key={app.id}
+                                app={app}
+                                jobId={job.id}
+                                defaultOpen={openApplicantId === app.id}
+                                onStatusChange={(applicationId, status, options) =>
+                                  updateStatus(job.id, applicationId, status, options)
+                                }
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 )}

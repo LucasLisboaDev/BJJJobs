@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isApplicationStatus } from "@/lib/application-status";
 import {
   sendApplicationStatusEmail,
   sendApplicationViewedEmail,
@@ -15,6 +16,25 @@ const applicationInclude = {
   },
   job: { include: { gym: { include: { user: true } } } },
 } as const;
+
+const coachApplicationSelect = {
+  id: true,
+  firstName: true,
+  lastName: true,
+  beltRank: true,
+  affiliation: true,
+  instagram: true,
+  yearsTeaching: true,
+  specialties: true,
+  targetCity: true,
+  bio: true,
+  competitionRecord: true,
+  minPay: true,
+  maxPay: true,
+  resumeUrl: true,
+  resumeFileName: true,
+  experiences: { orderBy: { sortOrder: "asc" as const } },
+};
 
 // GET — gym views applicants for one of their jobs
 export async function GET(
@@ -40,11 +60,7 @@ export async function GET(
     const applications = await prisma.application.findMany({
       where: { jobId: params.id },
       include: {
-        coach: {
-          include: {
-            experiences: { orderBy: { sortOrder: "asc" } },
-          },
-        },
+        coach: { select: coachApplicationSelect },
         conversation: {
           include: {
             messages: {
@@ -90,7 +106,7 @@ export async function GET(
   }
 }
 
-// PATCH — update application status (shortlist, reject, etc.)
+// PATCH — update application status
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -111,7 +127,11 @@ export async function PATCH(
       return NextResponse.json({ error: "Not authorized" }, { status: 403 });
     }
 
-    const { applicationId, status } = await req.json();
+    const { applicationId, status, closeJob } = await req.json();
+
+    if (!isApplicationStatus(status)) {
+      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+    }
 
     const existing = await prisma.application.findUnique({
       where: { id: applicationId },
@@ -126,13 +146,23 @@ export async function PATCH(
       include: applicationInclude,
     });
 
-    if (existing.status !== status && (status === "shortlisted" || status === "rejected")) {
+    if (status === "hired" && closeJob) {
+      await prisma.job.update({
+        where: { id: params.id },
+        data: { active: false },
+      });
+    }
+
+    if (existing.status !== status && ["shortlisted", "rejected", "hired"].includes(status)) {
       sendApplicationStatusEmail(updated, status).catch((err) =>
         console.error("Failed to send status email:", err)
       );
     }
 
-    return NextResponse.json(updated);
+    return NextResponse.json({
+      ...updated,
+      jobClosed: status === "hired" && closeJob,
+    });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

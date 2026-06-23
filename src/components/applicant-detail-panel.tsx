@@ -8,13 +8,13 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
+  FileDown,
+  Eye,
 } from "lucide-react";
 import { CoachExperienceSection } from "@/components/coach-experience-section";
 import { ApplicationChat } from "@/components/application-chat";
 import { InstagramLink } from "@/components/instagram-link";
+import { STATUS_CONFIG } from "@/lib/application-status";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -31,12 +31,6 @@ const BELT_LABELS: Record<string, string> = {
   BLACK: "Black belt",
 };
 
-const STATUS_CONFIG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
-  pending: { label: "Pending", icon: AlertCircle, color: "#92400e", bg: "#fef3c7" },
-  shortlisted: { label: "Shortlisted", icon: CheckCircle, color: "#0F6E56", bg: "#E1F5EE" },
-  rejected: { label: "Rejected", icon: XCircle, color: "#991b1b", bg: "#fee2e2" },
-};
-
 export function ApplicantDetailPanel({
   app,
   defaultOpen = false,
@@ -45,12 +39,22 @@ export function ApplicantDetailPanel({
   app: any;
   jobId: string;
   defaultOpen?: boolean;
-  onStatusChange: (applicationId: string, status: string) => void;
+  onStatusChange: (
+    applicationId: string,
+    status: string,
+    options?: { closeJob?: boolean }
+  ) => void;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  const [confirmDecline, setConfirmDecline] = useState(false);
+  const [confirmHire, setConfirmHire] = useState(false);
+  const [closeOnHire, setCloseOnHire] = useState(true);
   const coach = app.coach;
   const statusCfg = STATUS_CONFIG[app.status] ?? STATUS_CONFIG.pending;
   const StatusIcon = statusCfg.icon;
+  const isPending = app.status === "pending";
+  const isShortlisted = app.status === "shortlisted";
+  const canDecide = isPending || isShortlisted;
 
   return (
     <div className="ios-card overflow-hidden">
@@ -84,6 +88,7 @@ export function ApplicantDetailPanel({
               year: "numeric",
             })}
             {coach.yearsTeaching ? ` · ${coach.yearsTeaching}yr teaching` : ""}
+            {app.viewedAt ? " · Viewed" : " · New"}
           </div>
         </div>
         <span
@@ -102,6 +107,24 @@ export function ApplicantDetailPanel({
 
       {open && (
         <div className="border-t border-separator/50 p-4 space-y-4 bg-grouped">
+          {coach.resumeUrl && (
+            <a
+              href={coach.resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 rounded-ios bg-brand-light text-brand-dark tap"
+            >
+              <FileDown className="w-5 h-5 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="text-subheadline font-semibold">Download resume</div>
+                <div className="text-caption-1 truncate">
+                  {coach.resumeFileName ?? "Coach resume.pdf"}
+                </div>
+              </div>
+              <ExternalLink className="w-4 h-4 shrink-0 opacity-60" />
+            </a>
+          )}
+
           <div className="ios-card p-4 space-y-3">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -170,15 +193,6 @@ export function ApplicantDetailPanel({
               </div>
             )}
 
-            {coach.competitionRecord && (
-              <div>
-                <div className="text-xs font-medium text-gray-500 mb-1">Competition record</div>
-                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-                  {coach.competitionRecord}
-                </p>
-              </div>
-            )}
-
             {(coach.minPay || coach.maxPay) && (
               <div className="text-xs text-gray-500">
                 Pay expectation:{" "}
@@ -193,8 +207,8 @@ export function ApplicantDetailPanel({
 
           <CoachExperienceSection coach={coach} compact />
 
-          {app.status === "pending" && (
-            <div className="flex gap-2">
+          {canDecide && !confirmDecline && !confirmHire && (
+            <div className="flex flex-col sm:flex-row gap-2">
               <button
                 onClick={() => onStatusChange(app.id, "shortlisted")}
                 className="btn-primary text-sm !py-2 flex-1"
@@ -202,11 +216,91 @@ export function ApplicantDetailPanel({
                 Shortlist
               </button>
               <button
-                onClick={() => onStatusChange(app.id, "rejected")}
+                onClick={() => setConfirmHire(true)}
+                className="btn-primary text-sm !py-2 flex-1 !bg-blue-600 hover:!bg-blue-700"
+              >
+                Mark as hired
+              </button>
+              <button
+                onClick={() => setConfirmDecline(true)}
                 className="btn-secondary text-sm !py-2 flex-1"
               >
                 Decline
               </button>
+            </div>
+          )}
+
+          {confirmHire && (
+            <div className="ios-card p-4 space-y-3 border border-blue-200 bg-blue-50/50">
+              <div className="text-subheadline font-semibold">
+                Mark {coach.firstName} as hired?
+              </div>
+              <p className="text-footnote text-label-secondary">
+                They&apos;ll receive a confirmation email. You can keep messaging to coordinate start
+                date and details.
+              </p>
+              <label className="flex items-center gap-2 text-footnote cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={closeOnHire}
+                  onChange={(e) => setCloseOnHire(e.target.checked)}
+                  className="rounded"
+                />
+                Close this listing (stop accepting new applications)
+              </label>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    onStatusChange(app.id, "hired", { closeJob: closeOnHire });
+                    setConfirmHire(false);
+                  }}
+                  className="btn-primary text-sm !py-2 flex-1 !bg-blue-600"
+                >
+                  Confirm hire
+                </button>
+                <button
+                  onClick={() => setConfirmHire(false)}
+                  className="btn-secondary text-sm !py-2 flex-1"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {confirmDecline && (
+            <div className="ios-card p-4 space-y-3 border border-red-200 bg-red-50/50">
+              <div className="text-subheadline font-semibold">
+                Decline {coach.firstName}&apos;s application?
+              </div>
+              <p className="text-footnote text-label-secondary">
+                They&apos;ll be notified by email. You can still message them if you change your
+                mind later.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    onStatusChange(app.id, "rejected");
+                    setConfirmDecline(false);
+                  }}
+                  className="btn-secondary text-sm !py-2 flex-1 !text-red-700 !border-red-200"
+                >
+                  Yes, decline
+                </button>
+                <button
+                  onClick={() => setConfirmDecline(false)}
+                  className="btn-secondary text-sm !py-2 flex-1"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {app.status === "hired" && (
+            <div className="flex items-center gap-2 text-footnote text-blue-700 bg-blue-50 rounded-ios p-3">
+              <Eye className="w-4 h-4 shrink-0" />
+              This coach has been marked as hired for this role.
             </div>
           )}
 
