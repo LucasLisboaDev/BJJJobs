@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Providers } from "@/components/providers";
+import { APP_NAME } from "@/lib/brand";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "BJJJobs — The #1 Job Board for BJJ Coaches",
+  title: `${APP_NAME} — The #1 Job Board for BJJ Coaches`,
   description: "Find coaching jobs at top Brazilian jiu-jitsu gyms, or post a role and find your next instructor.",
 };
 

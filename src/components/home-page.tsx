@@ -1,4 +1,5 @@
 "use client";
+import { APP_DOMAIN } from "@/lib/brand";
 import Link from "next/link";
 import { Search, Users, Building2, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
@@ -236,7 +237,7 @@ export default function HomePage() {
         </PageCol>
 
         <footer className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-5 border-t border-separator/30 max-w-3xl mx-auto">
-          <div className="text-footnote text-label-tertiary">BJJJobs.com · 2025</div>
+          <div className="text-footnote text-label-tertiary">{APP_DOMAIN} · 2025</div>
           <div className="flex gap-5 text-caption-1 text-label-tertiary">
             <Link href="/about" className="hover:text-label-secondary">
               {t("nav.aboutUs")}

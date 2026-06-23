@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { SignUp } from "@clerk/nextjs";
 import { Logo } from "@/components/ui/logo";
+import { STORAGE_KEYS } from "@/lib/brand";
 
 export default function GymSignUp() {
   const [gymName, setGymName] = useState("");
@@ -33,8 +34,8 @@ export default function GymSignUp() {
             value={gymName}
             onChange={(e) => {
               setGymName(e.target.value);
-              sessionStorage.setItem("bjjjobs_gym_name", e.target.value);
-              sessionStorage.setItem("bjjjobs_signup_role", "GYM");
+              sessionStorage.setItem(STORAGE_KEYS.gymName, e.target.value);
+              sessionStorage.setItem(STORAGE_KEYS.signupRole, "GYM");
             }}
           />
         </div>

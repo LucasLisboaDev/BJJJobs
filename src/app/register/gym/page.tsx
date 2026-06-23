@@ -5,6 +5,7 @@ import { useAuth, SignOutButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { US_STATES } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
+import { STORAGE_KEYS, readStored } from "@/lib/brand";
 
 export default function GymRegisterPage() {
   const router = useRouter();
@@ -47,7 +48,7 @@ export default function GymRegisterPage() {
       setName(fromMeta.trim());
       return;
     }
-    const stored = sessionStorage.getItem("bjjjobs_gym_name");
+    const stored = readStored("gymName");
     if (stored?.trim()) setName(stored.trim());
   }, [user, name]);
 
@@ -72,8 +73,8 @@ export default function GymRegisterPage() {
         }),
       });
       if (res.ok) {
-        sessionStorage.removeItem("bjjjobs_gym_name");
-        sessionStorage.removeItem("bjjjobs_signup_role");
+        sessionStorage.removeItem(STORAGE_KEYS.gymName);
+        sessionStorage.removeItem(STORAGE_KEYS.signupRole);
         router.push("/dashboard");
       } else {
         const data = await res.json();

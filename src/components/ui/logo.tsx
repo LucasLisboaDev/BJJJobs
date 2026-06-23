@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Shield } from "lucide-react";
+import { APP_NAME } from "@/lib/brand";
 
 export function Logo({ className = "" }: { className?: string }) {
   return (
@@ -7,8 +8,9 @@ export function Logo({ className = "" }: { className?: string }) {
       <div className="w-[30px] h-[30px] rounded-[9px] bg-brand flex items-center justify-center flex-shrink-0">
         <Shield className="w-[18px] h-[18px] text-white" strokeWidth={2.1} />
       </div>
-      <span className="font-display font-bold text-lg tracking-tight text-label">
-        BJJ<span className="text-brand">Jobs</span>
+      <span className="font-display font-bold text-base sm:text-lg tracking-tight text-label">
+        {APP_NAME.replace("Jobs", "")}
+        <span className="text-brand">Jobs</span>
       </span>
     </Link>
   );

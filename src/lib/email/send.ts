@@ -56,9 +56,9 @@ export async function sendNewApplicationEmail(
         <p><strong>${coachName}</strong> (${belt}) applied to <strong>${application.job.title}</strong> at ${application.job.gym.name}.</p>
         ${details.length > 0 ? `<ul style="color: #555; padding-left: 18px;">${details.map((d) => `<li>${d}</li>`).join("")}</ul>` : ""}
         ${application.message ? `<p style="color: #555; border-left: 3px solid #1D9E75; padding-left: 12px; font-style: italic;">"${application.message}"</p>` : ""}
-        <p>Review their full profile, resume, and work history on your dashboard. You can also message them directly on BJJJobs.</p>
+        <p>Review their full profile, resume, and work history on your dashboard. You can also message them directly on JiuJitsuJobs.</p>
         <p><a href="${dashboardUrl}" style="display: inline-block; background: #1D9E75; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">View applicant</a></p>
-        <p style="color: #999; font-size: 12px;">BJJJobs — The job board for BJJ coaches</p>
+        <p style="color: #999; font-size: 12px;">JiuJitsuJobs — The job board for BJJ coaches</p>
       </div>
     `,
   });
@@ -106,8 +106,8 @@ export async function sendNewMessageEmail({
         <h2 style="color: #1a1a1a;">New message</h2>
         <p><strong>${senderName}</strong> sent you a message about <strong>${jobTitle}</strong>:</p>
         <p style="color: #555; border-left: 3px solid #1D9E75; padding-left: 12px;">"${preview}"</p>
-        <p><a href="${dashboardUrl}" style="display: inline-block; background: #1D9E75; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">Reply on BJJJobs</a></p>
-        <p style="color: #999; font-size: 12px;">BJJJobs — The job board for BJJ coaches</p>
+        <p><a href="${dashboardUrl}" style="display: inline-block; background: #1D9E75; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">Reply on JiuJitsuJobs</a></p>
+        <p style="color: #999; font-size: 12px;">JiuJitsuJobs — The job board for BJJ coaches</p>
       </div>
     `,
   });
@@ -133,9 +133,9 @@ export async function sendApplicationViewedEmail(
       <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto;">
         <h2 style="color: #1a1a1a;">Your application was viewed</h2>
         <p><strong>${application.job.gym.name}</strong> reviewed your application for <strong>${application.job.title}</strong>.</p>
-        <p>They may reach out via messages on BJJJobs — check your dashboard.</p>
+        <p>They may reach out via messages on JiuJitsuJobs — check your dashboard.</p>
         <p><a href="${dashboardUrl}" style="display: inline-block; background: #1D9E75; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">Open messages</a></p>
-        <p style="color: #999; font-size: 12px;">BJJJobs — The job board for BJJ coaches</p>
+        <p style="color: #999; font-size: 12px;">JiuJitsuJobs — The job board for BJJ coaches</p>
       </div>
     `,
   });
@@ -176,7 +176,7 @@ export async function sendApplicationStatusEmail(
         <h2 style="color: #1a1a1a;">${headline}</h2>
         <p>${body}</p>
         <p><a href="${isShortlisted ? dashboardUrl : jobsUrl}" style="display: inline-block; background: #1D9E75; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">${isShortlisted ? "Open messages" : "Browse more jobs"}</a></p>
-        <p style="color: #999; font-size: 12px;">BJJJobs — The job board for BJJ coaches</p>
+        <p style="color: #999; font-size: 12px;">JiuJitsuJobs — The job board for BJJ coaches</p>
       </div>
     `,
   });

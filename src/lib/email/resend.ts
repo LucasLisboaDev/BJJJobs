@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { APP_NAME } from "@/lib/brand";
 
 let resend: Resend | null = null;
 
@@ -9,7 +10,7 @@ export function getResend(): Resend | null {
 }
 
 export function getFromEmail(): string {
-  return process.env.RESEND_FROM_EMAIL ?? "BJJJobs <onboarding@resend.dev>";
+  return process.env.RESEND_FROM_EMAIL ?? `${APP_NAME} <onboarding@resend.dev>`;
 }
 
 export function getAppUrl(): string {

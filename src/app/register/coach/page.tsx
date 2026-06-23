@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import type { WorkExperienceInput } from "@/lib/coach-experience";
 import { Logo } from "@/components/ui/logo";
+import { STORAGE_KEYS } from "@/lib/brand";
 
 const BELTS = ["WHITE", "BLUE", "PURPLE", "BROWN", "BLACK"];
 const BELT_LABELS: Record<string, string> = {
@@ -209,7 +210,7 @@ export default function CoachRegisterPage() {
       });
 
       if (res.ok) {
-        sessionStorage.removeItem("bjjjobs_signup_role");
+        sessionStorage.removeItem(STORAGE_KEYS.signupRole);
         router.push("/dashboard");
       } else {
         const data = await res.json();

@@ -60,7 +60,7 @@ export const en = {
         "Your profile is your application. Gyms can contact you directly or you apply to their listing.",
     },
     footerCtaTitle: "Ready to post your first job?",
-    footerCtaSub: "Join 180+ gyms already finding great coaches on BJJJobs",
+    footerCtaSub: "Join 180+ gyms already finding great coaches on JiuJitsuJobs",
     postJobFree: "Post a job — it's free",
     footerCoach: "I'm a coach",
     newBadge: "New",
@@ -102,7 +102,7 @@ export const en = {
   register: {
     createTitle: "Create your account",
     createSub:
-      "Choose how you'll use BJJJobs — you can always browse jobs without an account.",
+      "Choose how you'll use JiuJitsuJobs — you can always browse jobs without an account.",
     coachTitle: "I'm a coach",
     coachDesc: "Build a profile, browse jobs, and apply to gyms",
     gymTitle: "I'm a gym",
@@ -116,7 +116,7 @@ export const en = {
     loading: "Loading dashboard...",
     errorTitle: "Something went wrong",
     errorSub: "Please try refreshing the page.",
-    welcomeTitle: "Welcome to BJJJobs",
+    welcomeTitle: "Welcome to JiuJitsuJobs",
     welcomeSub: "Sign in if you already have an account, or create one to get started.",
     browseJobs: "Browse jobs",
     viewProfile: "View profile",
@@ -137,18 +137,18 @@ export const en = {
     contact: "Contact",
   },
   about: {
-    badge: "About BJJJobs",
+    badge: "About JiuJitsuJobs",
     heroTitle: "Built for the mat. Designed to connect coaches and gyms.",
     heroSub:
-      "BJJJobs exists for one reason: to make hiring and job hunting in Brazilian jiu-jitsu simple, transparent, and professional — so great coaches find great gyms, and great gyms find great coaches.",
+      "JiuJitsuJobs exists for one reason: to make hiring and job hunting in Brazilian jiu-jitsu simple, transparent, and professional — so great coaches find great gyms, and great gyms find great coaches.",
     missionTitle: "Our mission",
     missionP1:
       "Brazilian jiu-jitsu has grown into a global industry — but the way coaches and gyms find each other hasn't kept up. Too often, hiring still happens through Instagram DMs, Facebook groups, and word of mouth.",
     missionP2:
-      "BJJJobs brings that process onto one platform built specifically for the sport. We understand belt ranks, affiliations, gi vs. no-gi, competition backgrounds, and what gyms actually need from a coach.",
+      "JiuJitsuJobs brings that process onto one platform built specifically for the sport. We understand belt ranks, affiliations, gi vs. no-gi, competition backgrounds, and what gyms actually need from a coach.",
     whyTitle: "Why we built this",
     oldWay: "The old way",
-    newWay: "The BJJJobs way",
+    newWay: "The JiuJitsuJobs way",
     whoTitle: "Who we serve",
     forCoaches: "For coaches",
     forGyms: "For gyms",
@@ -170,7 +170,7 @@ export const en = {
     coachesDesc:
       "You've put years on the mat. Your teaching experience, belt rank, and competition record deserve a home where gyms can actually find you. Build a profile once, search listings that match your goals, and apply with a single click — no more cold messaging gym owners and hoping for a reply.",
     gymsDesc:
-      "Finding the right coach is one of the most important decisions a gym makes. BJJJobs gives you a public profile, a place to post open positions, and a dashboard to review applicants — belt rank, specialties, and cover message included. Hire faster, with less guesswork.",
+      "Finding the right coach is one of the most important decisions a gym makes. JiuJitsuJobs gives you a public profile, a place to post open positions, and a dashboard to review applicants — belt rank, specialties, and cover message included. Hire faster, with less guesswork.",
     belief1Title: "Clarity over noise",
     belief1Desc:
       "Every listing should answer the questions that matter: belt requirement, pay, schedule, and what the role actually involves.",

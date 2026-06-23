@@ -2,12 +2,13 @@
 import { useEffect } from "react";
 import { SignUp } from "@clerk/nextjs";
 import { Logo } from "@/components/ui/logo";
+import { STORAGE_KEYS } from "@/lib/brand";
 
 const SIGN_UP_PATH = "/register/coach/account";
 
 export default function CoachSignUp() {
   useEffect(() => {
-    sessionStorage.setItem("bjjjobs_signup_role", "COACH");
+    sessionStorage.setItem(STORAGE_KEYS.signupRole, "COACH");
   }, []);
 
   return (

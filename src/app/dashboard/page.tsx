@@ -9,6 +9,7 @@ import { useLanguage } from "@/components/language-provider";
 import { DashboardNav } from "@/components/ui/dashboard-nav";
 import { PageShell } from "@/components/ui/page-shell";
 import { BELT_COLORS, BELT_LABELS } from "@/lib/utils";
+import { readStored } from "@/lib/brand";
 
 function CoachDashboard({ coach }: { coach: any }) {
   const { t } = useLanguage();
@@ -106,7 +107,7 @@ export default function DashboardPage() {
     if (loading || !data || data.error) return;
     if (data.gym || data.coach) return;
 
-    const storedRole = sessionStorage.getItem("bjjjobs_signup_role");
+    const storedRole = readStored("signupRole");
     const intendedRole = data.intendedRole ?? storedRole;
 
     if (intendedRole === "GYM") {

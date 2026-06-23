@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
-import { Shield, Users, Building2 } from "lucide-react";
+import { Users, Building2 } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 import LanguageSwitcher from "@/components/language-switcher";
+import { Logo } from "@/components/ui/logo";
+import { STORAGE_KEYS } from "@/lib/brand";
 
 export default function RegisterRolePicker() {
   const { t } = useLanguage();
@@ -11,10 +13,7 @@ export default function RegisterRolePicker() {
     <div className="min-h-screen bg-grouped">
       <div className="sticky top-0 z-50 px-4 py-3 bg-grouped-secondary/90 backdrop-blur-xl border-b border-separator/30">
         <div className="max-w-lg mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-brand" />
-            <span className="font-display font-bold">BJJJobs</span>
-          </Link>
+          <Logo />
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
             <Link href="/login" className="text-subheadline font-semibold text-label-secondary">
@@ -31,7 +30,7 @@ export default function RegisterRolePicker() {
         <div className="flex flex-col gap-3">
           <Link
             href="/register/coach/account"
-            onClick={() => sessionStorage.setItem("bjjjobs_signup_role", "COACH")}
+            onClick={() => sessionStorage.setItem(STORAGE_KEYS.signupRole, "COACH")}
             className="tap lift ios-card-lg flex items-center gap-4 px-6 py-5 text-left"
           >
             <div className="w-11 h-11 rounded-xl bg-brand-light flex items-center justify-center flex-shrink-0">
@@ -47,7 +46,7 @@ export default function RegisterRolePicker() {
 
           <Link
             href="/register/gym/account"
-            onClick={() => sessionStorage.setItem("bjjjobs_signup_role", "GYM")}
+            onClick={() => sessionStorage.setItem(STORAGE_KEYS.signupRole, "GYM")}
             className="tap lift ios-card-lg flex items-center gap-4 px-6 py-5 text-left"
           >
             <div className="w-11 h-11 rounded-xl bg-brand-light flex items-center justify-center flex-shrink-0">

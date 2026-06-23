@@ -62,7 +62,7 @@ export const ptBR: TranslationDict = {
         "Seu perfil é sua candidatura. Academias podem entrar em contato ou você se candidata direto.",
     },
     footerCtaTitle: "Pronto para publicar sua primeira vaga?",
-    footerCtaSub: "Mais de 180 academias já encontram ótimos professores no BJJJobs",
+    footerCtaSub: "Mais de 180 academias já encontram ótimos professores no JiuJitsuJobs",
     postJobFree: "Publicar vaga — é grátis",
     footerCoach: "Sou professor",
     newBadge: "Nova",
@@ -104,7 +104,7 @@ export const ptBR: TranslationDict = {
   register: {
     createTitle: "Crie sua conta",
     createSub:
-      "Escolha como você vai usar o BJJJobs — você pode navegar pelas vagas sem conta.",
+      "Escolha como você vai usar o JiuJitsuJobs — você pode navegar pelas vagas sem conta.",
     coachTitle: "Sou professor",
     coachDesc: "Crie seu perfil, busque vagas e candidate-se a academias",
     gymTitle: "Sou academia",
@@ -118,7 +118,7 @@ export const ptBR: TranslationDict = {
     loading: "Carregando painel...",
     errorTitle: "Algo deu errado",
     errorSub: "Tente atualizar a página.",
-    welcomeTitle: "Bem-vindo ao BJJJobs",
+    welcomeTitle: "Bem-vindo ao JiuJitsuJobs",
     welcomeSub: "Entre se já tiver conta, ou crie uma para começar.",
     browseJobs: "Ver vagas",
     viewProfile: "Ver perfil",
@@ -139,18 +139,18 @@ export const ptBR: TranslationDict = {
     contact: "Contato",
   },
   about: {
-    badge: "Sobre o BJJJobs",
+    badge: "Sobre o JiuJitsuJobs",
     heroTitle: "Feito para o tatame. Criado para conectar professores e academias.",
     heroSub:
-      "O BJJJobs existe por um motivo: tornar a contratação e a busca por trabalho no jiu-jitsu brasileiro simples, transparente e profissional.",
+      "O JiuJitsuJobs existe por um motivo: tornar a contratação e a busca por trabalho no jiu-jitsu brasileiro simples, transparente e profissional.",
     missionTitle: "Nossa missão",
     missionP1:
       "O jiu-jitsu brasileiro cresceu como indústria global — mas a forma como professores e academias se encontram não acompanhou. Muitas contratações ainda acontecem por direct no Instagram, grupos de Facebook e indicação.",
     missionP2:
-      "O BJJJobs centraliza esse processo em uma plataforma feita para o esporte. Entendemos faixas, afiliações, gi vs. no-gi, histórico competitivo e o que academias realmente precisam de um professor.",
+      "O JiuJitsuJobs centraliza esse processo em uma plataforma feita para o esporte. Entendemos faixas, afiliações, gi vs. no-gi, histórico competitivo e o que academias realmente precisam de um professor.",
     whyTitle: "Por que criamos isso",
     oldWay: "O jeito antigo",
-    newWay: "O jeito BJJJobs",
+    newWay: "O jeito JiuJitsuJobs",
     whoTitle: "Para quem é",
     forCoaches: "Para professores",
     forGyms: "Para academias",
@@ -172,7 +172,7 @@ export const ptBR: TranslationDict = {
     coachesDesc:
       "Você colocou anos no tatame. Sua experiência como professor, faixa e histórico competitivo merecem um lugar onde academias possam encontrá-lo. Crie um perfil, busque vagas alinhadas aos seus objetivos e candidate-se com um clique.",
     gymsDesc:
-      "Encontrar o professor certo é uma das decisões mais importantes de uma academia. O BJJJobs oferece perfil público, publicação de vagas e painel para revisar candidatos — faixa, especialidades e mensagem incluídos.",
+      "Encontrar o professor certo é uma das decisões mais importantes de uma academia. O JiuJitsuJobs oferece perfil público, publicação de vagas e painel para revisar candidatos — faixa, especialidades e mensagem incluídos.",
     belief1Title: "Clareza acima do ruído",
     belief1Desc:
       "Cada vaga deve responder o que importa: faixa exigida, pagamento, horário e o que o cargo envolve.",

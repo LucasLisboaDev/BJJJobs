@@ -1,4 +1,4 @@
-# BJJJobs
+# JiuJitsuJobs
 
 A full-stack job board connecting Brazilian jiu-jitsu coaches with gyms — built with Next.js 14, Clerk, Prisma, and PostgreSQL.
 
@@ -46,8 +46,8 @@ A full-stack job board connecting Brazilian jiu-jitsu coaches with gyms — buil
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/LucasLisboaDev/BJJJobs.git
-cd BJJJobs
+git clone https://github.com/LucasLisboaDev/JiuJitsuJobs.git
+cd JiuJitsuJobs
 npm install
 ```
 
@@ -68,7 +68,7 @@ DATABASE_URL=postgresql://...
 
 # Resend (email notifications)
 RESEND_API_KEY=re_...
-RESEND_FROM_EMAIL=BJJJobs <notifications@yourdomain.com>
+RESEND_FROM_EMAIL=JiuJitsuJobs <notifications@yourdomain.com>
 
 # App URL (used in email links)
 NEXT_PUBLIC_APP_URL=http://localhost:3000
