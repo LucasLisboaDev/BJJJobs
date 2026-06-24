@@ -16,6 +16,7 @@ import {
 import PublicNav from "@/components/public-nav";
 import { useLanguage } from "@/components/language-provider";
 import { PageShell, PageCol } from "@/components/ui/page-shell";
+import { JobWorkAuthBadges, WorkAuthorizationBadge } from "@/components/work-authorization-badges";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -209,6 +210,12 @@ export default function JobDetailPage() {
               This position is no longer accepting applications.
             </div>
           )}
+
+          <JobWorkAuthBadges
+            workPermitRequired={!!job.workPermitRequired}
+            sponsorshipAvailable={!!job.sponsorshipAvailable}
+            className="mb-4"
+          />
 
           {applied ? (
             <div className="flex flex-col items-center gap-2 rounded-[14px] py-3.5 text-subheadline font-semibold text-brand bg-brand-light">

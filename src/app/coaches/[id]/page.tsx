@@ -7,6 +7,7 @@ import PublicNav from "@/components/public-nav";
 import { CoachExperienceSection } from "@/components/coach-experience-section";
 import { InstagramLink } from "@/components/instagram-link";
 import { ProfileAvatar } from "@/components/profile-avatar";
+import { WorkAuthorizationBadge } from "@/components/work-authorization-badges";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -123,6 +124,9 @@ export default function CoachProfilePage() {
                 )}
                 {coach.instagram && (
                   <InstagramLink handle={coach.instagram} className="text-footnote text-brand" />
+                )}
+                {coach.workAuthorizationStatus && (
+                  <WorkAuthorizationBadge status={coach.workAuthorizationStatus} />
                 )}
               </div>
             </div>

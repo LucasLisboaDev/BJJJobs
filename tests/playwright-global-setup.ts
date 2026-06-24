@@ -10,8 +10,8 @@ import {
 } from "./helpers/db";
 
 export default async function globalSetup() {
-  loadEnv({ path: ".env.test" });
   loadEnv({ path: ".env.local" });
+  loadEnv({ path: ".env.test", override: true });
 
   const databaseUrl = resolveDatabaseUrl();
   if (!databaseUrl) return;

@@ -154,6 +154,34 @@ export const ptBR: TranslationDict = {
     sendAnother: "Enviar outra mensagem",
     error: "Algo deu errado. Tente novamente.",
   },
+  workAuth: {
+    coachLabel: "Autorização de trabalho nos EUA",
+    coachHint:
+      "Muitas academias precisam saber se você pode trabalhar legalmente nos EUA ou se precisa de patrocínio de visto.",
+    coachOptionalHint:
+      "Pule se preferir — você pode se candidatar normalmente. Academias só veem isso se você adicionar.",
+    coachSelectPlaceholder: "Selecione seu status",
+    jobSectionTitle: "Autorização de trabalho",
+    jobSectionHint:
+      "Ajude professores internacionais a entender se podem se candidatar — especialmente comum para professores vindos do Brasil.",
+    jobPermitRequired: "Exige autorização de trabalho nos EUA",
+    jobPermitRequiredHint: "Candidatos devem já estar autorizados a trabalhar nos EUA.",
+    jobSponsorshipAvailable: "Patrocínio de visto disponível",
+    jobSponsorshipAvailableHint:
+      "A academia pode patrocinar o professor para visto ou autorização de trabalho.",
+    jobNotSpecified: "Autorização de trabalho não informada",
+    applyBlockedPermitRequired:
+      "Esta vaga exige autorização de trabalho nos EUA e a academia não indicou patrocínio. Atualize seu perfil ou veja outras vagas.",
+    updateProfile: "Atualizar perfil",
+    status: {
+      US_CITIZEN: "Cidadão americano",
+      PERMANENT_RESIDENT: "Residente permanente (Green Card)",
+      AUTHORIZED_TO_WORK: "Autorizado a trabalhar (visto / EAD válido)",
+      NEEDS_SPONSORSHIP: "Preciso de patrocínio do empregador",
+      NOT_AUTHORIZED: "Não autorizado a trabalhar nos EUA atualmente",
+      PREFER_NOT_TO_SAY: "Prefiro não informar",
+    },
+  },
   about: {
     badge: "Sobre o JiuJitsuJobs",
     heroTitle: "Feito para o tatame. Criado para conectar professores e academias.",

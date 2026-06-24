@@ -11,6 +11,8 @@ import { PageShell } from "@/components/ui/page-shell";
 import { BELT_COLORS, BELT_LABELS } from "@/lib/utils";
 import { readStored } from "@/lib/brand";
 import { ProfilePhotoUpload } from "@/components/profile-photo-upload";
+import { WORK_AUTH_STATUSES, type WorkAuthorizationStatus } from "@/lib/work-authorization";
+import { WorkAuthorizationBadge } from "@/components/work-authorization-badges";
 
 function CoachDashboardInner() {
   const { t } = useLanguage();
@@ -28,6 +30,23 @@ function CoachDashboardInner() {
     if (json.coach) setCoach(json.coach);
     setLoading(false);
   }, []);
+
+  async function handleWorkAuthChange(status: WorkAuthorizationStatus | "") {
+    const res = await fetch("/api/coach", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        workAuthorizationStatus: status || null,
+      }),
+    });
+    if (res.ok) {
+      const updated = await res.json();
+      setCoach((prev: any) => ({
+        ...prev,
+        workAuthorizationStatus: updated.workAuthorizationStatus,
+      }));
+    }
+  }
 
   async function handlePhotoChange(photoUrl: string | null) {
     const res = await fetch("/api/coach", {
@@ -103,6 +122,11 @@ function CoachDashboardInner() {
                 {BELT_LABELS[coach.beltRank]}
                 {coach.affiliation ? ` · ${coach.affiliation}` : ""}
               </div>
+              {coach.workAuthorizationStatus && (
+                <div className="mt-2">
+                  <WorkAuthorizationBadge status={coach.workAuthorizationStatus} />
+                </div>
+              )}
             </div>
           </div>
           <div className="flex gap-2 flex-wrap sm:pt-1">
@@ -114,6 +138,28 @@ function CoachDashboardInner() {
             </Link>
           </div>
         </div>
+      </div>
+
+      <div className="ios-card-lg p-5 mb-5">
+        <h2 className="text-headline mb-1">
+          {t("workAuth.coachLabel")}{" "}
+          <span className="font-normal text-label-tertiary text-subheadline">
+            ({t("common.optional")})
+          </span>
+        </h2>
+        <p className="text-footnote text-label-secondary mb-4">{t("workAuth.coachOptionalHint")}</p>
+        <select
+          className="ios-field w-full max-w-md text-sm"
+          value={coach.workAuthorizationStatus ?? ""}
+          onChange={(e) => handleWorkAuthChange(e.target.value as WorkAuthorizationStatus | "")}
+        >
+          <option value="">{t("workAuth.coachSelectPlaceholder")}</option>
+          {WORK_AUTH_STATUSES.map((status) => (
+            <option key={status} value={status}>
+              {t(`workAuth.status.${status}`)}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-6">

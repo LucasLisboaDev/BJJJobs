@@ -152,6 +152,34 @@ export const en = {
     sendAnother: "Send another message",
     error: "Something went wrong. Please try again.",
   },
+  workAuth: {
+    coachLabel: "U.S. work authorization",
+    coachHint:
+      "Many gyms need to know if you can work legally in the U.S. or if you need visa sponsorship.",
+    coachOptionalHint:
+      "Skip this if you prefer — you can always apply to jobs. Gyms only see this if you choose to add it.",
+    coachSelectPlaceholder: "Select your status",
+    jobSectionTitle: "Work authorization",
+    jobSectionHint:
+      "Help international coaches understand whether they can apply — especially common for coaches coming from Brazil.",
+    jobPermitRequired: "Must have U.S. work authorization",
+    jobPermitRequiredHint: "Applicants must already be authorized to work in the U.S.",
+    jobSponsorshipAvailable: "Visa sponsorship available",
+    jobSponsorshipAvailableHint:
+      "Gym can sponsor the coach for a work visa or work permit.",
+    jobNotSpecified: "Work authorization not specified",
+    applyBlockedPermitRequired:
+      "This job requires U.S. work authorization and the gym has not indicated sponsorship is available. Update your profile or browse other listings.",
+    updateProfile: "Update your profile",
+    status: {
+      US_CITIZEN: "U.S. citizen",
+      PERMANENT_RESIDENT: "Permanent resident (Green Card)",
+      AUTHORIZED_TO_WORK: "Authorized to work (valid visa / EAD)",
+      NEEDS_SPONSORSHIP: "Need employer sponsorship",
+      NOT_AUTHORIZED: "Not currently authorized to work in the U.S.",
+      PREFER_NOT_TO_SAY: "Prefer not to say",
+    },
+  },
   about: {
     badge: "About JiuJitsuJobs",
     heroTitle: "Built for the mat. Designed to connect coaches and gyms.",

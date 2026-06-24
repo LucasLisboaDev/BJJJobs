@@ -27,6 +27,15 @@ enum JobType {
   REVENUE_SHARE
 }
 
+enum WorkAuthorizationStatus {
+  US_CITIZEN
+  PERMANENT_RESIDENT
+  AUTHORIZED_TO_WORK
+  NEEDS_SPONSORSHIP
+  NOT_AUTHORIZED
+  PREFER_NOT_TO_SAY
+}
+
 model User {
   id        String    @id @default(cuid())
   clerkId   String    @unique
@@ -58,6 +67,7 @@ model Coach {
   resumeUrl         String?
   resumeFileName    String?
   instagram         String?
+  workAuthorizationStatus WorkAuthorizationStatus?
   applications      Application[]
   experiences       WorkExperience[]
   createdAt         DateTime           @default(now())
@@ -111,9 +121,11 @@ model Job {
   minPay           Float?
   maxPay           Float?
   payType          String        @default("hourly")
-  featured         Boolean       @default(false)
-  active           Boolean       @default(true)
-  applications     Application[]
+  featured             Boolean       @default(false)
+  active               Boolean       @default(true)
+  workPermitRequired   Boolean       @default(false)
+  sponsorshipAvailable Boolean       @default(false)
+  applications         Application[]
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 }

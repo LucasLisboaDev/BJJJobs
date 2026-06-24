@@ -17,6 +17,8 @@ const jobUpdateSchema = z.object({
   maxPay: z.number().optional().nullable(),
   payType: z.string().optional(),
   active: z.boolean().optional(),
+  workPermitRequired: z.boolean().optional(),
+  sponsorshipAvailable: z.boolean().optional(),
 });
 
 async function getGymJob(jobId: string, clerkId: string) {

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { syncClerkEmail } from "@/lib/email/get-user-email";
 import { optionalInstagramSchema } from "@/lib/instagram";
+import { WORK_AUTH_STATUSES } from "@/lib/work-authorization";
 import { z } from "zod";
 
 const experienceSchema = z.object({
@@ -30,6 +31,7 @@ const coachSchema = z
     resumeUrl: z.string().optional(),
     resumeFileName: z.string().optional(),
     instagram: optionalInstagramSchema,
+    workAuthorizationStatus: z.enum(WORK_AUTH_STATUSES).optional(),
     experiences: z.array(experienceSchema).default([]),
   })
   .refine((data) => data.resumeUrl || data.experiences.length > 0, {
@@ -136,6 +138,7 @@ export async function GET() {
 
 const coachPatchSchema = z.object({
   photoUrl: z.string().nullable().optional(),
+  workAuthorizationStatus: z.enum(WORK_AUTH_STATUSES).nullable().optional(),
 });
 
 export async function PATCH(req: NextRequest) {
@@ -159,6 +162,9 @@ export async function PATCH(req: NextRequest) {
       where: { id: user.coach.id },
       data: {
         ...(data.photoUrl !== undefined && { photoUrl: data.photoUrl }),
+        ...(data.workAuthorizationStatus !== undefined && {
+          workAuthorizationStatus: data.workAuthorizationStatus,
+        }),
       },
       include: { experiences: { orderBy: { sortOrder: "asc" } } },
     });

@@ -114,6 +114,10 @@ export async function GET(
       });
     }
 
+    const job = await prisma.job.findUnique({
+      where: { id: params.id },
+    });
+
     const existing = await prisma.application.findUnique({
       where: { jobId_coachId: { jobId: params.id, coachId: user.coach.id } },
     });
@@ -123,6 +127,9 @@ export async function GET(
       application: existing,
       isCoach: true,
       isGym: false,
+      coachWorkAuthorization: user.coach.workAuthorizationStatus,
+      jobWorkPermitRequired: job?.workPermitRequired ?? false,
+      jobSponsorshipAvailable: job?.sponsorshipAvailable ?? false,
     });
   } catch (err) {
     console.error(err);

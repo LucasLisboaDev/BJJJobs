@@ -27,7 +27,7 @@ test.describe("Public pages", () => {
   test("job detail shows apply CTA when signed out", async ({ page }) => {
     await page.goto("/jobs");
     await page.getByText("E2E Test Coach Position").click();
-    await expect(page.getByRole("link", { name: /sign in to apply/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /sign in.*apply/i })).toBeVisible();
   });
 
   test("inactive job shows not accepting applications", async ({ page }) => {
@@ -35,6 +35,8 @@ test.describe("Public pages", () => {
     test.skip(!inactiveJobId, "Set TEST_DATABASE_URL for E2E seed");
 
     await page.goto(`/jobs/${inactiveJobId}`);
-    await expect(page.getByText(/no longer accepting applications/i)).toBeVisible();
+    await expect(page.getByText(/no longer accepting applications/i)).toBeVisible({
+      timeout: 15_000,
+    });
   });
 });

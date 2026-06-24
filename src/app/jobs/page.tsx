@@ -5,6 +5,7 @@ import { Search, MapPin } from "lucide-react";
 import PublicNav from "@/components/public-nav";
 import { useLanguage } from "@/components/language-provider";
 import { PageShell, PageCol, PageTitle } from "@/components/ui/page-shell";
+import { JobWorkAuthBadges } from "@/components/work-authorization-badges";
 
 const BELT_LABELS: Record<string, string> = {
   WHITE: "White belt+",
@@ -133,17 +134,22 @@ export default function JobsPage() {
                   <div className="text-footnote text-label-secondary mt-0.5">
                     {job.gym?.name} · {job.city}, {job.state}
                   </div>
-                  <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                    <span className="chip text-brand">{JOB_TYPE_LABELS[job.jobType]}</span>
-                    <span className="chip">
-                      <span
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{ background: BELT_COLORS[job.minBelt] }}
-                      />
-                      {BELT_LABELS[job.minBelt]}
-                    </span>
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      <span className="chip text-brand">{JOB_TYPE_LABELS[job.jobType]}</span>
+                      <span className="chip">
+                        <span
+                          className="w-1.5 h-1.5 rounded-full"
+                          style={{ background: BELT_COLORS[job.minBelt] }}
+                        />
+                        {BELT_LABELS[job.minBelt]}
+                      </span>
+                    </div>
+                    <JobWorkAuthBadges
+                      workPermitRequired={!!job.workPermitRequired}
+                      sponsorshipAvailable={!!job.sponsorshipAvailable}
+                      className="mt-2"
+                    />
                   </div>
-                </div>
                 <div className="text-right flex-shrink-0">
                   {job.featured && (
                     <span className="chip chip-active text-[10px] mb-1">{t("jobs.featured")}</span>

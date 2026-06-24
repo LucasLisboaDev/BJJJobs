@@ -16,6 +16,8 @@ const jobSchema = z.object({
   minPay: z.number().optional(),
   maxPay: z.number().optional(),
   payType: z.string().default("hourly"),
+  workPermitRequired: z.boolean().default(false),
+  sponsorshipAvailable: z.boolean().default(false),
 });
 
 // POST — gym creates a job

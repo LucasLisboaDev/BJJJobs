@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Building2 } from "lucide-react";
 import { US_STATES } from "@/lib/utils";
 import { DashboardNav } from "@/components/ui/dashboard-nav";
+import { useLanguage } from "@/components/language-provider";
 
 const STYLES = ["Gi", "No-Gi", "Kids program", "Competition team", "Self-defense", "Fundamentals"];
 const PERKS = [
@@ -17,6 +18,7 @@ const PERKS = [
 
 function PostJobForm() {
   const router = useRouter();
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const editJobId = searchParams.get("edit");
   const isEditing = !!editJobId;
@@ -37,6 +39,8 @@ function PostJobForm() {
   const [minPay, setMinPay] = useState("");
   const [maxPay, setMaxPay] = useState("");
   const [description, setDescription] = useState("");
+  const [workPermitRequired, setWorkPermitRequired] = useState(false);
+  const [sponsorshipAvailable, setSponsorshipAvailable] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -79,6 +83,8 @@ function PostJobForm() {
         setMinPay(job.minPay != null ? String(job.minPay) : "");
         setMaxPay(job.maxPay != null ? String(job.maxPay) : "");
         setDescription(job.description ?? "");
+        setWorkPermitRequired(!!job.workPermitRequired);
+        setSponsorshipAvailable(!!job.sponsorshipAvailable);
       })
       .finally(() => setLoadingJob(false));
   }, [editJobId]);
@@ -113,6 +119,8 @@ function PostJobForm() {
       minPay: minPay ? Number(minPay) : undefined,
       maxPay: maxPay ? Number(maxPay) : undefined,
       description,
+      workPermitRequired,
+      sponsorshipAvailable,
     };
 
     try {
@@ -280,6 +288,47 @@ function PostJobForm() {
                   </button>
                 ))}
               </div>
+            </div>
+          </section>
+
+          <section className="ios-card-lg p-6">
+            <h2 className="text-title-2 mb-1">{t("workAuth.jobSectionTitle")}</h2>
+            <p className="text-footnote text-label-secondary mb-5">{t("workAuth.jobSectionHint")}</p>
+
+            <div className="space-y-4">
+              <label className="flex items-start gap-3 tap cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={workPermitRequired}
+                  onChange={(e) => setWorkPermitRequired(e.target.checked)}
+                />
+                <span>
+                  <span className="text-subheadline font-semibold block">
+                    {t("workAuth.jobPermitRequired")}
+                  </span>
+                  <span className="text-footnote text-label-secondary">
+                    {t("workAuth.jobPermitRequiredHint")}
+                  </span>
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3 tap cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={sponsorshipAvailable}
+                  onChange={(e) => setSponsorshipAvailable(e.target.checked)}
+                />
+                <span>
+                  <span className="text-subheadline font-semibold block">
+                    {t("workAuth.jobSponsorshipAvailable")}
+                  </span>
+                  <span className="text-footnote text-label-secondary">
+                    {t("workAuth.jobSponsorshipAvailableHint")}
+                  </span>
+                </span>
+              </label>
             </div>
           </section>
 

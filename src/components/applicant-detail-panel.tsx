@@ -16,6 +16,7 @@ import { ApplicationChat } from "@/components/application-chat";
 import { InstagramLink } from "@/components/instagram-link";
 import { ProfileAvatar } from "@/components/profile-avatar";
 import { STATUS_CONFIG } from "@/lib/application-status";
+import { WorkAuthorizationBadge } from "@/components/work-authorization-badges";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -159,6 +160,9 @@ export function ApplicantDetailPanel({
                   )}
                   {coach.instagram && (
                     <InstagramLink handle={coach.instagram} className="text-brand" />
+                  )}
+                  {coach.workAuthorizationStatus && (
+                    <WorkAuthorizationBadge status={coach.workAuthorizationStatus} />
                   )}
                 </div>
               </div>
