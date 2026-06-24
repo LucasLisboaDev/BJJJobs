@@ -10,6 +10,7 @@ import { DashboardNav } from "@/components/ui/dashboard-nav";
 import { PageShell } from "@/components/ui/page-shell";
 import { BELT_COLORS, BELT_LABELS } from "@/lib/utils";
 import { readStored } from "@/lib/brand";
+import { ProfilePhotoUpload } from "@/components/profile-photo-upload";
 
 function CoachDashboardInner() {
   const { t } = useLanguage();
@@ -27,6 +28,18 @@ function CoachDashboardInner() {
     if (json.coach) setCoach(json.coach);
     setLoading(false);
   }, []);
+
+  async function handlePhotoChange(photoUrl: string | null) {
+    const res = await fetch("/api/coach", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ photoUrl }),
+    });
+    if (res.ok) {
+      const updated = await res.json();
+      setCoach((prev: any) => ({ ...prev, photoUrl: updated.photoUrl }));
+    }
+  }
 
   useEffect(() => {
     fetchCoach();
@@ -61,27 +74,45 @@ function CoachDashboardInner() {
 
   return (
     <div className="page-col !pt-6">
-      <div className="ios-card-lg p-5 mb-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-        <div>
-          <h1 className="text-title-2 mb-1">
-            {coach.firstName} {coach.lastName}
-          </h1>
-          <div className="flex items-center gap-2 text-footnote text-label-secondary">
-            <span
-              className="w-2.5 h-2.5 rounded-full"
-              style={{ background: BELT_COLORS[coach.beltRank] ?? "#9ca3af" }}
+      <div className="ios-card-lg p-5 mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4 flex-1">
+            <ProfilePhotoUpload
+              kind="photo"
+              value={coach.photoUrl}
+              onChange={handlePhotoChange}
+              alt={`${coach.firstName} ${coach.lastName}`}
+              fallback={
+                <>
+                  {coach.firstName[0]}
+                  {coach.lastName[0]}
+                </>
+              }
+              label=""
+              hint="Optional · visible to gyms reviewing your applications"
             />
-            {BELT_LABELS[coach.beltRank]}
-            {coach.affiliation ? ` · ${coach.affiliation}` : ""}
+            <div>
+              <h1 className="text-title-2 mb-1">
+                {coach.firstName} {coach.lastName}
+              </h1>
+              <div className="flex items-center gap-2 text-footnote text-label-secondary">
+                <span
+                  className="w-2.5 h-2.5 rounded-full"
+                  style={{ background: BELT_COLORS[coach.beltRank] ?? "#9ca3af" }}
+                />
+                {BELT_LABELS[coach.beltRank]}
+                {coach.affiliation ? ` · ${coach.affiliation}` : ""}
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          <Link href={`/coaches/${coach.id}`} className="btn-secondary text-sm !py-2">
-            {t("dashboard.viewProfile")}
-          </Link>
-          <Link href="/jobs" className="btn-primary text-sm !py-2">
-            {t("dashboard.browseJobs")}
-          </Link>
+          <div className="flex gap-2 flex-wrap sm:pt-1">
+            <Link href={`/coaches/${coach.id}`} className="btn-secondary text-sm !py-2">
+              {t("dashboard.viewProfile")}
+            </Link>
+            <Link href="/jobs" className="btn-primary text-sm !py-2">
+              {t("dashboard.browseJobs")}
+            </Link>
+          </div>
         </div>
       </div>
 

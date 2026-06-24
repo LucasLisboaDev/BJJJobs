@@ -6,6 +6,7 @@ import { MapPin, Award, Star, ChevronLeft, Briefcase } from "lucide-react";
 import PublicNav from "@/components/public-nav";
 import { CoachExperienceSection } from "@/components/coach-experience-section";
 import { InstagramLink } from "@/components/instagram-link";
+import { ProfileAvatar } from "@/components/profile-avatar";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -76,9 +77,13 @@ export default function CoachProfilePage() {
 
         <div className="ios-card-lg p-7 mb-4">
           <div className="flex items-start gap-5">
-            <div className="w-16 h-16 rounded-ios-lg flex items-center justify-center text-3xl shrink-0 bg-brand-light">
-              🥋
-            </div>
+            <ProfileAvatar
+              src={coach.photoUrl}
+              alt={`${coach.firstName} ${coach.lastName}`}
+              fallback="🥋"
+              size="lg"
+              rounded="full"
+            />
             <div className="flex-1 min-w-0">
               <h1 className="text-title-2 mb-1">
                 {coach.firstName} {coach.lastName}

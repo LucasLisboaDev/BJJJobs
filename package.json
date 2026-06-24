@@ -4,12 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "test": "vitest run",
+    "test:api": "vitest run tests/api",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:public": "playwright test tests/e2e/public.spec.ts",
+    "test:e2e:auth": "playwright test tests/e2e/hiring-flow.spec.ts",
+    "test:all": "npm run test:api && npm run test:e2e:public",
+    "test:db:up": "docker compose -f docker-compose.test.yml up -d",
+    "test:db:down": "docker compose -f docker-compose.test.yml down"
   },
   "dependencies": {
     "@clerk/nextjs": "^5.2.4",
@@ -29,11 +38,15 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@clerk/testing": "^2.1.6",
+    "@playwright/test": "^1.61.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "dotenv": "^17.4.2",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.9"
   }
 }

@@ -9,6 +9,7 @@ const gymSchema = z.object({
   name: z.string().min(1),
   city: z.string().min(1),
   state: z.string().min(1),
+  logoUrl: z.string().nullable().optional(),
   affiliation: z.string().optional(),
   website: z.string().url().optional().or(z.literal("")),
   instagram: optionalInstagramSchema,

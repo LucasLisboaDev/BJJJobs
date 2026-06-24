@@ -13,6 +13,7 @@ import {
 import { BELT_LABELS, JOB_TYPE_LABELS, formatPay } from "@/lib/utils";
 import PublicNav from "@/components/public-nav";
 import { InstagramLink } from "@/components/instagram-link";
+import { ProfileAvatar } from "@/components/profile-avatar";
 
 export default function GymProfilePage() {
   const { id } = useParams();
@@ -66,9 +67,7 @@ export default function GymProfilePage() {
 
         <div className="ios-card-lg p-7 mb-4">
           <div className="flex items-start gap-5">
-            <div className="w-16 h-16 rounded-ios-lg flex items-center justify-center text-3xl shrink-0 bg-brand-light">
-              🏛️
-            </div>
+            <ProfileAvatar src={gym.logoUrl} alt={gym.name} fallback="🏛️" size="lg" />
             <div className="flex-1 min-w-0">
               <h1 className="text-title-2 mb-1">{gym.name}</h1>
               <div className="flex items-center gap-3 flex-wrap text-subheadline text-label-secondary">

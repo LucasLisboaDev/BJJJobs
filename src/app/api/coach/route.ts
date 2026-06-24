@@ -18,6 +18,7 @@ const coachSchema = z
   .object({
     firstName: z.string().min(1),
     lastName: z.string().min(1),
+    photoUrl: z.string().optional(),
     beltRank: z.enum(["WHITE", "BLUE", "PURPLE", "BROWN", "BLACK"]),
     affiliation: z.string().optional(),
     yearsTeaching: z.number().min(0).default(0),
@@ -128,6 +129,45 @@ export async function GET() {
 
     return NextResponse.json(user.coach);
   } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+const coachPatchSchema = z.object({
+  photoUrl: z.string().nullable().optional(),
+});
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const user = await prisma.user.findUnique({
+      where: { clerkId: userId },
+      include: { coach: true },
+    });
+
+    if (!user?.coach) {
+      return NextResponse.json({ error: "Coach profile not found" }, { status: 404 });
+    }
+
+    const body = await req.json();
+    const data = coachPatchSchema.parse(body);
+
+    const coach = await prisma.coach.update({
+      where: { id: user.coach.id },
+      data: {
+        ...(data.photoUrl !== undefined && { photoUrl: data.photoUrl }),
+      },
+      include: { experiences: { orderBy: { sortOrder: "asc" } } },
+    });
+
+    return NextResponse.json(coach);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return NextResponse.json({ error: err.errors[0]?.message ?? "Invalid input" }, { status: 400 });
+    }
     console.error(err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { US_STATES } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
 import { STORAGE_KEYS, readStored } from "@/lib/brand";
+import { ProfilePhotoUpload } from "@/components/profile-photo-upload";
 
 export default function GymRegisterPage() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function GymRegisterPage() {
   const [checkingAccount, setCheckingAccount] = useState(true);
   const [wrongAccount, setWrongAccount] = useState(false);
   const [name, setName] = useState("");
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [affiliation, setAffiliation] = useState("");
@@ -66,6 +68,7 @@ export default function GymRegisterPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
+          logoUrl: logoUrl || undefined,
           city,
           state,
           affiliation: affiliation || undefined,
@@ -139,6 +142,16 @@ export default function GymRegisterPage() {
         {error && <div className="alert-error mb-5">{error}</div>}
 
         <div className="ios-card-lg p-6 space-y-5">
+          <ProfilePhotoUpload
+            kind="logo"
+            value={logoUrl}
+            onChange={setLogoUrl}
+            alt={name || "Gym logo"}
+            fallback="🏛️"
+            label="Gym logo"
+            hint="Your logo appears on job listings and your public page. JPG, PNG, or WebP · max 2 MB · optional"
+          />
+
           <div>
             <label className="field-label">Gym name</label>
             <input

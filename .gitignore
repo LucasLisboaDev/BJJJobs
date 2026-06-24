@@ -7,3 +7,14 @@ out/
 .cursor/
 /public/uploads/resumes/*
 !/public/uploads/resumes/.gitkeep
+/public/uploads/photos/*
+!/public/uploads/photos/.gitkeep
+/public/uploads/logos/*
+!/public/uploads/logos/.gitkeep
+
+# Tests
+/test-results/
+/playwright-report/
+/blob-report/
+/tests/.seed-state.json
+.env.test

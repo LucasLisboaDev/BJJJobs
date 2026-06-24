@@ -23,6 +23,8 @@ import {
 import { US_STATES } from "@/lib/utils";
 import { ApplicantDetailPanel } from "@/components/applicant-detail-panel";
 import { InstagramLink } from "@/components/instagram-link";
+import { ProfileAvatar } from "@/components/profile-avatar";
+import { ProfilePhotoUpload } from "@/components/profile-photo-upload";
 
 const JOB_TYPE_LABELS: Record<string, string> = {
   FULL_TIME: "Full-time",
@@ -44,6 +46,7 @@ function GymProfilePanel({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [name, setName] = useState(gym.name);
+  const [logoUrl, setLogoUrl] = useState<string | null>(gym.logoUrl ?? null);
   const [city, setCity] = useState(gym.city);
   const [state, setState] = useState(gym.state);
   const [affiliation, setAffiliation] = useState(gym.affiliation ?? "");
@@ -53,6 +56,7 @@ function GymProfilePanel({
 
   function startEdit() {
     setName(gym.name);
+    setLogoUrl(gym.logoUrl ?? null);
     setCity(gym.city);
     setState(gym.state);
     setAffiliation(gym.affiliation ?? "");
@@ -76,6 +80,7 @@ function GymProfilePanel({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
+          logoUrl,
           city,
           state,
           affiliation: affiliation || undefined,
@@ -114,6 +119,14 @@ function GymProfilePanel({
         {error && <div className="alert-error mb-4">{error}</div>}
 
         <div className="space-y-4">
+          <ProfilePhotoUpload
+            kind="logo"
+            value={logoUrl}
+            onChange={setLogoUrl}
+            alt={name || "Gym logo"}
+            fallback="🏛️"
+            label="Gym logo"
+          />
           <div>
             <label className="field-label">Gym name</label>
             <input className="ios-field" value={name} onChange={(e) => setName(e.target.value)} />
@@ -181,9 +194,7 @@ function GymProfilePanel({
   return (
     <div className="ios-card-lg p-6">
       <div className="flex items-start gap-4 mb-5">
-        <div className="w-14 h-14 rounded-ios-lg flex items-center justify-center text-2xl shrink-0 bg-brand-light">
-          🏛️
-        </div>
+        <ProfileAvatar src={gym.logoUrl} alt={gym.name} fallback="🏛️" size="md" />
         <div className="flex-1 min-w-0">
           <h1 className="text-title-2 mb-1">{gym.name}</h1>
           <p className="text-subheadline text-label-secondary flex items-center gap-1">

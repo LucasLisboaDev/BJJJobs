@@ -14,6 +14,7 @@ import {
 import { CoachExperienceSection } from "@/components/coach-experience-section";
 import { ApplicationChat } from "@/components/application-chat";
 import { InstagramLink } from "@/components/instagram-link";
+import { ProfileAvatar } from "@/components/profile-avatar";
 import { STATUS_CONFIG } from "@/lib/application-status";
 
 const BELT_COLORS: Record<string, string> = {
@@ -63,10 +64,18 @@ export function ApplicantDetailPanel({
         onClick={() => setOpen(!open)}
         className="w-full flex items-center gap-3 p-4 text-left hover:bg-fill-quaternary/40 transition-colors tap"
       >
-        <div className="w-10 h-10 rounded-xl bg-brand-light text-brand flex items-center justify-center text-sm flex-shrink-0 font-semibold">
-          {coach.firstName[0]}
-          {coach.lastName[0]}
-        </div>
+        <ProfileAvatar
+          src={coach.photoUrl}
+          alt={`${coach.firstName} ${coach.lastName}`}
+          fallback={
+            <>
+              {coach.firstName[0]}
+              {coach.lastName[0]}
+            </>
+          }
+          size="sm"
+          rounded="lg"
+        />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-headline">

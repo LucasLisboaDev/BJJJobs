@@ -17,6 +17,7 @@ import Link from "next/link";
 import type { WorkExperienceInput } from "@/lib/coach-experience";
 import { Logo } from "@/components/ui/logo";
 import { STORAGE_KEYS } from "@/lib/brand";
+import { ProfilePhotoUpload } from "@/components/profile-photo-upload";
 
 const BELTS = ["WHITE", "BLUE", "PURPLE", "BROWN", "BLACK"];
 const BELT_LABELS: Record<string, string> = {
@@ -61,6 +62,7 @@ export default function CoachRegisterPage() {
   const [yearsTeaching, setYearsTeaching] = useState(5);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [targetCity, setTargetCity] = useState("");
   const [resumeUrl, setResumeUrl] = useState("");
   const [resumeFileName, setResumeFileName] = useState("");
@@ -162,6 +164,7 @@ export default function CoachRegisterPage() {
       const payload = {
         firstName,
         lastName,
+        photoUrl: photoUrl || undefined,
         beltRank: selectedBelt,
         affiliation,
         instagram: instagram || undefined,
@@ -319,6 +322,27 @@ export default function CoachRegisterPage() {
             <>
               <h1 className="text-title-2 mb-1">Your BJJ background</h1>
               <p className="text-subheadline text-label-secondary mb-7">Tell gyms who you are on and off the mat</p>
+
+              <div className="mb-6">
+                <ProfilePhotoUpload
+                  kind="photo"
+                  value={photoUrl}
+                  onChange={setPhotoUrl}
+                  alt={`${firstName || "Coach"} ${lastName || "photo"}`.trim()}
+                  fallback={
+                    firstName && lastName ? (
+                      <>
+                        {firstName[0]}
+                        {lastName[0]}
+                      </>
+                    ) : (
+                      "🥋"
+                    )
+                  }
+                  label="Profile photo"
+                  hint="A clear headshot helps gyms recognize you. JPG, PNG, or WebP · max 2 MB · optional"
+                />
+              </div>
 
               <div className="grid grid-cols-2 gap-4 mb-5">
                 <div>
