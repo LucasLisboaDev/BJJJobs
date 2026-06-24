@@ -27,6 +27,12 @@ export function AppNav({ variant = "floating", showBeta = false }: AppNavProps) 
       >
         {t("nav.aboutUs")}
       </Link>
+      <Link
+        href="/contact"
+        className="text-subheadline font-semibold text-label-secondary hover:text-label transition-colors px-3.5 py-1.5 rounded-capsule"
+      >
+        {t("footer.contact")}
+      </Link>
       <LanguageSwitcher />
       <SignedOut>
         <Link

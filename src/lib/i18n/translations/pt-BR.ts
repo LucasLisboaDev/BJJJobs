@@ -138,6 +138,22 @@ export const ptBR: TranslationDict = {
     terms: "Termos",
     contact: "Contato",
   },
+  contact: {
+    badge: "Fale conosco",
+    title: "Entre em contato",
+    subtitle:
+      "Dúvidas, feedback ou parcerias? Envie uma mensagem e responderemos o mais rápido possível.",
+    emailLabel: "Seu e-mail",
+    emailPlaceholder: "voce@exemplo.com",
+    messageLabel: "Mensagem",
+    messagePlaceholder: "Como podemos ajudar?",
+    send: "Enviar mensagem",
+    sending: "Enviando...",
+    successTitle: "Mensagem enviada",
+    successSub: "Obrigado pelo contato. Responderemos ao seu e-mail em breve.",
+    sendAnother: "Enviar outra mensagem",
+    error: "Algo deu errado. Tente novamente.",
+  },
   about: {
     badge: "Sobre o JiuJitsuJobs",
     heroTitle: "Feito para o tatame. Criado para conectar professores e academias.",

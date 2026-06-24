@@ -1,5 +1,5 @@
 import { BELT_LABELS } from "@/lib/utils";
-import { getAppUrl, getFromEmail, getResend } from "./resend";
+import { getAppUrl, getFromEmail, getResend, getContactToEmail } from "./resend";
 import { getUserEmail } from "./get-user-email";
 
 type ApplicationWithRelations = {
@@ -219,6 +219,44 @@ export async function sendApplicationStatusEmail(
         <p>${body}</p>
         <p><a href="${ctaUrl}" style="display: inline-block; background: #1D9E75; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">${ctaLabel}</a></p>
         <p style="color: #999; font-size: 12px;">JiuJitsuJobs — The job board for BJJ coaches</p>
+      </div>
+    `,
+  });
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+export async function sendContactFormEmail({
+  email,
+  message,
+}: {
+  email: string;
+  message: string;
+}): Promise<void> {
+  const resend = getResend();
+  if (!resend) {
+    throw new Error("Email service not configured");
+  }
+
+  const safeMessage = escapeHtml(message).replace(/\n/g, "<br />");
+
+  await resend.emails.send({
+    from: getFromEmail(),
+    to: getContactToEmail(),
+    replyTo: email,
+    subject: `JiuJitsuJobs contact — ${email}`,
+    html: `
+      <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto;">
+        <h2 style="color: #1a1a1a;">New contact form message</h2>
+        <p><strong>From:</strong> ${escapeHtml(email)}</p>
+        <p style="color: #555; border-left: 3px solid #1D9E75; padding-left: 12px;">${safeMessage}</p>
+        <p style="color: #999; font-size: 12px;">Reply directly to this email to respond to the sender.</p>
       </div>
     `,
   });

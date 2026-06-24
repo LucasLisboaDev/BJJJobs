@@ -16,3 +16,7 @@ export function getFromEmail(): string {
 export function getAppUrl(): string {
   return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 }
+
+export function getContactToEmail(): string {
+  return process.env.CONTACT_TO_EMAIL ?? "lucaslisboalves@hotmail.com";
+}

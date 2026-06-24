@@ -136,6 +136,22 @@ export const en = {
     terms: "Terms",
     contact: "Contact",
   },
+  contact: {
+    badge: "Contact us",
+    title: "Get in touch",
+    subtitle:
+      "Questions, feedback, or partnership ideas? Send us a message and we'll get back to you as soon as we can.",
+    emailLabel: "Your email",
+    emailPlaceholder: "you@example.com",
+    messageLabel: "Message",
+    messagePlaceholder: "How can we help?",
+    send: "Send message",
+    sending: "Sending...",
+    successTitle: "Message sent",
+    successSub: "Thanks for reaching out. We'll reply to your email as soon as possible.",
+    sendAnother: "Send another message",
+    error: "Something went wrong. Please try again.",
+  },
   about: {
     badge: "About JiuJitsuJobs",
     heroTitle: "Built for the mat. Designed to connect coaches and gyms.",
