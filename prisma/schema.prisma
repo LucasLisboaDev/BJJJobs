@@ -36,6 +36,11 @@ enum WorkAuthorizationStatus {
   PREFER_NOT_TO_SAY
 }
 
+enum CoachLocationType {
+  US
+  INTERNATIONAL
+}
+
 model User {
   id        String    @id @default(cuid())
   clerkId   String    @unique
@@ -60,6 +65,10 @@ model Coach {
   yearsTeaching     Int                @default(0)
   specialties       String[]
   targetCity        String?
+  locationType      CoachLocationType?
+  city              String?
+  state             String?
+  country           String?
   bio               String?
   competitionRecord String?
   minPay            Float?

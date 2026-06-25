@@ -6,15 +6,26 @@ import { US_STATES } from "@/lib/utils";
 import { DashboardNav } from "@/components/ui/dashboard-nav";
 import { useLanguage } from "@/components/language-provider";
 
-const STYLES = ["Gi", "No-Gi", "Kids program", "Competition team", "Self-defense", "Fundamentals"];
-const PERKS = [
-  "Free membership",
-  "Flexible schedule",
-  "Competition support",
-  "Health benefits",
-  "Seminar opportunities",
-  "Growth potential",
+const STYLE_ITEMS: { value: string; labelKey: string }[] = [
+  { value: "Gi", labelKey: "gi" },
+  { value: "No-Gi", labelKey: "noGi" },
+  { value: "Kids program", labelKey: "kidsProgram" },
+  { value: "Competition team", labelKey: "competitionTeam" },
+  { value: "Self-defense", labelKey: "selfDefense" },
+  { value: "Fundamentals", labelKey: "fundamentals" },
 ];
+const PERK_ITEMS: { value: string; labelKey: string }[] = [
+  { value: "Free membership", labelKey: "freeMembership" },
+  { value: "Flexible schedule", labelKey: "flexibleSchedule" },
+  { value: "Competition support", labelKey: "competitionSupport" },
+  { value: "Health benefits", labelKey: "healthBenefits" },
+  { value: "Seminar opportunities", labelKey: "seminarOpportunities" },
+  { value: "Growth potential", labelKey: "growthPotential" },
+];
+const JOB_TYPES = ["FULL_TIME", "PART_TIME", "CONTRACT", "REVENUE_SHARE"] as const;
+const BELT_OPTIONS = ["WHITE", "BLUE", "PURPLE", "BROWN", "BLACK"] as const;
+const EXPERIENCE_YEARS = [0, 1, 2, 5] as const;
+const PAY_TYPES = ["monthly", "hourly", "revenue_share", "negotiable"] as const;
 
 function PostJobForm() {
   const router = useRouter();
@@ -68,7 +79,7 @@ function PostJobForm() {
       .then((r) => r.json())
       .then((job) => {
         if (job.error) {
-          setError("Could not load this listing");
+          setError(t("postJob.loadError"));
           return;
         }
         setTitle(job.title);
@@ -96,11 +107,11 @@ function PostJobForm() {
 
   async function handlePublish() {
     if (!title || !city || !state || !description) {
-      setError("Please fill in title, city, state, and description");
+      setError(t("postJob.errorRequired"));
       return;
     }
     if (minPay && maxPay && Number(minPay) > Number(maxPay)) {
-      setError("Minimum pay cannot be greater than maximum pay");
+      setError(t("postJob.errorPayRange"));
       return;
     }
 
@@ -137,10 +148,10 @@ function PostJobForm() {
           router.push(`/dashboard?published=${data.id}`);
         }
       } else {
-        setError(typeof data.error === "string" ? data.error : "Something went wrong");
+        setError(typeof data.error === "string" ? data.error : t("postJob.errorGeneric"));
       }
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("postJob.errorTryAgain"));
     } finally {
       setSaving(false);
     }
@@ -149,7 +160,7 @@ function PostJobForm() {
   if (checkingGym || loadingJob) {
     return (
       <div className="min-h-screen bg-grouped flex items-center justify-center">
-        <div className="text-footnote text-label-tertiary">Loading...</div>
+        <div className="text-footnote text-label-tertiary">{t("common.loading")}</div>
       </div>
     );
   }
@@ -162,10 +173,10 @@ function PostJobForm() {
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
           <div>
             <div className="text-caption-1 font-semibold text-label-tertiary uppercase tracking-wide">
-              {isEditing ? "Edit listing" : "Post a job"}
+              {isEditing ? t("postJob.editBadge") : t("nav.postJob")}
             </div>
             <div className="text-headline font-semibold">
-              {isEditing ? title || "Edit job" : "New listing"}
+              {isEditing ? title || t("postJob.editJob") : t("postJob.newListing")}
             </div>
           </div>
           <button
@@ -173,7 +184,11 @@ function PostJobForm() {
             disabled={saving}
             className="btn-primary text-sm !py-2 !px-5 disabled:opacity-60"
           >
-            {saving ? "Saving..." : isEditing ? "Save changes" : "Publish listing"}
+            {saving
+              ? t("postJob.saving")
+              : isEditing
+                ? t("postJob.saveChanges")
+                : t("postJob.publishListing")}
           </button>
         </div>
       </div>
@@ -189,21 +204,21 @@ function PostJobForm() {
           <div className="alert-brand flex items-center gap-2">
             <Building2 className="w-4 h-4 text-brand shrink-0" />
             <span>
-              Posting as <span className="font-semibold">{gymName}</span>
+              {t("postJob.postingAs")} <span className="font-semibold">{gymName}</span>
             </span>
           </div>
 
           <section className="ios-card-lg p-6">
-            <h2 className="text-title-2 mb-1">Job details</h2>
+            <h2 className="text-title-2 mb-1">{t("postJob.jobDetailsTitle")}</h2>
             <p className="text-footnote text-label-secondary mb-6">
-              This is what coaches will see when browsing listings
+              {t("postJob.jobDetailsHint")}
             </p>
 
             <div className="mb-5">
-              <label className="field-label">Job title</label>
+              <label className="field-label">{t("postJob.jobTitle")}</label>
               <input
                 className="ios-field"
-                placeholder="e.g. Head BJJ Coach, Kids Instructor"
+                placeholder={t("postJob.jobTitlePlaceholder")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
@@ -211,16 +226,17 @@ function PostJobForm() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
               <div>
-                <label className="field-label">Job type</label>
+                <label className="field-label">{t("jobDetail.jobType")}</label>
                 <select className="ios-field" value={jobType} onChange={(e) => setJobType(e.target.value)}>
-                  <option value="FULL_TIME">Full-time</option>
-                  <option value="PART_TIME">Part-time</option>
-                  <option value="CONTRACT">Contract</option>
-                  <option value="REVENUE_SHARE">Revenue share</option>
+                  {JOB_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {t(`postJob.jobTypes.${type}`)}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
-                <label className="field-label">City</label>
+                <label className="field-label">{t("dashboard.city")}</label>
                 <input
                   className="ios-field"
                   placeholder="Dallas"
@@ -229,9 +245,9 @@ function PostJobForm() {
                 />
               </div>
               <div>
-                <label className="field-label">State</label>
+                <label className="field-label">{t("dashboard.state")}</label>
                 <select className="ios-field" value={state} onChange={(e) => setState(e.target.value)}>
-                  <option value="">Select state</option>
+                  <option value="">{t("dashboard.selectState")}</option>
                   {US_STATES.map((s) => (
                     <option key={s.abbr} value={s.abbr}>
                       {s.name}
@@ -243,48 +259,49 @@ function PostJobForm() {
           </section>
 
           <section className="ios-card-lg p-6">
-            <h2 className="text-title-2 mb-1">Requirements</h2>
+            <h2 className="text-title-2 mb-1">{t("postJob.requirementsTitle")}</h2>
             <p className="text-footnote text-label-secondary mb-5">
-              Set the minimum belt rank and experience required
+              {t("postJob.requirementsHint")}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
               <div>
-                <label className="field-label">Minimum belt rank</label>
+                <label className="field-label">{t("postJob.minBelt")}</label>
                 <select className="ios-field" value={minBelt} onChange={(e) => setMinBelt(e.target.value)}>
-                  <option value="WHITE">Any belt</option>
-                  <option value="BLUE">Blue belt+</option>
-                  <option value="PURPLE">Purple belt+</option>
-                  <option value="BROWN">Brown belt+</option>
-                  <option value="BLACK">Black belt only</option>
+                  {BELT_OPTIONS.map((belt) => (
+                    <option key={belt} value={belt}>
+                      {t(`postJob.belts.${belt}`)}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
-                <label className="field-label">Teaching experience</label>
+                <label className="field-label">{t("postJob.teachingExperience")}</label>
                 <select
                   className="ios-field"
                   value={minYears}
                   onChange={(e) => setMinYears(Number(e.target.value))}
                 >
-                  <option value={0}>No minimum</option>
-                  <option value={1}>1+ years</option>
-                  <option value={2}>2+ years</option>
-                  <option value={5}>5+ years</option>
+                  {EXPERIENCE_YEARS.map((years) => (
+                    <option key={years} value={years}>
+                      {t(`postJob.experienceYears.${years}`)}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
 
             <div>
-              <label className="field-label">Style preference</label>
+              <label className="field-label">{t("postJob.stylePreference")}</label>
               <div className="flex flex-wrap gap-2">
-                {STYLES.map((s) => (
+                {STYLE_ITEMS.map(({ value, labelKey }) => (
                   <button
-                    key={s}
+                    key={value}
                     type="button"
-                    onClick={() => toggleStyle(s)}
-                    className={`chip-toggle ${selectedStyles.includes(s) ? "chip-toggle-active" : ""}`}
+                    onClick={() => toggleStyle(value)}
+                    className={`chip-toggle ${selectedStyles.includes(value) ? "chip-toggle-active" : ""}`}
                   >
-                    {s}
+                    {t(`postJob.styleLabels.${labelKey}`)}
                   </button>
                 ))}
               </div>
@@ -333,23 +350,24 @@ function PostJobForm() {
           </section>
 
           <section className="ios-card-lg p-6">
-            <h2 className="text-title-2 mb-1">Compensation</h2>
+            <h2 className="text-title-2 mb-1">{t("postJob.compensationTitle")}</h2>
             <p className="text-footnote text-label-secondary mb-5">
-              Listings with pay ranges get more applications
+              {t("postJob.compensationHint")}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
               <div>
-                <label className="field-label">Pay type</label>
+                <label className="field-label">{t("postJob.payType")}</label>
                 <select className="ios-field" value={payType} onChange={(e) => setPayType(e.target.value)}>
-                  <option value="monthly">Monthly salary</option>
-                  <option value="hourly">Hourly rate</option>
-                  <option value="revenue_share">Revenue share</option>
-                  <option value="negotiable">Negotiable</option>
+                  {PAY_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {t(`postJob.payTypes.${type}`)}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
-                <label className="field-label">Min</label>
+                <label className="field-label">{t("postJob.min")}</label>
                 <input
                   className="ios-field"
                   placeholder="25"
@@ -358,7 +376,7 @@ function PostJobForm() {
                 />
               </div>
               <div>
-                <label className="field-label">Max</label>
+                <label className="field-label">{t("postJob.max")}</label>
                 <input
                   className="ios-field"
                   placeholder="45"
@@ -370,13 +388,13 @@ function PostJobForm() {
 
             <div className="mb-5">
               <label className="field-label">
-                Job description{" "}
-                <span className="font-normal text-label-tertiary">· What will this coach do day to day?</span>
+                {t("postJob.jobDescription")}{" "}
+                <span className="font-normal text-label-tertiary">· {t("postJob.jobDescriptionHint")}</span>
               </label>
               <textarea
                 className="ios-field"
                 rows={4}
-                placeholder="Describe the role, schedule, class sizes, team culture..."
+                placeholder={t("postJob.jobDescriptionPlaceholder")}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -384,17 +402,18 @@ function PostJobForm() {
 
             <div>
               <label className="field-label">
-                Perks & benefits <span className="font-normal text-label-tertiary">· optional</span>
+                {t("postJob.perksBenefits")}{" "}
+                <span className="font-normal text-label-tertiary">· {t("common.optional")}</span>
               </label>
               <div className="flex flex-wrap gap-2">
-                {PERKS.map((p) => (
+                {PERK_ITEMS.map(({ value, labelKey }) => (
                   <button
-                    key={p}
+                    key={value}
                     type="button"
-                    onClick={() => togglePerk(p)}
-                    className={`chip-toggle ${selectedPerks.includes(p) ? "chip-toggle-active" : ""}`}
+                    onClick={() => togglePerk(value)}
+                    className={`chip-toggle ${selectedPerks.includes(value) ? "chip-toggle-active" : ""}`}
                   >
-                    {p}
+                    {t(`postJob.perkLabels.${labelKey}`)}
                   </button>
                 ))}
               </div>
@@ -406,44 +425,49 @@ function PostJobForm() {
             disabled={saving}
             className="btn-primary w-full disabled:opacity-60"
           >
-            {saving ? "Saving..." : isEditing ? "Save changes" : "Publish listing"}
+            {saving
+              ? t("postJob.saving")
+              : isEditing
+                ? t("postJob.saveChanges")
+                : t("postJob.publishListing")}
           </button>
         </div>
 
         <aside className="space-y-5 lg:sticky lg:top-32 lg:self-start">
           <div className="text-caption-1 font-semibold uppercase tracking-wider text-label-tertiary">
-            Live preview
+            {t("postJob.livePreview")}
           </div>
           <div className="ios-card p-4">
-            <div className="text-headline font-semibold mb-1">{title || "Job title"}</div>
+            <div className="text-headline font-semibold mb-1">
+              {title || t("postJob.previewJobTitle")}
+            </div>
             <div className="flex items-center gap-1 text-footnote text-label-secondary mb-3">
               <Building2 className="w-3.5 h-3.5 text-brand" />
-              {gymName} · {city || "City"}, {state || "State"}
+              {gymName} · {city || t("postJob.previewCity")}, {state || t("postJob.previewState")}
             </div>
             <div className="flex flex-wrap gap-1.5 mb-3">
-              <span className="chip chip-active">
-                {jobType.replace("_", "-").toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}
-              </span>
-              {selectedStyles.slice(0, 2).map((s) => (
-                <span key={s} className="chip">
-                  {s}
-                </span>
-              ))}
+              <span className="chip chip-active">{t(`postJob.jobTypes.${jobType}`)}</span>
+              {selectedStyles.slice(0, 2).map((s) => {
+                const item = STYLE_ITEMS.find((i) => i.value === s);
+                return (
+                  <span key={s} className="chip">
+                    {item ? t(`postJob.styleLabels.${item.labelKey}`) : s}
+                  </span>
+                );
+              })}
             </div>
             <div className="text-headline font-semibold">
               {minPay && maxPay
-                ? `$${minPay}–$${maxPay}/${payType === "monthly" ? "mo" : "hr"}`
+                ? `$${minPay}–$${maxPay}/${payType === "monthly" ? t("postJob.payUnit.mo") : t("postJob.payUnit.hr")}`
                 : minPay
                   ? `$${minPay}+`
-                  : "Pay negotiable"}
+                  : t("jobDetail.payNegotiable")}
             </div>
           </div>
 
           <div className="alert-brand">
-            <div className="text-footnote font-semibold mb-1">Pro tip</div>
-            <div className="text-caption-1 leading-relaxed">
-              Listings with a pay range, belt minimum, and description get filled faster on average.
-            </div>
+            <div className="text-footnote font-semibold mb-1">{t("postJob.proTipTitle")}</div>
+            <div className="text-caption-1 leading-relaxed">{t("postJob.proTipBody")}</div>
           </div>
         </aside>
       </div>
@@ -456,7 +480,7 @@ export default function PostJobPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-grouped flex items-center justify-center">
-          <div className="text-footnote text-label-tertiary">Loading...</div>
+          <div className="text-footnote text-label-tertiary">{t("common.loading")}</div>
         </div>
       }
     >

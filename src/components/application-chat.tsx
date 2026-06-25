@@ -13,9 +13,11 @@ type ChatMessage = {
 export function ApplicationChat({
   applicationId,
   viewerRole,
+  variant = "card",
 }: {
   applicationId: string;
   viewerRole: "gym" | "coach";
+  variant?: "card" | "embedded";
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,17 +71,28 @@ export function ApplicationChat({
     }
   }
 
-  return (
-    <div className="ios-card overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-separator/40 bg-fill-quaternary/30">
-        <MessageCircle className="w-4 h-4 text-brand" />
-        <span className="text-subheadline font-semibold">Messages</span>
-        <span className="text-caption-1 text-label-tertiary">
-          {viewerRole === "gym" ? "Chat with this coach" : "Chat with the gym"}
-        </span>
-      </div>
+  const rootClass =
+    variant === "embedded"
+      ? "flex flex-col h-full min-h-[20rem] ios-card overflow-hidden"
+      : "ios-card overflow-hidden";
 
-      <div className="h-56 overflow-y-auto px-4 py-3 space-y-3">
+  return (
+    <div className={rootClass}>
+      {variant === "card" && (
+        <div className="flex items-center gap-2 px-4 py-3 border-b border-separator/40 bg-fill-quaternary/30">
+          <MessageCircle className="w-4 h-4 text-brand" />
+          <span className="text-subheadline font-semibold">Messages</span>
+          <span className="text-caption-1 text-label-tertiary">
+            {viewerRole === "gym" ? "Chat with this coach" : "Chat with the gym"}
+          </span>
+        </div>
+      )}
+
+      <div
+        className={`overflow-y-auto px-4 py-3 space-y-3 ${
+          variant === "embedded" ? "flex-1 min-h-[16rem]" : "h-56"
+        }`}
+      >
         {loading ? (
           <div className="text-caption-1 text-label-tertiary text-center py-8">
             Loading messages...

@@ -25,6 +25,9 @@ import { ApplicantDetailPanel } from "@/components/applicant-detail-panel";
 import { InstagramLink } from "@/components/instagram-link";
 import { ProfileAvatar } from "@/components/profile-avatar";
 import { ProfilePhotoUpload } from "@/components/profile-photo-upload";
+import { DashboardTabBar } from "@/components/dashboard-tab-bar";
+import { DashboardMessages } from "@/components/dashboard-messages";
+import { useDashboardTab } from "@/hooks/use-dashboard-tab";
 
 const JOB_TYPE_LABELS: Record<string, string> = {
   FULL_TIME: "Full-time",
@@ -296,6 +299,8 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
   const router = useRouter();
   const highlightJobId = searchParams.get("job");
   const publishedJobId = searchParams.get("published");
+  const { activeTab, applicationId, setTab, setSelectedApplication } = useDashboardTab();
+  const [unreadCount, setUnreadCount] = useState(0);
   const [showPublishedBanner, setShowPublishedBanner] = useState(!!publishedJobId);
 
   const [gym, setGym] = useState(initialGym);
@@ -324,6 +329,19 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [highlightJobId, searchParams]);
+
+  useEffect(() => {
+    async function loadUnread() {
+      const res = await fetch("/api/conversations");
+      if (res.ok) {
+        const data = await res.json();
+        setUnreadCount(data.totalUnread ?? 0);
+      }
+    }
+    loadUnread();
+    const interval = setInterval(loadUnread, 20000);
+    return () => clearInterval(interval);
+  }, []);
 
   function dismissPublishedBanner() {
     setShowPublishedBanner(false);
@@ -423,6 +441,21 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
 
       <GymProfilePanel gym={gym} onUpdate={setGym} />
 
+      <DashboardTabBar
+        activeTab={activeTab}
+        unreadCount={unreadCount}
+        onTabChange={setTab}
+      />
+
+      {activeTab === "messages" ? (
+        <DashboardMessages
+          viewerRole="gym"
+          selectedApplicationId={applicationId ?? searchParams.get("application")}
+          onSelectApplication={setSelectedApplication}
+          onUnreadChange={setUnreadCount}
+        />
+      ) : (
+        <>
       <div className="grid grid-cols-3 gap-4 my-6">
         {[
           { icon: Briefcase, label: "Total listings", value: String(jobs.length) },
@@ -592,6 +625,8 @@ export default function GymDashboard({ gym: initialGym }: { gym: any }) {
             );
           })}
         </div>
+      )}
+        </>
       )}
     </div>
   );

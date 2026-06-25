@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { syncClerkEmail } from "@/lib/email/get-user-email";
 import { optionalInstagramSchema } from "@/lib/instagram";
 import { WORK_AUTH_STATUSES } from "@/lib/work-authorization";
+import { coachLocationSchema, coachLocationToPayload } from "@/lib/coach-location";
 import { z } from "zod";
 
 const experienceSchema = z.object({
@@ -25,6 +26,10 @@ const coachSchema = z
     yearsTeaching: z.number().min(0).default(0),
     specialties: z.array(z.string()).default([]),
     targetCity: z.string().optional(),
+    locationType: z.enum(["US", "INTERNATIONAL"]),
+    city: z.string().min(1),
+    state: z.string().min(1),
+    country: z.string().optional(),
     bio: z.string().optional(),
     minPay: z.number().optional(),
     maxPay: z.number().optional(),
@@ -37,6 +42,17 @@ const coachSchema = z
   .refine((data) => data.resumeUrl || data.experiences.length > 0, {
     message: "Upload a resume or add at least one work experience entry",
     path: ["experiences"],
+  })
+  .superRefine((data, ctx) => {
+    const locationResult = coachLocationSchema.safeParse({
+      locationType: data.locationType,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+    });
+    if (!locationResult.success) {
+      locationResult.error.issues.forEach((issue) => ctx.addIssue(issue));
+    }
   });
 
 export async function POST(req: NextRequest) {
@@ -46,7 +62,14 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const parsed = coachSchema.parse(body);
-    const { experiences, ...data } = parsed;
+    const { experiences, country, locationType, city, state, ...rest } = parsed;
+    const locationPayload = coachLocationToPayload({
+      locationType,
+      city,
+      state,
+      country: country ?? "",
+    });
+    const data = { ...rest, ...locationPayload };
 
     const email = await syncClerkEmail(userId);
 
@@ -136,10 +159,43 @@ export async function GET() {
   }
 }
 
-const coachPatchSchema = z.object({
-  photoUrl: z.string().nullable().optional(),
-  workAuthorizationStatus: z.enum(WORK_AUTH_STATUSES).nullable().optional(),
-});
+const coachPatchSchema = z
+  .object({
+    photoUrl: z.string().nullable().optional(),
+    workAuthorizationStatus: z.enum(WORK_AUTH_STATUSES).nullable().optional(),
+    locationType: z.enum(["US", "INTERNATIONAL"]).optional(),
+    city: z.string().min(1).optional(),
+    state: z.string().min(1).optional(),
+    country: z.string().nullable().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.locationType === undefined &&
+      data.city === undefined &&
+      data.state === undefined &&
+      data.country === undefined
+    ) {
+      return;
+    }
+
+    if (!data.locationType || !data.city || !data.state) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Location type, city, and state are required",
+      });
+      return;
+    }
+
+    const locationResult = coachLocationSchema.safeParse({
+      locationType: data.locationType,
+      city: data.city,
+      state: data.state,
+      country: data.country ?? undefined,
+    });
+    if (!locationResult.success) {
+      locationResult.error.issues.forEach((issue) => ctx.addIssue(issue));
+    }
+  });
 
 export async function PATCH(req: NextRequest) {
   try {
@@ -158,6 +214,19 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const data = coachPatchSchema.parse(body);
 
+    const locationUpdate =
+      data.locationType !== undefined ||
+      data.city !== undefined ||
+      data.state !== undefined ||
+      data.country !== undefined
+        ? coachLocationToPayload({
+            locationType: data.locationType ?? user.coach.locationType ?? "US",
+            city: data.city ?? user.coach.city ?? "",
+            state: data.state ?? user.coach.state ?? "",
+            country: data.country ?? user.coach.country ?? "",
+          })
+        : null;
+
     const coach = await prisma.coach.update({
       where: { id: user.coach.id },
       data: {
@@ -165,6 +234,7 @@ export async function PATCH(req: NextRequest) {
         ...(data.workAuthorizationStatus !== undefined && {
           workAuthorizationStatus: data.workAuthorizationStatus,
         }),
+        ...(locationUpdate && locationUpdate),
       },
       include: { experiences: { orderBy: { sortOrder: "asc" } } },
     });

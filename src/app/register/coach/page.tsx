@@ -18,6 +18,13 @@ import type { WorkExperienceInput } from "@/lib/coach-experience";
 import { Logo } from "@/components/ui/logo";
 import { STORAGE_KEYS } from "@/lib/brand";
 import { ProfilePhotoUpload } from "@/components/profile-photo-upload";
+import { CoachLocationFields } from "@/components/coach-location-fields";
+import {
+  coachLocationToPayload,
+  emptyCoachLocation,
+  validateCoachLocation,
+  type CoachLocationInput,
+} from "@/lib/coach-location";
 
 const BELTS = ["WHITE", "BLUE", "PURPLE", "BROWN", "BLACK"];
 const BELT_LABELS: Record<string, string> = {
@@ -64,6 +71,7 @@ export default function CoachRegisterPage() {
   const [lastName, setLastName] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [targetCity, setTargetCity] = useState("");
+  const [location, setLocation] = useState<CoachLocationInput>(emptyCoachLocation());
   const [resumeUrl, setResumeUrl] = useState("");
   const [resumeFileName, setResumeFileName] = useState("");
   const [uploadingResume, setUploadingResume] = useState(false);
@@ -146,6 +154,18 @@ export default function CoachRegisterPage() {
     return true;
   }
 
+  function validateStep3() {
+    const validationError = validateCoachLocation(location, {
+      us: "Please enter your city and state",
+      international: "Please enter your city, state/province, and country",
+    });
+    if (validationError) {
+      setError(validationError);
+      return false;
+    }
+    return true;
+  }
+
   function goNext() {
     setError("");
     if (step === 1 && validateStep1()) setStep(2);
@@ -158,6 +178,7 @@ export default function CoachRegisterPage() {
       setStep(2);
       return;
     }
+    if (!validateStep3()) return;
 
     setSaving(true);
     try {
@@ -171,6 +192,7 @@ export default function CoachRegisterPage() {
         yearsTeaching,
         specialties: selectedSpecs,
         targetCity,
+        ...coachLocationToPayload(location),
         resumeUrl: resumeUrl || undefined,
         resumeFileName: resumeFileName || undefined,
         experiences: resumeUrl
@@ -629,10 +651,23 @@ export default function CoachRegisterPage() {
           {step === 3 && (
             <>
               <h1 className="text-title-2 mb-1">Job preferences</h1>
-              <p className="text-subheadline text-label-secondary mb-7">Where are you looking to coach?</p>
+              <p className="text-subheadline text-label-secondary mb-7">
+                Where you live now and where you want to coach
+              </p>
+
+              <div className="mb-6">
+                <label className="field-label">Current address</label>
+                <p className="text-caption-1 text-label-tertiary mb-3">
+                  Gyms use this to see where you&apos;re located today.
+                </p>
+                <CoachLocationFields value={location} onChange={setLocation} />
+              </div>
 
               <div className="mb-7">
                 <label className="field-label">Target city</label>
+                <p className="text-caption-1 text-label-tertiary mb-3">
+                  Where you&apos;re looking for coaching work (can differ from where you live).
+                </p>
                 <input
                   className="ios-field w-full"
                   placeholder="e.g. Miami, FL or Dallas, TX"

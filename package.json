@@ -21,6 +21,7 @@
     "test:db:down": "docker compose -f docker-compose.test.yml down"
   },
   "dependencies": {
+    "@clerk/localizations": "^4.10.0",
     "@clerk/nextjs": "^5.2.4",
     "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "^5.16.1",

@@ -14,6 +14,10 @@ export interface Coach {
   yearsTeaching: number;
   specialties: string[];
   targetCity?: string;
+  locationType?: "US" | "INTERNATIONAL";
+  city?: string;
+  state?: string;
+  country?: string;
   bio?: string;
   instagram?: string;
   minPay?: number;

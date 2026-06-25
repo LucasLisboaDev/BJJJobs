@@ -17,6 +17,7 @@ import { InstagramLink } from "@/components/instagram-link";
 import { ProfileAvatar } from "@/components/profile-avatar";
 import { STATUS_CONFIG } from "@/lib/application-status";
 import { WorkAuthorizationBadge } from "@/components/work-authorization-badges";
+import { formatCoachLocation } from "@/lib/coach-location";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -52,6 +53,7 @@ export function ApplicantDetailPanel({
   const [confirmHire, setConfirmHire] = useState(false);
   const [closeOnHire, setCloseOnHire] = useState(true);
   const coach = app.coach;
+  const coachLocation = formatCoachLocation(coach);
   const statusCfg = STATUS_CONFIG[app.status] ?? STATUS_CONFIG.pending;
   const StatusIcon = statusCfg.icon;
   const isPending = app.status === "pending";
@@ -97,6 +99,7 @@ export function ApplicantDetailPanel({
               day: "numeric",
               year: "numeric",
             })}
+            {coachLocation ? ` · ${coachLocation}` : ""}
             {coach.yearsTeaching ? ` · ${coach.yearsTeaching}yr teaching` : ""}
             {app.viewedAt ? " · Viewed" : " · New"}
           </div>
@@ -144,6 +147,12 @@ export function ApplicantDetailPanel({
                     <span className="flex items-center gap-1">
                       <Building2 className="w-3 h-3" />
                       {coach.affiliation}
+                    </span>
+                  )}
+                  {coachLocation && (
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      Located in: {coachLocation}
                     </span>
                   )}
                   {coach.targetCity && (

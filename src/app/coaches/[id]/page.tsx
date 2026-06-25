@@ -8,6 +8,7 @@ import { CoachExperienceSection } from "@/components/coach-experience-section";
 import { InstagramLink } from "@/components/instagram-link";
 import { ProfileAvatar } from "@/components/profile-avatar";
 import { WorkAuthorizationBadge } from "@/components/work-authorization-badges";
+import { formatCoachLocation } from "@/lib/coach-location";
 
 const BELT_COLORS: Record<string, string> = {
   WHITE: "#9ca3af",
@@ -63,6 +64,7 @@ export default function CoachProfilePage() {
 
   const beltColor = BELT_COLORS[coach.beltRank] ?? "#9ca3af";
   const beltLabel = BELT_LABELS[coach.beltRank] ?? coach.beltRank;
+  const coachLocation = formatCoachLocation(coach);
 
   return (
     <div className="min-h-screen bg-grouped">
@@ -102,6 +104,12 @@ export default function CoachProfilePage() {
                 )}
               </div>
               <div className="flex items-center gap-4 mt-3 flex-wrap">
+                {coachLocation && (
+                  <span className="flex items-center gap-1 text-footnote text-label-secondary">
+                    <MapPin className="w-3.5 h-3.5" />
+                    Located in: {coachLocation}
+                  </span>
+                )}
                 {coach.targetCity && (
                   <span className="flex items-center gap-1 text-footnote text-label-secondary">
                     <MapPin className="w-3.5 h-3.5" />

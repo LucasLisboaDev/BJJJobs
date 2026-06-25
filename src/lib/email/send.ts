@@ -1,4 +1,5 @@
 import { BELT_LABELS } from "@/lib/utils";
+import { formatCoachLocation } from "@/lib/coach-location";
 import { getAppUrl, getFromEmail, getResend, getContactToEmail } from "./resend";
 import { getUserEmail } from "./get-user-email";
 
@@ -14,6 +15,10 @@ type ApplicationWithRelations = {
     yearsTeaching?: number;
     specialties: string[];
     targetCity?: string | null;
+    locationType?: "US" | "INTERNATIONAL" | null;
+    city?: string | null;
+    state?: string | null;
+    country?: string | null;
     user: { clerkId: string };
   };
   job: {
@@ -43,6 +48,8 @@ export async function sendNewApplicationEmail(
   if (application.coach.yearsTeaching) {
     details.push(`${application.coach.yearsTeaching}+ years teaching`);
   }
+  const coachLocation = formatCoachLocation(application.coach);
+  if (coachLocation) details.push(`Located in: ${coachLocation}`);
   if (application.coach.targetCity) details.push(`Looking in: ${application.coach.targetCity}`);
   if (application.coach.specialties.length > 0) {
     details.push(`Specialties: ${application.coach.specialties.join(", ")}`);
@@ -76,7 +83,7 @@ export async function sendApplicationConfirmationEmail(
   if (!coachEmail) return;
 
   const appUrl = getAppUrl();
-  const dashboardUrl = `${appUrl}/dashboard?application=${application.id}`;
+  const dashboardUrl = `${appUrl}/dashboard?tab=messages&application=${application.id}`;
 
   await resend.emails.send({
     from: getFromEmail(),
@@ -123,7 +130,7 @@ export async function sendNewMessageEmail({
   if (!recipientEmail) return;
 
   const appUrl = getAppUrl();
-  const dashboardUrl = `${appUrl}/dashboard?job=${jobId}&application=${applicationId}`;
+  const dashboardUrl = `${appUrl}/dashboard?tab=messages&job=${jobId}&application=${applicationId}`;
   const senderName = senderRole === "COACH" ? coachName : gymName;
   const preview = messageBody.length > 200 ? `${messageBody.slice(0, 200)}…` : messageBody;
 
@@ -153,7 +160,7 @@ export async function sendApplicationViewedEmail(
   if (!coachEmail) return;
 
   const appUrl = getAppUrl();
-  const dashboardUrl = `${appUrl}/dashboard?job=${application.job.id}&application=${application.id}`;
+  const dashboardUrl = `${appUrl}/dashboard?tab=messages&job=${application.job.id}&application=${application.id}`;
 
   await resend.emails.send({
     from: getFromEmail(),
@@ -184,7 +191,7 @@ export async function sendApplicationStatusEmail(
   if (!coachEmail) return;
 
   const appUrl = getAppUrl();
-  const dashboardUrl = `${appUrl}/dashboard?application=${application.id}`;
+  const dashboardUrl = `${appUrl}/dashboard?tab=messages&application=${application.id}`;
   const jobsUrl = `${appUrl}/jobs`;
 
   const isShortlisted = status === "shortlisted";

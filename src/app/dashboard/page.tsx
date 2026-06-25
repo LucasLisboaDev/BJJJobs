@@ -11,14 +11,28 @@ import { PageShell } from "@/components/ui/page-shell";
 import { BELT_COLORS, BELT_LABELS } from "@/lib/utils";
 import { readStored } from "@/lib/brand";
 import { ProfilePhotoUpload } from "@/components/profile-photo-upload";
+import { CoachLocationFields } from "@/components/coach-location-fields";
+import {
+  coachLocationFromData,
+  coachLocationToPayload,
+  formatCoachLocation,
+  validateCoachLocation,
+  type CoachLocationInput,
+} from "@/lib/coach-location";
 import { WORK_AUTH_STATUSES, type WorkAuthorizationStatus } from "@/lib/work-authorization";
 import { WorkAuthorizationBadge } from "@/components/work-authorization-badges";
+import { DashboardTabBar } from "@/components/dashboard-tab-bar";
+import { DashboardMessages } from "@/components/dashboard-messages";
+import { useDashboardTab } from "@/hooks/use-dashboard-tab";
 
 function CoachDashboardInner() {
   const { t } = useLanguage();
   const searchParams = useSearchParams();
   const highlightApplicationId = searchParams.get("application");
+  const { activeTab, applicationId, setTab, setSelectedApplication } = useDashboardTab();
+  const [unreadCount, setUnreadCount] = useState(0);
   const [coach, setCoach] = useState<any>(null);
+  const [location, setLocation] = useState<CoachLocationInput | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "pending" | "shortlisted" | "rejected" | "hired">(
     "all"
@@ -27,7 +41,10 @@ function CoachDashboardInner() {
   const fetchCoach = useCallback(async () => {
     const res = await fetch("/api/dashboard");
     const json = await res.json();
-    if (json.coach) setCoach(json.coach);
+    if (json.coach) {
+      setCoach(json.coach);
+      setLocation(coachLocationFromData(json.coach));
+    }
     setLoading(false);
   }, []);
 
@@ -60,11 +77,50 @@ function CoachDashboardInner() {
     }
   }
 
+  async function handleLocationUpdate(next: CoachLocationInput) {
+    setLocation(next);
+
+    const validationError = validateCoachLocation(next, {
+      us: t("dashboard.locationValidationUS"),
+      international: t("dashboard.locationValidationIntl"),
+    });
+    if (validationError) return;
+
+    const res = await fetch("/api/coach", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(coachLocationToPayload(next)),
+    });
+    if (res.ok) {
+      const updated = await res.json();
+      setCoach((prev: any) => ({
+        ...prev,
+        locationType: updated.locationType,
+        city: updated.city,
+        state: updated.state,
+        country: updated.country,
+      }));
+    }
+  }
+
   useEffect(() => {
     fetchCoach();
     const interval = setInterval(fetchCoach, 20000);
     return () => clearInterval(interval);
   }, [fetchCoach]);
+
+  useEffect(() => {
+    async function loadUnread() {
+      const res = await fetch("/api/conversations");
+      if (res.ok) {
+        const data = await res.json();
+        setUnreadCount(data.totalUnread ?? 0);
+      }
+    }
+    loadUnread();
+    const interval = setInterval(loadUnread, 20000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (loading || !coach) {
     return (
@@ -127,6 +183,11 @@ function CoachDashboardInner() {
                   <WorkAuthorizationBadge status={coach.workAuthorizationStatus} />
                 </div>
               )}
+              {formatCoachLocation(coach) && (
+                <div className="mt-2 text-footnote text-label-secondary">
+                  {t("dashboard.currentLocation")}: {formatCoachLocation(coach)}
+                </div>
+              )}
             </div>
           </div>
           <div className="flex gap-2 flex-wrap sm:pt-1">
@@ -138,6 +199,29 @@ function CoachDashboardInner() {
             </Link>
           </div>
         </div>
+      </div>
+
+      <DashboardTabBar
+        activeTab={activeTab}
+        unreadCount={unreadCount}
+        onTabChange={setTab}
+      />
+
+      {activeTab === "messages" ? (
+        <DashboardMessages
+          viewerRole="coach"
+          selectedApplicationId={applicationId ?? highlightApplicationId}
+          onSelectApplication={setSelectedApplication}
+          onUnreadChange={setUnreadCount}
+        />
+      ) : (
+        <>
+      <div className="ios-card-lg p-5 mb-5">
+        <h2 className="text-headline mb-1">{t("dashboard.currentLocation")}</h2>
+        <p className="text-footnote text-label-secondary mb-4">{t("dashboard.currentLocationHint")}</p>
+        {location && (
+          <CoachLocationFields value={location} onChange={handleLocationUpdate} />
+        )}
       </div>
 
       <div className="ios-card-lg p-5 mb-5">
@@ -211,6 +295,8 @@ function CoachDashboardInner() {
               />
             ))}
           </div>
+        </>
+      )}
         </>
       )}
     </div>

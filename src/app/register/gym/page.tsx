@@ -7,9 +7,12 @@ import { US_STATES } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
 import { STORAGE_KEYS, readStored } from "@/lib/brand";
 import { ProfilePhotoUpload } from "@/components/profile-photo-upload";
+import { useLanguage } from "@/components/language-provider";
+import LanguageSwitcher from "@/components/language-switcher";
 
 export default function GymRegisterPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { isLoaded, userId } = useAuth();
   const { user } = useUser();
   const [checkingAccount, setCheckingAccount] = useState(true);
@@ -57,7 +60,7 @@ export default function GymRegisterPage() {
 
   async function handleSubmit() {
     if (!name || !city || !state) {
-      setError("Please fill in gym name, city, and state");
+      setError(t("register.gymProfile.errorRequired"));
       return;
     }
     setSaving(true);
@@ -83,10 +86,10 @@ export default function GymRegisterPage() {
         router.push("/dashboard");
       } else {
         const data = await res.json();
-        setError(data.error || "Something went wrong");
+        setError(data.error || t("register.gymProfile.errorGeneric"));
       }
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("register.gymProfile.errorTryAgain"));
     } finally {
       setSaving(false);
     }
@@ -95,7 +98,7 @@ export default function GymRegisterPage() {
   if (!isLoaded || checkingAccount) {
     return (
       <div className="min-h-screen bg-grouped flex items-center justify-center">
-        <div className="text-footnote text-label-tertiary">Loading...</div>
+        <div className="text-footnote text-label-tertiary">{t("common.loading")}</div>
       </div>
     );
   }
@@ -105,17 +108,16 @@ export default function GymRegisterPage() {
       <div className="min-h-screen bg-grouped flex items-center justify-center px-6">
         <div className="max-w-md text-center ios-card-lg p-8">
           <div className="text-3xl mb-4">🏋️</div>
-          <h1 className="text-title-2 mb-2">This account is a coach</h1>
+          <h1 className="text-title-2 mb-2">{t("register.gymProfile.wrongAccountTitle")}</h1>
           <p className="text-subheadline text-label-secondary mb-8 leading-relaxed">
-            You&apos;re signed in with a coach account. Coach and gym profiles use separate accounts
-            — sign out and create a new account with a different email to register a gym.
+            {t("register.gymProfile.wrongAccountSub")}
           </p>
           <div className="flex flex-col gap-3">
             <SignOutButton redirectUrl="/register/gym/account">
-              <button className="btn-primary w-full">Sign out & create gym account</button>
+              <button className="btn-primary w-full">{t("register.gymProfile.signOutCreateGym")}</button>
             </SignOutButton>
             <Link href="/dashboard" className="btn-secondary w-full text-center">
-              Go to coach dashboard
+              {t("register.gymProfile.goToCoachDashboard")}
             </Link>
           </div>
         </div>
@@ -128,16 +130,16 @@ export default function GymRegisterPage() {
       <div className="sticky top-0 z-50 px-4 py-3 bg-grouped-secondary/90 backdrop-blur-xl border-b border-separator/30">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <Logo />
-          <div className="text-caption-1 text-label-tertiary">Gym registration</div>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <div className="text-caption-1 text-label-tertiary">{t("register.gymProfile.badge")}</div>
+          </div>
         </div>
       </div>
 
       <div className="page-col max-w-lg">
-        <h1 className="text-title-1 mb-2">Create your gym profile</h1>
-        <p className="text-subheadline text-label-secondary mb-8">
-          Set up your gym profile first. You&apos;ll land on your dashboard where you can manage your
-          info and post jobs when you&apos;re ready.
-        </p>
+        <h1 className="text-title-1 mb-2">{t("register.gymProfile.title")}</h1>
+        <p className="text-subheadline text-label-secondary mb-8">{t("register.gymProfile.sub")}</p>
 
         {error && <div className="alert-error mb-5">{error}</div>}
 
@@ -148,15 +150,15 @@ export default function GymRegisterPage() {
             onChange={setLogoUrl}
             alt={name || "Gym logo"}
             fallback="🏛️"
-            label="Gym logo"
-            hint="Your logo appears on job listings and your public page. JPG, PNG, or WebP · max 2 MB · optional"
+            label={t("register.gymProfile.gymLogo")}
+            hint={t("register.gymProfile.gymLogoHint")}
           />
 
           <div>
-            <label className="field-label">Gym name</label>
+            <label className="field-label">{t("register.gymProfile.gymName")}</label>
             <input
               className="ios-field"
-              placeholder="e.g. Alliance Miami"
+              placeholder={t("register.gymProfile.gymNamePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -164,7 +166,7 @@ export default function GymRegisterPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="field-label">City</label>
+              <label className="field-label">{t("dashboard.city")}</label>
               <input
                 className="ios-field"
                 placeholder="Miami"
@@ -173,9 +175,9 @@ export default function GymRegisterPage() {
               />
             </div>
             <div>
-              <label className="field-label">State</label>
+              <label className="field-label">{t("dashboard.state")}</label>
               <select className="ios-field" value={state} onChange={(e) => setState(e.target.value)}>
-                <option value="">Select state</option>
+                <option value="">{t("dashboard.selectState")}</option>
                 {US_STATES.map((s) => (
                   <option key={s.abbr} value={s.abbr}>
                     {s.name}
@@ -187,11 +189,12 @@ export default function GymRegisterPage() {
 
           <div>
             <label className="field-label">
-              Affiliation <span className="font-normal text-label-tertiary">· optional</span>
+              {t("register.gymProfile.affiliation")}{" "}
+              <span className="font-normal text-label-tertiary">· {t("common.optional")}</span>
             </label>
             <input
               className="ios-field"
-              placeholder="e.g. Alliance, Gracie Barra, Independent..."
+              placeholder={t("register.gymProfile.affiliationPlaceholder")}
               value={affiliation}
               onChange={(e) => setAffiliation(e.target.value)}
             />
@@ -199,11 +202,12 @@ export default function GymRegisterPage() {
 
           <div>
             <label className="field-label">
-              Website <span className="font-normal text-label-tertiary">· optional</span>
+              {t("register.gymProfile.website")}{" "}
+              <span className="font-normal text-label-tertiary">· {t("common.optional")}</span>
             </label>
             <input
               className="ios-field"
-              placeholder="https://yourgym.com"
+              placeholder={t("register.gymProfile.websitePlaceholder")}
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
             />
@@ -211,11 +215,12 @@ export default function GymRegisterPage() {
 
           <div>
             <label className="field-label">
-              Instagram <span className="font-normal text-label-tertiary">· optional</span>
+              {t("register.gymProfile.instagram")}{" "}
+              <span className="font-normal text-label-tertiary">· {t("common.optional")}</span>
             </label>
             <input
               className="ios-field"
-              placeholder="@yourgym or instagram.com/yourgym"
+              placeholder={t("register.gymProfile.instagramPlaceholder")}
               value={instagram}
               onChange={(e) => setInstagram(e.target.value)}
             />
@@ -223,19 +228,20 @@ export default function GymRegisterPage() {
 
           <div>
             <label className="field-label">
-              About your gym <span className="font-normal text-label-tertiary">· optional</span>
+              {t("register.gymProfile.aboutGym")}{" "}
+              <span className="font-normal text-label-tertiary">· {t("common.optional")}</span>
             </label>
             <textarea
               className="ios-field"
               rows={3}
-              placeholder="Tell coaches about your gym culture, schedule, and what makes you a great place to work..."
+              placeholder={t("register.gymProfile.aboutGymPlaceholder")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
           <button onClick={handleSubmit} disabled={saving} className="btn-primary w-full disabled:opacity-60">
-            {saving ? "Saving..." : "Create gym profile →"}
+            {saving ? t("register.gymProfile.saving") : t("register.gymProfile.createProfile")}
           </button>
         </div>
       </div>
