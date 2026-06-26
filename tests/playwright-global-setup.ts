@@ -1,3 +1,4 @@
+import { execSync } from "child_process";
 import { config as loadEnv } from "dotenv";
 import { writeFileSync } from "fs";
 import { resolve } from "path";
@@ -23,6 +24,12 @@ export default async function globalSetup() {
   }
 
   process.env.DATABASE_URL = databaseUrl;
+
+  execSync("npx prisma db push --skip-generate", {
+    stdio: "inherit",
+    env: { ...process.env, DATABASE_URL: databaseUrl },
+  });
+
   await resetDatabase();
 
   const gymUser = await seedGym();
