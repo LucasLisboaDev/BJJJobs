@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { enUS } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Providers } from "@/components/providers";
 import { APP_NAME } from "@/lib/brand";
@@ -11,7 +12,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      localization={enUS}
+      appearance={{
+        signUp: {
+          options: {
+            showOptionalFields: false,
+          },
+        },
+      }}
+    >
       <html lang="en" suppressHydrationWarning data-theme="light">
         <body>
           <Providers>{children}</Providers>

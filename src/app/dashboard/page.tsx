@@ -9,7 +9,7 @@ import { useLanguage } from "@/components/language-provider";
 import { DashboardNav } from "@/components/ui/dashboard-nav";
 import { PageShell } from "@/components/ui/page-shell";
 import { BELT_COLORS, BELT_LABELS } from "@/lib/utils";
-import { readStored } from "@/lib/brand";
+import { readStored, STORAGE_KEYS } from "@/lib/brand";
 import { ProfilePhotoUpload } from "@/components/profile-photo-upload";
 import { CoachLocationFields } from "@/components/coach-location-fields";
 import {
@@ -42,8 +42,23 @@ function CoachDashboardInner() {
     const res = await fetch("/api/dashboard");
     const json = await res.json();
     if (json.coach) {
-      setCoach(json.coach);
-      setLocation(coachLocationFromData(json.coach));
+      let coachData = json.coach;
+
+      const pendingPhoto = readStored("pendingCoachPhoto");
+      if (!coachData.photoUrl && pendingPhoto) {
+        const patchRes = await fetch("/api/coach", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ photoUrl: pendingPhoto }),
+        });
+        if (patchRes.ok) {
+          coachData = await patchRes.json();
+          sessionStorage.removeItem(STORAGE_KEYS.pendingCoachPhoto);
+        }
+      }
+
+      setCoach(coachData);
+      setLocation(coachLocationFromData(coachData));
     }
     setLoading(false);
   }, []);
@@ -74,6 +89,11 @@ function CoachDashboardInner() {
     if (res.ok) {
       const updated = await res.json();
       setCoach((prev: any) => ({ ...prev, photoUrl: updated.photoUrl }));
+      if (photoUrl) {
+        sessionStorage.setItem(STORAGE_KEYS.pendingCoachPhoto, photoUrl);
+      } else {
+        sessionStorage.removeItem(STORAGE_KEYS.pendingCoachPhoto);
+      }
     }
   }
 

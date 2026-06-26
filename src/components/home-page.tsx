@@ -77,7 +77,7 @@ export default function HomePage() {
     <PageShell>
       <AppNav variant="floating" showBeta />
 
-      <div className="pt-[74px]">
+      <div className="pt-14 md:pt-[74px]">
         <PageCol>
           {/* Hero — Liquid Glass style */}
           <div className="relative overflow-hidden rounded-[28px] p-10 md:p-11 mb-5 shadow-ios-lg hero-gradient">

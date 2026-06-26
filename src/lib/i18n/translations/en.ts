@@ -6,6 +6,8 @@ export const en = {
     createAccount: "Create an account",
     dashboard: "Dashboard",
     postJob: "Post a job",
+    menu: "Menu",
+    closeMenu: "Close menu",
   },
   language: {
     label: "Language",

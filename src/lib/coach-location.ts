@@ -81,6 +81,18 @@ export function validateCoachLocation(
   });
 
   if (result.success) return null;
+
+  const issue = result.error.errors[0];
+  if (issue?.path[0] === "city" && !location.city.trim()) {
+    return "City is required";
+  }
+  if (issue?.path[0] === "state" && !location.state.trim()) {
+    return "State is required";
+  }
+  if (issue?.path[0] === "country" && !location.country.trim()) {
+    return "Country is required";
+  }
+
   return location.locationType === "US" ? messages.us : messages.international;
 }
 
@@ -89,6 +101,8 @@ export function coachLocationToPayload(location: CoachLocationInput) {
     locationType: location.locationType,
     city: location.city.trim(),
     state: location.state.trim(),
-    country: location.locationType === "INTERNATIONAL" ? location.country.trim() : null,
+    ...(location.locationType === "INTERNATIONAL"
+      ? { country: location.country.trim() }
+      : {}),
   };
 }

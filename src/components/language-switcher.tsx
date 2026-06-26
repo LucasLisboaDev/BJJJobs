@@ -1,5 +1,4 @@
 "use client";
-import { Globe } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 import type { Locale } from "@/lib/i18n/types";
 
@@ -18,7 +17,6 @@ export default function LanguageSwitcher() {
       role="group"
       aria-label="Language"
     >
-      <Globe className="w-3.5 h-3.5 text-label-tertiary ml-1.5 hidden sm:block" />
       {OPTIONS.map((option) => {
         const active = locale === option.value;
         return (

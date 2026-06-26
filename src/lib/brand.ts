@@ -5,6 +5,7 @@ export const STORAGE_KEYS = {
   signupRole: "jiujitsujobs_signup_role",
   gymName: "jiujitsujobs_gym_name",
   locale: "jiujitsujobs_locale",
+  pendingCoachPhoto: "jiujitsujobs_pending_coach_photo",
 } as const;
 
 /** @deprecated Pre-rebrand keys — read for one release, then remove */
@@ -12,6 +13,7 @@ const LEGACY_KEYS = {
   signupRole: "bjjjobs_signup_role",
   gymName: "bjjjobs_gym_name",
   locale: "bjjjobs_locale",
+  pendingCoachPhoto: "bjjjobs_pending_coach_photo",
 } as const;
 
 export function readStored(key: keyof typeof STORAGE_KEYS): string | null {

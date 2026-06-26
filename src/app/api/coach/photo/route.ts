@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 import { saveUploadedImage, validateImageFile } from "@/lib/upload-image";
 
 export async function POST(req: NextRequest) {
@@ -20,6 +21,19 @@ export async function POST(req: NextRequest) {
     }
 
     const photoUrl = await saveUploadedImage(file, userId, "photos");
+
+    const user = await prisma.user.findUnique({
+      where: { clerkId: userId },
+      include: { coach: true },
+    });
+
+    if (user?.coach) {
+      await prisma.coach.update({
+        where: { id: user.coach.id },
+        data: { photoUrl },
+      });
+    }
+
     return NextResponse.json({ photoUrl });
   } catch (err) {
     console.error(err);

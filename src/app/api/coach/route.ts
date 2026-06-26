@@ -5,16 +5,28 @@ import { syncClerkEmail } from "@/lib/email/get-user-email";
 import { optionalInstagramSchema } from "@/lib/instagram";
 import { WORK_AUTH_STATUSES } from "@/lib/work-authorization";
 import { coachLocationSchema, coachLocationToPayload } from "@/lib/coach-location";
+import { formatZodError } from "@/lib/zod-errors";
 import { z } from "zod";
 
-const experienceSchema = z.object({
-  position: z.string().min(1),
-  organization: z.string().min(1),
-  description: z.string().min(1),
-  reasonLeft: z.string().optional(),
-  startDate: z.string().min(1),
-  endDate: z.string().optional(),
-});
+const experienceSchema = z
+  .object({
+    position: z.string().min(1, "Position is required"),
+    organization: z.string().min(1, "Gym / organization is required"),
+    description: z.string().min(1, "Description is required"),
+    reasonLeft: z.string().optional(),
+    startDate: z.string().min(1, "Start date is required"),
+    endDate: z.string().optional(),
+    isCurrent: z.boolean().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.isCurrent && !data.endDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "End date is required (or check \"I currently work here\")",
+        path: ["endDate"],
+      });
+    }
+  });
 
 const coachSchema = z
   .object({
@@ -29,7 +41,7 @@ const coachSchema = z
     locationType: z.enum(["US", "INTERNATIONAL"]),
     city: z.string().min(1),
     state: z.string().min(1),
-    country: z.string().optional(),
+    country: z.string().nullable().optional(),
     bio: z.string().optional(),
     minPay: z.number().optional(),
     maxPay: z.number().optional(),
@@ -129,8 +141,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(fullCoach, { status: 201 });
   } catch (err) {
     if (err instanceof z.ZodError) {
-      const message = err.errors[0]?.message ?? "Invalid input";
-      return NextResponse.json({ error: message }, { status: 400 });
+      return NextResponse.json({ error: formatZodError(err) }, { status: 400 });
     }
     console.error(err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -242,7 +253,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json(coach);
   } catch (err) {
     if (err instanceof z.ZodError) {
-      return NextResponse.json({ error: err.errors[0]?.message ?? "Invalid input" }, { status: 400 });
+      return NextResponse.json({ error: formatZodError(err) }, { status: 400 });
     }
     console.error(err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

@@ -8,6 +8,8 @@ export const ptBR: TranslationDict = {
     createAccount: "Criar conta",
     dashboard: "Painel",
     postJob: "Publicar vaga",
+    menu: "Menu",
+    closeMenu: "Fechar menu",
   },
   language: {
     label: "Idioma",

@@ -16,7 +16,7 @@ import {
 import Link from "next/link";
 import type { WorkExperienceInput } from "@/lib/coach-experience";
 import { Logo } from "@/components/ui/logo";
-import { STORAGE_KEYS } from "@/lib/brand";
+import { STORAGE_KEYS, readStored } from "@/lib/brand";
 import { ProfilePhotoUpload } from "@/components/profile-photo-upload";
 import { CoachLocationFields } from "@/components/coach-location-fields";
 import {
@@ -101,6 +101,23 @@ export default function CoachRegisterPage() {
       .finally(() => setCheckingAccount(false));
   }, [isLoaded, userId, router]);
 
+  useEffect(() => {
+    const pendingPhoto = readStored("pendingCoachPhoto");
+    if (pendingPhoto) {
+      setPhotoUrl((current) => current || pendingPhoto);
+    }
+  }, []);
+
+  function handlePhotoChange(url: string | null) {
+    setPhotoUrl(url);
+    if (typeof window === "undefined") return;
+    if (url) {
+      sessionStorage.setItem(STORAGE_KEYS.pendingCoachPhoto, url);
+    } else {
+      sessionStorage.removeItem(STORAGE_KEYS.pendingCoachPhoto);
+    }
+  }
+
   function updateExperience(index: number, field: keyof ExperienceForm, value: string | boolean) {
     setExperiences((prev) =>
       prev.map((exp, i) => (i === index ? { ...exp, [field]: value } : exp))
@@ -139,18 +156,55 @@ export default function CoachRegisterPage() {
   function validateStep2() {
     if (resumeUrl) return true;
 
-    const valid = experiences.filter(
+    const filled = experiences.filter(
       (exp) =>
-        exp.position.trim() &&
-        exp.organization.trim() &&
-        exp.description.trim() &&
-        exp.startDate
+        exp.position.trim() ||
+        exp.organization.trim() ||
+        exp.description.trim() ||
+        exp.startDate ||
+        exp.endDate
     );
 
-    if (valid.length === 0) {
-      setError("Upload a PDF resume or add at least one complete work experience entry");
+    if (filled.length === 0) {
+      setError("Upload a PDF resume or add at least one work experience entry");
       return false;
     }
+
+    for (let i = 0; i < experiences.length; i++) {
+      const exp = experiences[i];
+      const hasContent =
+        exp.position.trim() ||
+        exp.organization.trim() ||
+        exp.description.trim() ||
+        exp.startDate ||
+        exp.endDate;
+
+      if (!hasContent) continue;
+
+      const label = `Position ${i + 1}`;
+
+      if (!exp.position.trim()) {
+        setError(`${label}: enter your job title`);
+        return false;
+      }
+      if (!exp.organization.trim()) {
+        setError(`${label}: enter the gym or organization name`);
+        return false;
+      }
+      if (!exp.description.trim()) {
+        setError(`${label}: describe what you did in this role`);
+        return false;
+      }
+      if (!exp.startDate) {
+        setError(`${label}: select a start date`);
+        return false;
+      }
+      if (!exp.isCurrent && !exp.endDate) {
+        setError(`${label}: select an end date or check "I currently work here"`);
+        return false;
+      }
+    }
+
     return true;
   }
 
@@ -182,10 +236,33 @@ export default function CoachRegisterPage() {
 
     setSaving(true);
     try {
+      const mapExperience = (exp: ExperienceForm) => ({
+        position: exp.position.trim(),
+        organization: exp.organization.trim(),
+        description: exp.description.trim(),
+        reasonLeft: exp.reasonLeft?.trim() || undefined,
+        startDate: exp.startDate,
+        endDate: exp.isCurrent ? undefined : exp.endDate || undefined,
+        isCurrent: exp.isCurrent,
+      });
+
+      const completeExperiences = experiences
+        .filter(
+          (exp) =>
+            exp.position.trim() &&
+            exp.organization.trim() &&
+            exp.description.trim() &&
+            exp.startDate &&
+            (exp.isCurrent || exp.endDate)
+        )
+        .map(mapExperience);
+
+      const savedPhotoUrl = photoUrl || readStored("pendingCoachPhoto");
+
       const payload = {
         firstName,
         lastName,
-        photoUrl: photoUrl || undefined,
+        photoUrl: savedPhotoUrl || undefined,
         beltRank: selectedBelt,
         affiliation,
         instagram: instagram || undefined,
@@ -195,39 +272,7 @@ export default function CoachRegisterPage() {
         ...coachLocationToPayload(location),
         resumeUrl: resumeUrl || undefined,
         resumeFileName: resumeFileName || undefined,
-        experiences: resumeUrl
-          ? experiences
-              .filter(
-                (exp) =>
-                  exp.position.trim() &&
-                  exp.organization.trim() &&
-                  exp.description.trim() &&
-                  exp.startDate
-              )
-              .map((exp) => ({
-                position: exp.position.trim(),
-                organization: exp.organization.trim(),
-                description: exp.description.trim(),
-                reasonLeft: exp.reasonLeft?.trim() || undefined,
-                startDate: exp.startDate,
-                endDate: exp.isCurrent ? undefined : exp.endDate || undefined,
-              }))
-          : experiences
-              .filter(
-                (exp) =>
-                  exp.position.trim() &&
-                  exp.organization.trim() &&
-                  exp.description.trim() &&
-                  exp.startDate
-              )
-              .map((exp) => ({
-                position: exp.position.trim(),
-                organization: exp.organization.trim(),
-                description: exp.description.trim(),
-                reasonLeft: exp.reasonLeft?.trim() || undefined,
-                startDate: exp.startDate,
-                endDate: exp.isCurrent ? undefined : exp.endDate || undefined,
-              })),
+        experiences: completeExperiences,
       };
 
       const res = await fetch("/api/coach", {
@@ -238,6 +283,7 @@ export default function CoachRegisterPage() {
 
       if (res.ok) {
         sessionStorage.removeItem(STORAGE_KEYS.signupRole);
+        sessionStorage.removeItem(STORAGE_KEYS.pendingCoachPhoto);
         router.push("/dashboard");
       } else {
         const data = await res.json();
@@ -349,7 +395,7 @@ export default function CoachRegisterPage() {
                 <ProfilePhotoUpload
                   kind="photo"
                   value={photoUrl}
-                  onChange={setPhotoUrl}
+                  onChange={handlePhotoChange}
                   alt={`${firstName || "Coach"} ${lastName || "photo"}`.trim()}
                   fallback={
                     firstName && lastName ? (
@@ -549,7 +595,7 @@ export default function CoachRegisterPage() {
                           )}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3 mb-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                           <div>
                             <label className="field-label">Position</label>
                             <input
@@ -593,37 +639,42 @@ export default function CoachRegisterPage() {
                           />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-3">
                           <div>
                             <label className="field-label">From</label>
                             <input
                               type="month"
-                              className="ios-field w-full"
+                              className="ios-field w-full min-h-[44px]"
                               value={exp.startDate}
                               onChange={(e) => updateExperience(index, "startDate", e.target.value)}
                             />
                           </div>
-                          <div>
-                            <label className="field-label">To</label>
+
+                          <label className="flex items-center gap-2.5 py-1 text-subheadline text-label-secondary tap">
                             <input
-                              type="month"
-                              className="ios-field w-full disabled:opacity-50"
-                              value={exp.endDate}
-                              disabled={exp.isCurrent}
-                              onChange={(e) => updateExperience(index, "endDate", e.target.value)}
+                              type="checkbox"
+                              className="w-[18px] h-[18px] shrink-0 accent-brand"
+                              checked={exp.isCurrent}
+                              onChange={(e) => {
+                                updateExperience(index, "isCurrent", e.target.checked);
+                                if (e.target.checked) updateExperience(index, "endDate", "");
+                              }}
                             />
-                            <label className="flex items-center gap-1.5 mt-2 text-caption-1 text-label-secondary">
+                            I currently work here
+                          </label>
+
+                          {!exp.isCurrent && (
+                            <div>
+                              <label className="field-label">To</label>
                               <input
-                                type="checkbox"
-                                checked={exp.isCurrent}
-                                onChange={(e) => {
-                                  updateExperience(index, "isCurrent", e.target.checked);
-                                  if (e.target.checked) updateExperience(index, "endDate", "");
-                                }}
+                                type="month"
+                                className="ios-field w-full min-h-[44px]"
+                                value={exp.endDate}
+                                min={exp.startDate || undefined}
+                                onChange={(e) => updateExperience(index, "endDate", e.target.value)}
                               />
-                              I currently work here
-                            </label>
-                          </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}

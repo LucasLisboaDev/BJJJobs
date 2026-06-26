@@ -23,13 +23,16 @@ type LanguageContextValue = {
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  // Default is always English. Only switch when the user explicitly chose PT (saved in localStorage).
   const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(LOCALE_STORAGE_KEY) as Locale | null;
-    if (stored === "en" || stored === "pt-BR") {
-      setLocaleState(stored);
+    if (stored === "pt-BR") {
+      setLocaleState("pt-BR");
+    } else {
+      setLocaleState(DEFAULT_LOCALE);
     }
     setReady(true);
   }, []);

@@ -48,3 +48,17 @@
     outline: none;
   }
 }
+
+/* Clerk: hide name fields on email-only coach/gym signup */
+.email-only-signup .cl-formFieldRow:has(input[name="firstName"]),
+.email-only-signup .cl-formFieldRow:has(input[name="lastName"]),
+.email-only-signup .cl-formFieldRow:has(input[name="first_name"]),
+.email-only-signup .cl-formFieldRow:has(input[name="last_name"]),
+.email-only-signup .cl-formFieldRow:has(input[autocomplete="given-name"]),
+.email-only-signup .cl-formFieldRow:has(input[autocomplete="family-name"]),
+.email-only-signup .cl-formField:has(input[name="firstName"]),
+.email-only-signup .cl-formField:has(input[name="lastName"]),
+.email-only-signup .cl-formField:has(input[name="first_name"]),
+.email-only-signup .cl-formField:has(input[name="last_name"]) {
+  display: none !important;
+}
