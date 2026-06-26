@@ -10,7 +10,7 @@ export default async function globalSetup() {
   assertSafeTestDatabase(databaseUrl);
 
   process.env.DATABASE_URL = databaseUrl;
-  process.env.NODE_ENV = "test";
+  // CI already sets NODE_ENV=test; avoid assigning read-only NODE_ENV during Next typecheck.
 
   execSync("npx prisma db push --skip-generate", {
     stdio: "inherit",

@@ -2,8 +2,6 @@
 
 import { useEffect, useRef, type ComponentProps } from "react";
 import { SignUp } from "@clerk/nextjs";
-import { useLanguage } from "@/components/language-provider";
-import { getClerkLocalization } from "@/lib/clerk-localization";
 
 const HIDE_NAME_FIELD_ELEMENTS = {
   formFieldRow__firstName: { display: "none" },
@@ -88,29 +86,27 @@ function useHideClerkNameFields(enabled: boolean) {
 function buildEmailOnlyAppearance(
   appearance: ComponentProps<typeof SignUp>["appearance"]
 ): ComponentProps<typeof SignUp>["appearance"] {
+  const themed = appearance as
+    | (NonNullable<ComponentProps<typeof SignUp>["appearance"]> & {
+        signUp?: { elements?: Record<string, unknown> };
+        elements?: Record<string, unknown>;
+      })
+    | undefined;
+
   return {
-    ...appearance,
-    // Clerk defaults showOptionalFields to true — must override at root and signUp.
-    options: {
-      ...appearance?.options,
-      showOptionalFields: false,
-    },
+    ...themed,
     signUp: {
-      ...appearance?.signUp,
-      options: {
-        ...appearance?.signUp?.options,
-        showOptionalFields: false,
-      },
+      ...themed?.signUp,
       elements: {
-        ...appearance?.signUp?.elements,
+        ...themed?.signUp?.elements,
         ...HIDE_NAME_FIELD_ELEMENTS,
       },
     },
     elements: {
-      ...appearance?.elements,
+      ...themed?.elements,
       ...HIDE_NAME_FIELD_ELEMENTS,
     },
-  };
+  } as ComponentProps<typeof SignUp>["appearance"];
 }
 
 export function LocalizedSignUp({
@@ -118,13 +114,11 @@ export function LocalizedSignUp({
   appearance,
   ...props
 }: ComponentProps<typeof SignUp> & { emailOnly?: boolean }) {
-  const { locale } = useLanguage();
   const containerRef = useHideClerkNameFields(emailOnly);
 
   const signUp = (
     <SignUp
       {...props}
-      localization={getClerkLocalization(locale)}
       appearance={emailOnly ? buildEmailOnlyAppearance(appearance) : appearance}
     />
   );

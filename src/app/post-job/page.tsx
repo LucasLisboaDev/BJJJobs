@@ -475,15 +475,18 @@ function PostJobForm() {
   );
 }
 
+function PostJobLoadingFallback() {
+  const { t } = useLanguage();
+  return (
+    <div className="min-h-screen bg-grouped flex items-center justify-center">
+      <div className="text-footnote text-label-tertiary">{t("common.loading")}</div>
+    </div>
+  );
+}
+
 export default function PostJobPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-grouped flex items-center justify-center">
-          <div className="text-footnote text-label-tertiary">{t("common.loading")}</div>
-        </div>
-      }
-    >
+    <Suspense fallback={<PostJobLoadingFallback />}>
       <PostJobForm />
     </Suspense>
   );

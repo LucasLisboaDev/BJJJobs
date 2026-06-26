@@ -2,12 +2,13 @@ import { describe, it, expect, beforeAll } from "vitest";
 import { GET as getConversations } from "@/app/api/conversations/route";
 import { POST as postMessage } from "@/app/api/applications/[applicationId]/messages/route";
 import { jsonRequest } from "../helpers/request";
-import { mockSignedInAs, TEST_CLERK } from "../helpers/mocks";
+import { mockSignedInAs } from "../helpers/mocks";
 import {
   seedGym,
   seedCoach,
   seedJob,
   seedApplication,
+  TEST_CLERK,
   resolveDatabaseUrl,
   assertSafeTestDatabase,
   getTestPrisma,
